@@ -1,0 +1,6 @@
+allowBuilds:
+  "@datadog/mobile-react-native": true
+  "@sentry/cli": true
+  esbuild: true
+  return-fetch: true
+  unrs-resolver: true
