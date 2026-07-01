@@ -1,17 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
+
 import {
   blockUser,
   createCommunityComment,
   createCommunityPost,
   createUpload,
-  getUnreadMessageSummary,
   getMySubscription,
+  getUnreadMessageSummary,
   likeUser,
   listBlackMatchCandidates,
+  listCommunityPosts,
   listLikedMeCandidates,
   listMatchCandidates,
-  listCommunityPosts,
   listMessages,
   listRooms,
   listSubscriptionPlans,
@@ -20,25 +21,26 @@ import {
   reportCommunityPost,
   reportMessage,
   sendMessage,
+  setTyping,
   subscribeToMessageCreated,
   subscribeToMessageDeleted,
   subscribeToMessageUpdated,
   subscribeToReadReceiptUpdated,
   subscribeToTypingChanged,
-  setTyping,
   uploadFileToSignedUrl,
 } from "./api";
-import { Message } from "./types";
+import { pickImageAttachment } from "./image-picker";
+import { AttachmentDraft, Message } from "./types";
 
-export function useRooms() {
+export const useRooms = () => {
   return useQuery({ queryKey: ["rooms"], queryFn: listRooms });
-}
+};
 
-export function useCommunityPosts() {
+export const useCommunityPosts = () => {
   return useQuery({ queryKey: ["community-posts"], queryFn: listCommunityPosts });
-}
+};
 
-export function useCreateCommunityPost() {
+export const useCreateCommunityPost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -47,9 +49,9 @@ export function useCreateCommunityPost() {
       void queryClient.invalidateQueries({ queryKey: ["community-posts"] });
     },
   });
-}
+};
 
-export function useCreateCommunityComment() {
+export const useCreateCommunityComment = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -58,37 +60,37 @@ export function useCreateCommunityComment() {
       void queryClient.invalidateQueries({ queryKey: ["community-posts"] });
     },
   });
-}
+};
 
-export function useReportCommunityPost() {
+export const useReportCommunityPost = () => {
   return useMutation({ mutationFn: reportCommunityPost });
-}
+};
 
-export function useSubscriptionPlans() {
+export const useSubscriptionPlans = () => {
   return useQuery({ queryKey: ["subscription-plans"], queryFn: listSubscriptionPlans });
-}
+};
 
-export function useMySubscription() {
+export const useMySubscription = () => {
   return useQuery({ queryKey: ["my-subscription"], queryFn: getMySubscription });
-}
+};
 
-export function useUnreadMessageSummary() {
+export const useUnreadMessageSummary = () => {
   return useMutation({ mutationFn: getUnreadMessageSummary });
-}
+};
 
-export function useMatchCandidates() {
+export const useMatchCandidates = () => {
   return useQuery({ queryKey: ["match-candidates"], queryFn: listMatchCandidates });
-}
+};
 
-export function useBlackMatchCandidates(enabled: boolean) {
+export const useBlackMatchCandidates = (enabled: boolean) => {
   return useQuery({
     queryKey: ["black-match-candidates"],
     queryFn: listBlackMatchCandidates,
     enabled,
   });
-}
+};
 
-export function useLikedMeCandidates(enabled: boolean) {
+export const useLikedMeCandidates = (enabled: boolean) => {
   return useQuery({
     queryKey: ["liked-me-candidates"],
     queryFn: listLikedMeCandidates,
@@ -96,9 +98,9 @@ export function useLikedMeCandidates(enabled: boolean) {
     refetchOnWindowFocus: false,
     staleTime: 60_000,
   });
-}
+};
 
-export function useLikeUser() {
+export const useLikeUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -108,13 +110,13 @@ export function useLikeUser() {
       void queryClient.invalidateQueries({ queryKey: ["rooms"] });
     },
   });
-}
+};
 
-export function useRateProfile() {
+export const useRateProfile = () => {
   return useMutation({ mutationFn: rateProfile });
-}
+};
 
-export function useMessages(roomId: string) {
+export const useMessages = (roomId: string) => {
   const query = useQuery({ queryKey: ["messages", roomId], queryFn: () => listMessages(roomId) });
   const queryClient = useQueryClient();
   const refetchMessages = useCallback(() => {
@@ -158,9 +160,9 @@ export function useMessages(roomId: string) {
   }, [queryClient, refetchMessages, roomId]);
 
   return query;
-}
+};
 
-export function useSendMessage(roomId: string) {
+export const useSendMessage = (roomId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -173,9 +175,9 @@ export function useSendMessage(roomId: string) {
       );
     },
   });
-}
+};
 
-export function useRoomRealtime(roomId: string) {
+export const useRoomRealtime = (roomId: string) => {
   const [isPeerTyping, setIsPeerTyping] = useState(false);
   const [readReceiptVersion, setReadReceiptVersion] = useState(0);
 
@@ -200,28 +202,79 @@ export function useRoomRealtime(roomId: string) {
   }, [roomId]);
 
   return { isPeerTyping, readReceiptVersion };
-}
+};
 
-export function useMarkRoomRead() {
+export const useMarkRoomRead = () => {
   return useMutation({ mutationFn: markRoomRead });
-}
+};
 
-export function useSetTyping() {
+export const useSetTyping = () => {
   return useMutation({ mutationFn: setTyping });
-}
+};
 
-export function useBlockUser() {
+export const useBlockUser = () => {
   return useMutation({ mutationFn: blockUser });
-}
+};
 
-export function useReportMessage() {
+export const useReportMessage = () => {
   return useMutation({ mutationFn: reportMessage });
-}
+};
 
-export function useCreateUpload() {
+export const useCreateUpload = () => {
   return useMutation({ mutationFn: createUpload });
-}
+};
 
-export function useUploadFileToSignedUrl() {
+export const useUploadFileToSignedUrl = () => {
   return useMutation({ mutationFn: uploadFileToSignedUrl });
-}
+};
+
+export const useChatAttachments = () => {
+  const createUploadMutation = useCreateUpload();
+  const uploadFile = useUploadFileToSignedUrl();
+  const [attachments, setAttachments] = useState<AttachmentDraft[]>([]);
+
+  const addAttachment = async () => {
+    const picked = await pickImageAttachment();
+    if (!picked) {
+      return;
+    }
+
+    const localId = `attachment-${Date.now()}`;
+    const attachment: AttachmentDraft = {
+      id: localId,
+      filename: picked.filename,
+      contentType: picked.contentType,
+      status: "signing",
+    };
+
+    setAttachments((current) => [...current, attachment]);
+
+    try {
+      const upload = await createUploadMutation.mutateAsync({
+        filename: attachment.filename,
+        contentType: attachment.contentType,
+      });
+      setAttachments((current) =>
+        current.map((item) =>
+          item.id === localId
+            ? { ...item, id: upload.id, putUrl: upload.putUrl, status: "uploading" }
+            : item,
+        ),
+      );
+      await uploadFile.mutateAsync({
+        putUrl: upload.putUrl,
+        contentType: attachment.contentType,
+        body: picked.body,
+      });
+      setAttachments((current) =>
+        current.map((item) => (item.id === upload.id ? { ...item, status: "uploaded" } : item)),
+      );
+    } catch {
+      setAttachments((current) =>
+        current.map((item) => (item.id === localId ? { ...item, status: "failed" } : item)),
+      );
+    }
+  };
+
+  return { addAttachment, attachments };
+};

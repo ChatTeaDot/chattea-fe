@@ -1,18 +1,20 @@
-import { StyleSheet, Text, TextInput, TextInputProps, View } from "react-native";
-import { colors, spacing } from "../../theme/tokens";
+import { Text, TextInput, TextInputProps, View } from "react-native";
+import { StyleSheet } from "react-native-unistyles";
+
+import { colors, spacing } from "@/theme/tokens";
 
 type AppInputProps = TextInputProps & {
   label: string;
 };
 
-export function AppInput({ label, ...props }: AppInputProps) {
+export const AppInput = ({ label, ...props }: AppInputProps) => {
   return (
     <View style={styles.wrap}>
       <Text style={styles.label}>{label}</Text>
       <TextInput placeholderTextColor={colors.muted} style={styles.input} {...props} />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   wrap: {
@@ -24,12 +26,13 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   input: {
+    backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 8,
+    borderRadius: 18,
     borderWidth: 1,
     color: colors.text,
     fontSize: 16,
-    minHeight: 48,
+    minHeight: 54,
     paddingHorizontal: spacing.md,
   },
 });

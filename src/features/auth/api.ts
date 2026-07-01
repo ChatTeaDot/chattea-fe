@@ -1,12 +1,14 @@
 import { gql } from "graphql-request";
-import { graphQLRequest, setGraphQLRequester, type Requester } from "../../shared/graphql/client";
+
+import { graphQLRequest, type Requester, setGraphQLRequester } from "@/shared/graphql/client";
+
 import { CompletePhoneSignupResult, KakaoLoginResult, VerifyPhoneResult } from "./types";
 
-export function setAuthApiRequester(requester: Requester) {
+export const setAuthApiRequester = (requester: Requester) => {
   setGraphQLRequester(requester);
-}
+};
 
-export function normalizeKoreanPhone(input: string): string {
+export const normalizeKoreanPhone = (input: string): string => {
   const compact = input.replace(/[\s-]/g, "");
 
   if (compact.startsWith("+82") && /^10\d{8}$/.test(compact.slice(3))) {
@@ -18,9 +20,9 @@ export function normalizeKoreanPhone(input: string): string {
   }
 
   throw new Error("INVALID_KOREAN_PHONE");
-}
+};
 
-export async function requestPhoneCode(phoneE164: string) {
+export const requestPhoneCode = async (phoneE164: string) => {
   const data = await graphQLRequest<{ requestPhoneCode: { ok: boolean } }>(
     gql`
       mutation RequestPhoneCode($phone: String!) {
@@ -33,9 +35,12 @@ export async function requestPhoneCode(phoneE164: string) {
   );
 
   return data.requestPhoneCode;
-}
+};
 
-export async function verifyPhoneCode(phoneE164: string, code: string): Promise<VerifyPhoneResult> {
+export const verifyPhoneCode = async (
+  phoneE164: string,
+  code: string,
+): Promise<VerifyPhoneResult> => {
   const data = await graphQLRequest<{ verifyPhoneCode: VerifyPhoneResult }>(
     gql`
       mutation VerifyPhoneCode($phone: String!, $code: String!) {
@@ -64,13 +69,13 @@ export async function verifyPhoneCode(phoneE164: string, code: string): Promise<
   );
 
   return data.verifyPhoneCode;
-}
+};
 
-export async function completePhoneSignup(
+export const completePhoneSignup = async (
   signupToken: string,
   nickname: string,
   intro = "",
-): Promise<CompletePhoneSignupResult> {
+): Promise<CompletePhoneSignupResult> => {
   const data = await graphQLRequest<{ completePhoneSignup: CompletePhoneSignupResult }>(
     gql`
       mutation CompletePhoneSignup(
@@ -101,9 +106,9 @@ export async function completePhoneSignup(
   );
 
   return data.completePhoneSignup;
-}
+};
 
-export async function loginWithKakao(accessToken: string): Promise<KakaoLoginResult> {
+export const loginWithKakao = async (accessToken: string): Promise<KakaoLoginResult> => {
   const data = await graphQLRequest<{ loginWithKakao: KakaoLoginResult }>(
     gql`
       mutation LoginWithKakao($accessToken: String!) {
@@ -133,14 +138,14 @@ export async function loginWithKakao(accessToken: string): Promise<KakaoLoginRes
   );
 
   return data.loginWithKakao;
-}
+};
 
-export async function completeKakaoPhoneSignup(
+export const completeKakaoPhoneSignup = async (
   kakaoToken: string,
   signupToken: string,
   nickname: string,
   intro = "",
-): Promise<CompletePhoneSignupResult> {
+): Promise<CompletePhoneSignupResult> => {
   const data = await graphQLRequest<{ completeKakaoPhoneSignup: CompletePhoneSignupResult }>(
     gql`
       mutation CompleteKakaoPhoneSignup(
@@ -173,13 +178,13 @@ export async function completeKakaoPhoneSignup(
   );
 
   return data.completeKakaoPhoneSignup;
-}
+};
 
-export async function attachPhoneToMe(
+export const attachPhoneToMe = async (
   kakaoToken: string,
   phoneE164: string,
   code: string,
-): Promise<CompletePhoneSignupResult> {
+): Promise<CompletePhoneSignupResult> => {
   const data = await graphQLRequest<{ attachPhoneToMe: CompletePhoneSignupResult }>(
     gql`
       mutation AttachPhoneToMe($kakaoToken: String!, $phone: String!, $code: String!) {
@@ -200,4 +205,4 @@ export async function attachPhoneToMe(
   );
 
   return data.attachPhoneToMe;
-}
+};

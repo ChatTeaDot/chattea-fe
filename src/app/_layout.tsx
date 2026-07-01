@@ -1,18 +1,13 @@
 import { Stack } from "expo-router";
-import { ObservabilityProvider, withSentry } from "../providers/observability-provider";
-import { QueryProvider } from "../providers/query-provider";
-import { SessionProvider } from "../providers/session-provider";
 
-function RootLayout() {
+import { RootProvider, withSentry } from "@/providers";
+
+const RootLayout = () => {
   return (
-    <ObservabilityProvider>
-      <QueryProvider>
-        <SessionProvider>
-          <Stack screenOptions={{ headerShown: false }} />
-        </SessionProvider>
-      </QueryProvider>
-    </ObservabilityProvider>
+    <RootProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </RootProvider>
   );
-}
+};
 
 export default withSentry(RootLayout);

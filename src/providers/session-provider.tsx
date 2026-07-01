@@ -1,5 +1,7 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
-import { setGraphQLSessionToken } from "../shared/graphql/client";
+
+import { setGraphQLSessionToken } from "@/shared/graphql/client";
+
 import { loadStoredSession, saveStoredSession } from "./session-storage";
 
 type Session = {
@@ -15,7 +17,7 @@ type SessionContextValue = {
 
 const SessionContext = createContext<SessionContextValue | null>(null);
 
-export function SessionProvider({ children }: PropsWithChildren) {
+export const SessionProvider = ({ children }: PropsWithChildren) => {
   const [session, setSession] = useState<Session | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const value = useMemo(() => ({ hydrated, session, setSession }), [hydrated, session]);
@@ -51,12 +53,12 @@ export function SessionProvider({ children }: PropsWithChildren) {
   }, [hydrated, session]);
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
-}
+};
 
-export function useSession() {
+export const useSession = () => {
   const value = useContext(SessionContext);
   if (!value) {
     throw new Error("SessionProvider missing");
   }
   return value;
-}
+};

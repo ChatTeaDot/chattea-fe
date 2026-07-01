@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+
 import {
   attachPhoneToMe,
   completeKakaoPhoneSignup,
@@ -8,17 +9,17 @@ import {
   verifyPhoneCode,
 } from "./api";
 
-export function useRequestPhoneCode() {
+export const useRequestPhoneCode = () => {
   return useMutation({ mutationFn: requestPhoneCode });
-}
+};
 
-export function useVerifyPhoneCode() {
+export const useVerifyPhoneCode = () => {
   return useMutation({
     mutationFn: ({ phone, code }: { phone: string; code: string }) => verifyPhoneCode(phone, code),
   });
-}
+};
 
-export function useCompletePhoneSignup() {
+export const useCompletePhoneSignup = () => {
   return useMutation({
     mutationFn: ({
       signupToken,
@@ -30,13 +31,13 @@ export function useCompletePhoneSignup() {
       intro?: string;
     }) => completePhoneSignup(signupToken, nickname, intro),
   });
-}
+};
 
-export function useLoginWithKakao() {
+export const useLoginWithKakao = () => {
   return useMutation({ mutationFn: loginWithKakao });
-}
+};
 
-export function useCompleteKakaoPhoneSignup() {
+export const useCompleteKakaoPhoneSignup = () => {
   return useMutation({
     mutationFn: ({
       kakaoToken,
@@ -50,9 +51,9 @@ export function useCompleteKakaoPhoneSignup() {
       intro?: string;
     }) => completeKakaoPhoneSignup(kakaoToken, signupToken, nickname, intro),
   });
-}
+};
 
-export function useAttachPhoneToMe() {
+export const useAttachPhoneToMe = () => {
   return useMutation({
     mutationFn: ({
       kakaoToken,
@@ -64,4 +65,4 @@ export function useAttachPhoneToMe() {
       code: string;
     }) => attachPhoneToMe(kakaoToken, phone, code),
   });
-}
+};

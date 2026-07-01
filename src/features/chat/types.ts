@@ -8,7 +8,7 @@ export type Message = {
   id: string;
   roomId: string;
   text: string;
-  status: "sending" | "sent";
+  status: "failed" | "sending" | "sent";
   mine: boolean;
   createdAt?: string;
 };

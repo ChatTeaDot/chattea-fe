@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import {
   attachPhoneToMe,
   completeKakaoPhoneSignup,
@@ -8,12 +9,12 @@ import {
   requestPhoneCode,
   verifyPhoneCode,
 } from "../src/features/auth/api";
+import { getNextResendSeconds, getResendTitle } from "../src/features/auth/resend-timer";
 import {
   getGraphQLAuthorizationHeaders,
   setGraphQLRequester,
   setGraphQLSessionToken,
 } from "../src/shared/graphql/client";
-import { getNextResendSeconds, getResendTitle } from "../src/features/auth/resend-timer";
 
 describe("normalizeKoreanPhone", () => {
   it("normalizes supported Korean mobile formats", () => {

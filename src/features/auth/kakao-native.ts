@@ -3,7 +3,7 @@ import { login } from "@react-native-kakao/user";
 
 let initialized = false;
 
-export async function initializeKakao() {
+export const initializeKakao = async () => {
   if (initialized) {
     return;
   }
@@ -15,11 +15,11 @@ export async function initializeKakao() {
 
   await initializeKakaoSDK(nativeAppKey);
   initialized = true;
-}
+};
 
-export async function loginWithKakaoNative() {
+export const loginWithKakaoNative = async () => {
   await initializeKakao();
   const token = await login();
 
   return token.accessToken;
-}
+};

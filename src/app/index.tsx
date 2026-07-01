@@ -1,8 +1,9 @@
 import { Redirect } from "expo-router";
-import { useSession } from "../providers/session-provider";
-import { getSessionRedirect } from "../providers/session-routing";
 
-export default function IndexRoute() {
+import { useSession } from "@/providers/session-provider";
+import { getSessionRedirect } from "@/providers/session-routing";
+
+const IndexRoute = () => {
   const { hydrated, session } = useSession();
   const redirect = getSessionRedirect(hydrated, Boolean(session));
 
@@ -11,4 +12,6 @@ export default function IndexRoute() {
   }
 
   return <Redirect href={redirect} />;
-}
+};
+
+export default IndexRoute;
