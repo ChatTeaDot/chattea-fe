@@ -1,1 +1,1 @@
-export { CodeScreen as default } from "../features/auth/code-screen";
+export { CodeScreen as default } from "@/features/auth/code-screen";

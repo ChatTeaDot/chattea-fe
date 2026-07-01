@@ -1,6 +1,6 @@
 import { GraphQLClient } from "graphql-request";
-import { createClient } from "graphql-ws";
 import type { Client } from "graphql-ws";
+import { createClient } from "graphql-ws";
 
 export type Requester = <T>(query: string, variables?: Record<string, unknown>) => Promise<T>;
 
@@ -22,27 +22,27 @@ let createSubscriptionClient = () =>
     shouldRetry: () => true,
   });
 
-export function setGraphQLRequester(requester: Requester) {
+export const setGraphQLRequester = (requester: Requester) => {
   requestGraphQL = requester;
-}
+};
 
-export function setGraphQLSessionToken(token: string | null) {
+export const setGraphQLSessionToken = (token: string | null) => {
   sessionToken = token;
   graphQLClient.setHeaders(getGraphQLAuthorizationHeaders());
-}
+};
 
-export function getGraphQLAuthorizationHeaders(): Record<string, string> {
+export const getGraphQLAuthorizationHeaders = (): Record<string, string> => {
   return sessionToken ? { authorization: `Bearer ${sessionToken}` } : {};
-}
+};
 
-export function graphQLRequest<T>(query: string, variables?: Record<string, unknown>) {
+export const graphQLRequest = <T>(query: string, variables?: Record<string, unknown>) => {
   return requestGraphQL<T>(query, variables);
-}
+};
 
-export function createGraphQLSubscriptionClient() {
+export const createGraphQLSubscriptionClient = () => {
   return createSubscriptionClient();
-}
+};
 
-export function setGraphQLSubscriptionClientFactory(factory: () => Pick<Client, "subscribe">) {
+export const setGraphQLSubscriptionClientFactory = (factory: () => Pick<Client, "subscribe">) => {
   createSubscriptionClient = factory as () => Client;
-}
+};

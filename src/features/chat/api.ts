@@ -1,5 +1,7 @@
 import { gql } from "graphql-request";
-import { createGraphQLSubscriptionClient, graphQLRequest } from "../../shared/graphql/client";
+
+import { createGraphQLSubscriptionClient, graphQLRequest } from "@/shared/graphql/client";
+
 import {
   AiSummaryPreview,
   CommunityComment,
@@ -18,11 +20,11 @@ type Fetcher = typeof fetch;
 
 let uploadFetch: Fetcher = fetch;
 
-export function setUploadFetcher(fetcher: Fetcher) {
+export const setUploadFetcher = (fetcher: Fetcher) => {
   uploadFetch = fetcher;
-}
+};
 
-export async function listRooms(): Promise<Room[]> {
+export const listRooms = async (): Promise<Room[]> => {
   const data = await graphQLRequest<{ rooms: Room[] }>(gql`
     query Rooms {
       rooms {
@@ -34,9 +36,9 @@ export async function listRooms(): Promise<Room[]> {
   `);
 
   return data.rooms;
-}
+};
 
-export async function listCommunityPosts(): Promise<CommunityPost[]> {
+export const listCommunityPosts = async (): Promise<CommunityPost[]> => {
   const data = await graphQLRequest<{ communityPosts: CommunityPost[] }>(gql`
     query CommunityPosts {
       communityPosts {
@@ -51,12 +53,12 @@ export async function listCommunityPosts(): Promise<CommunityPost[]> {
   `);
 
   return data.communityPosts;
-}
+};
 
-export async function createCommunityPost(input: {
+export const createCommunityPost = async (input: {
   title: string;
   body: string;
-}): Promise<CommunityPost> {
+}): Promise<CommunityPost> => {
   const data = await graphQLRequest<{ createCommunityPost: CommunityPost }>(
     gql`
       mutation CreateCommunityPost($title: String!, $body: String!) {
@@ -74,12 +76,12 @@ export async function createCommunityPost(input: {
   );
 
   return data.createCommunityPost;
-}
+};
 
-export async function createCommunityComment(input: {
+export const createCommunityComment = async (input: {
   postId: string;
   body: string;
-}): Promise<CommunityComment> {
+}): Promise<CommunityComment> => {
   const data = await graphQLRequest<{ createCommunityComment: CommunityComment }>(
     gql`
       mutation CreateCommunityComment($postId: ID!, $body: String!) {
@@ -96,12 +98,12 @@ export async function createCommunityComment(input: {
   );
 
   return data.createCommunityComment;
-}
+};
 
-export async function reportCommunityPost(input: {
+export const reportCommunityPost = async (input: {
   postId: string;
   reason: string;
-}): Promise<boolean> {
+}): Promise<boolean> => {
   const data = await graphQLRequest<{ reportCommunityPost: boolean }>(
     gql`
       mutation ReportCommunityPost($postId: ID!, $reason: String!) {
@@ -112,9 +114,9 @@ export async function reportCommunityPost(input: {
   );
 
   return data.reportCommunityPost;
-}
+};
 
-export async function listSubscriptionPlans(): Promise<SubscriptionPlan[]> {
+export const listSubscriptionPlans = async (): Promise<SubscriptionPlan[]> => {
   const data = await graphQLRequest<{ subscriptionPlans: SubscriptionPlan[] }>(gql`
     query SubscriptionPlans {
       subscriptionPlans {
@@ -127,9 +129,9 @@ export async function listSubscriptionPlans(): Promise<SubscriptionPlan[]> {
   `);
 
   return data.subscriptionPlans;
-}
+};
 
-export async function getMySubscription(): Promise<CurrentSubscription> {
+export const getMySubscription = async (): Promise<CurrentSubscription> => {
   const data = await graphQLRequest<{ mySubscription: CurrentSubscription }>(gql`
     query MySubscription {
       mySubscription {
@@ -139,13 +141,13 @@ export async function getMySubscription(): Promise<CurrentSubscription> {
   `);
 
   return data.mySubscription;
-}
+};
 
-export async function getUnreadMessageSummary(input: {
+export const getUnreadMessageSummary = async (input: {
   planId: string;
   unreadTexts: string[];
   enabled: boolean;
-}): Promise<AiSummaryPreview> {
+}): Promise<AiSummaryPreview> => {
   const data = await graphQLRequest<{ unreadMessageSummary: AiSummaryPreview }>(
     gql`
       query UnreadMessageSummary($planId: String!, $unreadTexts: [String!]!, $enabled: Boolean!) {
@@ -161,9 +163,9 @@ export async function getUnreadMessageSummary(input: {
   );
 
   return data.unreadMessageSummary;
-}
+};
 
-export async function listMatchCandidates(): Promise<MatchCandidate[]> {
+export const listMatchCandidates = async (): Promise<MatchCandidate[]> => {
   const data = await graphQLRequest<{ matchCandidates: MatchCandidate[] }>(gql`
     query MatchCandidates {
       matchCandidates {
@@ -178,9 +180,9 @@ export async function listMatchCandidates(): Promise<MatchCandidate[]> {
   `);
 
   return data.matchCandidates;
-}
+};
 
-export async function listBlackMatchCandidates(): Promise<MatchCandidate[]> {
+export const listBlackMatchCandidates = async (): Promise<MatchCandidate[]> => {
   const data = await graphQLRequest<{ blackMatchCandidates: MatchCandidate[] }>(gql`
     query BlackMatchCandidates {
       blackMatchCandidates {
@@ -195,9 +197,9 @@ export async function listBlackMatchCandidates(): Promise<MatchCandidate[]> {
   `);
 
   return data.blackMatchCandidates;
-}
+};
 
-export async function listLikedMeCandidates(): Promise<MatchCandidate[]> {
+export const listLikedMeCandidates = async (): Promise<MatchCandidate[]> => {
   const data = await graphQLRequest<{ likedMeCandidates: MatchCandidate[] }>(gql`
     query LikedMeCandidates {
       likedMeCandidates {
@@ -212,9 +214,9 @@ export async function listLikedMeCandidates(): Promise<MatchCandidate[]> {
   `);
 
   return data.likedMeCandidates;
-}
+};
 
-export async function likeUser(userId: string): Promise<LikeUserResult> {
+export const likeUser = async (userId: string): Promise<LikeUserResult> => {
   const data = await graphQLRequest<{ likeUser: LikeUserResult }>(
     gql`
       mutation LikeUser($userId: ID!) {
@@ -228,12 +230,12 @@ export async function likeUser(userId: string): Promise<LikeUserResult> {
   );
 
   return data.likeUser;
-}
+};
 
-export async function rateProfile(input: {
+export const rateProfile = async (input: {
   userId: string;
   score: number;
-}): Promise<ProfileRatingSummary> {
+}): Promise<ProfileRatingSummary> => {
   const data = await graphQLRequest<{ rateProfile: ProfileRatingSummary }>(
     gql`
       mutation RateProfile($userId: ID!, $score: Int!) {
@@ -248,12 +250,12 @@ export async function rateProfile(input: {
   );
 
   return data.rateProfile;
-}
+};
 
-export async function listMessages(
+export const listMessages = async (
   roomId: string,
   input: { first?: number; after?: string | null } = {},
-): Promise<Message[]> {
+): Promise<Message[]> => {
   const data = await graphQLRequest<{ messages: Omit<Message, "status" | "mine">[] }>(
     gql`
       query Messages($roomId: ID!, $first: Int, $after: String) {
@@ -269,13 +271,13 @@ export async function listMessages(
   );
 
   return data.messages.map((message) => ({ ...message, status: "sent", mine: false }));
-}
+};
 
-export async function sendMessage(input: {
+export const sendMessage = async (input: {
   roomId: string;
   text: string;
   idempotencyKey: string;
-}): Promise<Message> {
+}): Promise<Message> => {
   const data = await graphQLRequest<{ sendMessage: Omit<Message, "status" | "mine"> }>(
     gql`
       mutation SendMessage($roomId: ID!, $text: String!, $idempotencyKey: String) {
@@ -291,9 +293,9 @@ export async function sendMessage(input: {
   );
 
   return { ...data.sendMessage, status: "sent", mine: true };
-}
+};
 
-export async function editMessage(input: { messageId: string; text: string }): Promise<Message> {
+export const editMessage = async (input: { messageId: string; text: string }): Promise<Message> => {
   const data = await graphQLRequest<{ editMessage: Omit<Message, "status" | "mine"> }>(
     gql`
       mutation EditMessage($messageId: ID!, $text: String!) {
@@ -309,9 +311,9 @@ export async function editMessage(input: { messageId: string; text: string }): P
   );
 
   return { ...data.editMessage, status: "sent", mine: true };
-}
+};
 
-export async function deleteMessage(messageId: string): Promise<boolean> {
+export const deleteMessage = async (messageId: string): Promise<boolean> => {
   const data = await graphQLRequest<{ deleteMessage: boolean }>(
     gql`
       mutation DeleteMessage($messageId: ID!) {
@@ -322,9 +324,9 @@ export async function deleteMessage(messageId: string): Promise<boolean> {
   );
 
   return data.deleteMessage;
-}
+};
 
-export async function markRoomRead(roomId: string): Promise<boolean> {
+export const markRoomRead = async (roomId: string): Promise<boolean> => {
   const data = await graphQLRequest<{ markRoomRead: boolean }>(
     gql`
       mutation MarkRoomRead($roomId: ID!) {
@@ -335,9 +337,9 @@ export async function markRoomRead(roomId: string): Promise<boolean> {
   );
 
   return data.markRoomRead;
-}
+};
 
-export async function setTyping(input: { roomId: string; typing: boolean }): Promise<boolean> {
+export const setTyping = async (input: { roomId: string; typing: boolean }): Promise<boolean> => {
   const data = await graphQLRequest<{ setTyping: boolean }>(
     gql`
       mutation SetTyping($roomId: ID!, $typing: Boolean!) {
@@ -348,9 +350,9 @@ export async function setTyping(input: { roomId: string; typing: boolean }): Pro
   );
 
   return data.setTyping;
-}
+};
 
-export async function blockUser(userId: string): Promise<boolean> {
+export const blockUser = async (userId: string): Promise<boolean> => {
   const data = await graphQLRequest<{ blockUser: boolean }>(
     gql`
       mutation BlockUser($userId: ID!) {
@@ -361,12 +363,12 @@ export async function blockUser(userId: string): Promise<boolean> {
   );
 
   return data.blockUser;
-}
+};
 
-export async function reportMessage(input: {
+export const reportMessage = async (input: {
   messageId: string;
   reason: string;
-}): Promise<boolean> {
+}): Promise<boolean> => {
   const data = await graphQLRequest<{ reportMessage: boolean }>(
     gql`
       mutation ReportMessage($messageId: ID!, $reason: String!) {
@@ -377,12 +379,12 @@ export async function reportMessage(input: {
   );
 
   return data.reportMessage;
-}
+};
 
-export async function createUpload(input: {
+export const createUpload = async (input: {
   filename: string;
   contentType: string;
-}): Promise<Upload> {
+}): Promise<Upload> => {
   const data = await graphQLRequest<{ createUpload: Upload }>(
     gql`
       mutation CreateUpload($filename: String!, $contentType: String!) {
@@ -396,13 +398,13 @@ export async function createUpload(input: {
   );
 
   return data.createUpload;
-}
+};
 
-export async function uploadFileToSignedUrl(input: {
+export const uploadFileToSignedUrl = async (input: {
   putUrl: string;
   contentType: string;
   body: Blob | ArrayBuffer | string;
-}) {
+}) => {
   const response = await uploadFetch(input.putUrl, {
     method: "PUT",
     headers: { "content-type": input.contentType },
@@ -412,13 +414,13 @@ export async function uploadFileToSignedUrl(input: {
   if (!response.ok) {
     throw new Error("UPLOAD_PUT_FAILED");
   }
-}
+};
 
-export function subscribeToMessageCreated(input: {
+export const subscribeToMessageCreated = (input: {
   roomId: string;
   onMessage: (message: Message) => void;
   onError?: (error: unknown) => void;
-}) {
+}) => {
   const client = createGraphQLSubscriptionClient();
 
   return client.subscribe(
@@ -446,13 +448,13 @@ export function subscribeToMessageCreated(input: {
       complete: () => undefined,
     },
   );
-}
+};
 
-export function subscribeToMessageUpdated(input: {
+export const subscribeToMessageUpdated = (input: {
   roomId: string;
   onMessage: (message: Message) => void;
   onError?: (error: unknown) => void;
-}) {
+}) => {
   const client = createGraphQLSubscriptionClient();
 
   return client.subscribe(
@@ -480,13 +482,13 @@ export function subscribeToMessageUpdated(input: {
       complete: () => undefined,
     },
   );
-}
+};
 
-export function subscribeToMessageDeleted(input: {
+export const subscribeToMessageDeleted = (input: {
   roomId: string;
   onMessageId: (messageId: string) => void;
   onError?: (error: unknown) => void;
-}) {
+}) => {
   const client = createGraphQLSubscriptionClient();
 
   return client.subscribe(
@@ -509,13 +511,13 @@ export function subscribeToMessageDeleted(input: {
       complete: () => undefined,
     },
   );
-}
+};
 
-export function subscribeToTypingChanged(input: {
+export const subscribeToTypingChanged = (input: {
   roomId: string;
   onTyping: (typing: boolean) => void;
   onError?: (error: unknown) => void;
-}) {
+}) => {
   const client = createGraphQLSubscriptionClient();
 
   return client.subscribe(
@@ -538,13 +540,13 @@ export function subscribeToTypingChanged(input: {
       complete: () => undefined,
     },
   );
-}
+};
 
-export function subscribeToReadReceiptUpdated(input: {
+export const subscribeToReadReceiptUpdated = (input: {
   roomId: string;
   onRead: (read: boolean) => void;
   onError?: (error: unknown) => void;
-}) {
+}) => {
   const client = createGraphQLSubscriptionClient();
 
   return client.subscribe(
@@ -567,4 +569,4 @@ export function subscribeToReadReceiptUpdated(input: {
       complete: () => undefined,
     },
   );
-}
+};

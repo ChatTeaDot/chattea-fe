@@ -1,15 +1,15 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Text } from "react-native";
-import { AppInput } from "../../shared/components/app-input";
-import { Screen } from "../../shared/components/screen";
-import { colors } from "../../theme/tokens";
-import { useSession } from "../../providers/session-provider";
-import { AuthActionButton } from "./auth-action-button";
-import { useAttachPhoneToMe, useRequestPhoneCode, useVerifyPhoneCode } from "./hooks";
-import { getNextResendSeconds, getResendTitle, PHONE_CODE_RESEND_SECONDS } from "./resend-timer";
+import { Alert } from "react-native";
 
-export function CodeScreen() {
+import { useSession } from "@/providers/session-provider";
+import { Screen } from "@/shared/components/screen";
+
+import { CodeVerificationForm } from "./code-verification-form";
+import { useAttachPhoneToMe, useRequestPhoneCode, useVerifyPhoneCode } from "./hooks";
+import { getNextResendSeconds, PHONE_CODE_RESEND_SECONDS } from "./resend-timer";
+
+export const CodeScreen = () => {
   const { kakaoToken, phone } = useLocalSearchParams<{ kakaoToken?: string; phone: string }>();
   const [code, setCode] = useState("");
   const [resendSeconds, setResendSeconds] = useState(PHONE_CODE_RESEND_SECONDS);
@@ -30,7 +30,7 @@ export function CodeScreen() {
     return () => clearTimeout(timer);
   }, [resendSeconds]);
 
-  async function resend() {
+  const resend = async () => {
     if (!phone) {
       Alert.alert("전화번호가 없습니다");
       return;
@@ -42,9 +42,9 @@ export function CodeScreen() {
     } catch {
       Alert.alert("인증번호를 다시 보낼 수 없어요");
     }
-  }
+  };
 
-  async function submit() {
+  const submit = async () => {
     if (!phone) {
       Alert.alert("전화번호가 없습니다");
       return;
@@ -84,30 +84,20 @@ export function CodeScreen() {
     }
 
     router.push({ pathname: "/signup", params: { signupToken: result.signupToken } });
-  }
+  };
 
   return (
     <Screen>
-      <Text style={{ color: colors.text, fontSize: 22, fontWeight: "800" }}>인증번호</Text>
-      <AppInput
-        keyboardType="number-pad"
-        label="6자리 코드"
-        maxLength={6}
-        onChangeText={setCode}
-        value={code}
+      <CodeVerificationForm
+        attachPending={attachPhone.isPending}
+        code={code}
+        onChangeCode={setCode}
+        onResend={resend}
+        onSubmit={submit}
+        requestPending={requestCode.isPending}
+        resendSeconds={resendSeconds}
+        verifyPending={verify.isPending}
       />
-      <AuthActionButton
-        disabled={code.length !== 6 || verify.isPending || attachPhone.isPending}
-        onPress={submit}
-        title="확인"
-      />
-      <AuthActionButton
-        disabled={resendSeconds > 0 || requestCode.isPending}
-        onPress={resend}
-        title={getResendTitle(resendSeconds)}
-        variant="text"
-      />
-      <Text style={{ color: colors.muted }}>인증번호는 5분 동안 유효합니다.</Text>
     </Screen>
   );
-}
+};

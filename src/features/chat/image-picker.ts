@@ -6,7 +6,7 @@ export type PickedImage = {
   filename: string;
 };
 
-export async function pickImageAttachment(): Promise<PickedImage | null> {
+export const pickImageAttachment = async (): Promise<PickedImage | null> => {
   const result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ["images"],
     quality: 0.9,
@@ -30,4 +30,4 @@ export async function pickImageAttachment(): Promise<PickedImage | null> {
     contentType,
     filename: asset.fileName ?? `chattea-${Date.now()}.jpg`,
   };
-}
+};

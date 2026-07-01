@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import {
   blockUser,
   createCommunityComment,
@@ -6,12 +7,12 @@ import {
   createUpload,
   deleteMessage,
   editMessage,
-  getUnreadMessageSummary,
   getMySubscription,
+  getUnreadMessageSummary,
   likeUser,
   listBlackMatchCandidates,
-  listLikedMeCandidates,
   listCommunityPosts,
+  listLikedMeCandidates,
   listMatchCandidates,
   listMessages,
   listRooms,
@@ -31,15 +32,15 @@ import {
   uploadFileToSignedUrl,
 } from "../src/features/chat/api";
 import {
-  setGraphQLRequester,
-  setGraphQLSubscriptionClientFactory,
-} from "../src/shared/graphql/client";
-import {
   FIRST_MESSAGE_MAX_LENGTH,
   getMessageTextLimit,
   MESSAGE_MAX_LENGTH,
   normalizeMessageDraft,
 } from "../src/features/chat/message-limits";
+import {
+  setGraphQLRequester,
+  setGraphQLSubscriptionClientFactory,
+} from "../src/shared/graphql/client";
 
 describe("chat api", () => {
   it("uses product text limits for first and general messages", () => {

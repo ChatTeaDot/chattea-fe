@@ -22,7 +22,7 @@ if (sentryDsn) {
   });
 }
 
-export function ObservabilityProvider({ children }: PropsWithChildren) {
+export const ObservabilityProvider = ({ children }: PropsWithChildren) => {
   const datadogConfig = useMemo(() => {
     if (!datadogClientToken || !datadogRumApplicationId) {
       return null;
@@ -54,6 +54,6 @@ export function ObservabilityProvider({ children }: PropsWithChildren) {
   }
 
   return <DatadogProvider configuration={datadogConfig}>{children}</DatadogProvider>;
-}
+};
 
 export const withSentry = sentryDsn ? Sentry.wrap : <T,>(component: T) => component;

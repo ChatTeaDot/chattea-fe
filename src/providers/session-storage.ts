@@ -7,7 +7,7 @@ export type StoredSession = {
 
 const SESSION_KEY = "chattea.session";
 
-export async function loadStoredSession(): Promise<StoredSession | null> {
+export const loadStoredSession = async (): Promise<StoredSession | null> => {
   const value = await SecureStore.getItemAsync(SESSION_KEY);
   if (!value) {
     return null;
@@ -22,13 +22,13 @@ export async function loadStoredSession(): Promise<StoredSession | null> {
     await SecureStore.deleteItemAsync(SESSION_KEY);
     return null;
   }
-}
+};
 
-export async function saveStoredSession(session: StoredSession | null) {
+export const saveStoredSession = async (session: StoredSession | null) => {
   if (!session) {
     await SecureStore.deleteItemAsync(SESSION_KEY);
     return;
   }
 
   await SecureStore.setItemAsync(SESSION_KEY, JSON.stringify(session));
-}
+};

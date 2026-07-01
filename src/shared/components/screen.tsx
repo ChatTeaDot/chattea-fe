@@ -1,14 +1,17 @@
 import { PropsWithChildren } from "react";
-import { SafeAreaView, StyleSheet, View } from "react-native";
-import { colors, spacing } from "../../theme/tokens";
+import { View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet } from "react-native-unistyles";
 
-export function Screen({ children }: PropsWithChildren) {
+import { colors, spacing } from "@/theme/tokens";
+
+export const Screen = ({ children }: PropsWithChildren) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.content}>{children}</View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -18,6 +21,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     gap: spacing.md,
-    padding: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.lg,
   },
 });

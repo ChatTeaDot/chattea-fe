@@ -1,6 +1,7 @@
 import { Button, Host, UniversalStyle } from "@expo/ui";
 import { View, ViewStyle } from "react-native";
-import { colors, spacing } from "../../theme/tokens";
+
+import { colors, spacing } from "@/theme/tokens";
 
 type AuthActionButtonProps = {
   title: string;
@@ -9,12 +10,12 @@ type AuthActionButtonProps = {
   variant?: "filled" | "outlined" | "text";
 };
 
-export function AuthActionButton({
+export const AuthActionButton = ({
   title,
   onPress,
   disabled = false,
   variant = "filled",
-}: AuthActionButtonProps) {
+}: AuthActionButtonProps) => {
   const buttonStyle = disabled ? styles.disabledButton : styles.button;
 
   return (
@@ -30,14 +31,14 @@ export function AuthActionButton({
       </Host>
     </View>
   );
-}
+};
 
 const button: UniversalStyle = {
   backgroundColor: colors.primary,
   borderColor: colors.primary,
-  borderRadius: 8,
+  borderRadius: 18,
   borderWidth: 1,
-  height: 48,
+  height: 52,
   paddingHorizontal: spacing.md,
   width: "100%",
 };

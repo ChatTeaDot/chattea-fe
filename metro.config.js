@@ -1,7 +1,13 @@
-const { getDefaultConfig } = require("expo/metro-config");
-const { withDatadogMetroConfig } = require("@datadog/mobile-react-native/metro");
-const { withSentryConfig } = require("@sentry/react-native/metro");
+const { getDatadogExpoConfig } = require("@datadog/mobile-react-native/metro");
+const { getSentryExpoConfig } = require("@sentry/react-native/metro");
 
-const config = getDefaultConfig(__dirname);
+const getDefaultConfig = (projectRoot, options) => {
+  return getSentryExpoConfig(projectRoot, {
+    ...options,
+    getDefaultConfig: undefined,
+  });
+};
 
-module.exports = withDatadogMetroConfig(withSentryConfig(config));
+module.exports = getDatadogExpoConfig(__dirname, {
+  getDefaultConfig,
+});

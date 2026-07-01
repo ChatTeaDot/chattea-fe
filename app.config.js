@@ -3,6 +3,8 @@ const kakaoNativeAppKey =
 const plugins = [
   "expo-router",
   "expo-secure-store",
+  "expo-splash-screen",
+  "expo-image",
   [
     "expo-image-picker",
     {
@@ -25,7 +27,7 @@ const plugins = [
 
 if (process.env.SENTRY_ORG && process.env.SENTRY_PROJECT) {
   plugins.push([
-    "@sentry/react-native/expo",
+    "@sentry/react-native",
     {
       organization: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT,
@@ -54,5 +56,11 @@ module.exports = {
     orientation: "portrait",
     userInterfaceStyle: "automatic",
     plugins,
+    ios: {
+      bundleIdentifier: "com.cyjoon.chattea",
+    },
+    android: {
+      package: "com.cyjoon.chattea",
+    },
   },
 };
