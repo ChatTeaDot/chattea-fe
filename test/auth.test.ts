@@ -36,7 +36,13 @@ describe("normalizeKoreanPhone", () => {
       }
 
       if (query.includes("VerifyPhoneCode")) {
-        return { verifyPhoneCode: { status: "SIGNUP_REQUIRED", signupToken: "signup-token" } } as T;
+        return {
+          verifyPhoneCode: {
+            existingUser: false,
+            phoneVerificationToken: "signup-token",
+            tokenPayload: null,
+          },
+        } as T;
       }
 
       if (query.includes("LoginWithKakao")) {
@@ -44,8 +50,8 @@ describe("normalizeKoreanPhone", () => {
           loginWithKakao: {
             __typename: "KakaoRequiresPhonePayload",
             requiresPhone: true,
-            kakaoToken: "kakao-token",
-            nickname: "tea",
+            kakaoPhoneVerificationToken: "kakao-token",
+            userName: "tea",
           },
         } as T;
       }
@@ -53,25 +59,18 @@ describe("normalizeKoreanPhone", () => {
       if (query.includes("CompleteKakaoPhoneSignup")) {
         return {
           completeKakaoPhoneSignup: {
-            session: { token: "session-token", userId: "user-id" },
-            user: { id: "user-id", nickname: "tea", intro: "소개" },
+            accessToken: "session-token",
           },
         } as T;
       }
 
       if (query.includes("AttachPhoneToMe")) {
-        return {
-          attachPhoneToMe: {
-            session: { token: "session-token", userId: "user-id" },
-            user: { id: "user-id", nickname: "tea", intro: "소개" },
-          },
-        } as T;
+        return { attachPhoneToMe: true } as T;
       }
 
       return {
         completePhoneSignup: {
-          session: { token: "session-token", userId: "user-id" },
-          user: { id: "user-id", nickname: "tea", intro: "소개" },
+          accessToken: "session-token",
         },
       } as T;
     });
@@ -81,35 +80,38 @@ describe("normalizeKoreanPhone", () => {
       status: "SIGNUP_REQUIRED",
       signupToken: "signup-token",
     });
-    await expect(completePhoneSignup("signup-token", "tea", "소개")).resolves.toMatchObject({
-      user: { nickname: "tea" },
+    await expect(completePhoneSignup("signup-token", "tea", "tea@example.com", "password")).resolves.toMatchObject({
+      session: { token: "session-token" },
     });
     await expect(loginWithKakao("access-token")).resolves.toMatchObject({
-      kakaoToken: "kakao-token",
+      kakaoPhoneVerificationToken: "kakao-token",
       requiresPhone: true,
     });
-    await expect(
-      completeKakaoPhoneSignup("kakao-token", "signup-token", "tea", "소개"),
-    ).resolves.toMatchObject({
-      user: { nickname: "tea" },
+    await expect(completeKakaoPhoneSignup("kakao-token", "signup-token", "tea")).resolves.toMatchObject({
+      session: { token: "session-token" },
     });
-    await expect(attachPhoneToMe("kakao-token", "+821012345678", "123456")).resolves.toMatchObject({
-      user: { nickname: "tea" },
-    });
+    await expect(attachPhoneToMe("kakao-token", "+821012345678", "123456")).resolves.toBe(true);
 
     expect(calls.map((call) => call.variables)).toEqual([
-      { phone: "+821012345678" },
-      { phone: "+821012345678", code: "123456" },
-      { signupToken: "signup-token", nickname: "tea", intro: "소개", termsAccepted: true },
+      { input: { phone: "+821012345678", purpose: "signup" } },
+      { input: { phone: "+821012345678", code: "123456" } },
+      {
+        input: {
+          phoneVerificationToken: "signup-token",
+          userName: "tea",
+          email: "tea@example.com",
+          password: "password",
+        },
+      },
       { accessToken: "access-token" },
       {
-        kakaoToken: "kakao-token",
-        signupToken: "signup-token",
-        nickname: "tea",
-        intro: "소개",
-        termsAccepted: true,
+        input: {
+          kakaoPhoneVerificationToken: "kakao-token",
+          phoneVerificationToken: "signup-token",
+          userName: "tea",
+        },
       },
-      { kakaoToken: "kakao-token", phone: "+821012345678", code: "123456" },
+      { input: { phone: "+821012345678", code: "123456" } },
     ]);
   });
 

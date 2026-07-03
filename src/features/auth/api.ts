@@ -2,7 +2,7 @@ import { gql } from "graphql-request";
 
 import { graphQLRequest, type Requester, setGraphQLRequester } from "@/shared/graphql/client";
 
-import { CompletePhoneSignupResult, KakaoLoginResult, VerifyPhoneResult } from "./types";
+import { CompletePhoneSignupResult, KakaoLoginResult, Session, VerifyPhoneResult } from "./types";
 
 export const setAuthApiRequester = (requester: Requester) => {
   setGraphQLRequester(requester);
@@ -25,13 +25,13 @@ export const normalizeKoreanPhone = (input: string): string => {
 export const requestPhoneCode = async (phoneE164: string) => {
   const data = await graphQLRequest<{ requestPhoneCode: { ok: boolean } }>(
     gql`
-      mutation RequestPhoneCode($phone: String!) {
-        requestPhoneCode(phone: $phone) {
+      mutation RequestPhoneCode($input: RequestPhoneCodeInput!) {
+        requestPhoneCode(input: $input) {
           ok
         }
       }
     `,
-    { phone: phoneE164 },
+    { input: { phone: phoneE164, purpose: "signup" } },
   );
 
   return data.requestPhoneCode;
@@ -41,75 +41,63 @@ export const verifyPhoneCode = async (
   phoneE164: string,
   code: string,
 ): Promise<VerifyPhoneResult> => {
-  const data = await graphQLRequest<{ verifyPhoneCode: VerifyPhoneResult }>(
+  const data = await graphQLRequest<{
+    verifyPhoneCode: {
+      existingUser: boolean;
+      phoneVerificationToken?: string | null;
+      tokenPayload?: { accessToken: string } | null;
+    };
+  }>(
     gql`
-      mutation VerifyPhoneCode($phone: String!, $code: String!) {
-        verifyPhoneCode(phone: $phone, code: $code) {
-          __typename
-          ... on LoginPayload {
-            status
-            session {
-              token
-              userId
-            }
-            user {
-              id
-              nickname
-              intro
-            }
-          }
-          ... on SignupRequiredPayload {
-            status
-            signupToken
+      mutation VerifyPhoneCode($input: VerifyPhoneCodeInput!) {
+        verifyPhoneCode(input: $input) {
+          existingUser
+          phoneVerificationToken
+          tokenPayload {
+            accessToken
           }
         }
       }
     `,
-    { phone: phoneE164, code },
+    { input: { phone: phoneE164, code } },
   );
 
-  return data.verifyPhoneCode;
+  return data.verifyPhoneCode.existingUser
+    ? { status: "LOGIN", session: tokenPayloadToSession(data.verifyPhoneCode.tokenPayload) }
+    : { status: "SIGNUP_REQUIRED", signupToken: data.verifyPhoneCode.phoneVerificationToken ?? "" };
 };
 
 export const completePhoneSignup = async (
   signupToken: string,
-  nickname: string,
-  intro = "",
+  userName: string,
+  email: string,
+  password: string,
 ): Promise<CompletePhoneSignupResult> => {
-  const data = await graphQLRequest<{ completePhoneSignup: CompletePhoneSignupResult }>(
+  const data = await graphQLRequest<{ completePhoneSignup: { accessToken: string } }>(
     gql`
-      mutation CompletePhoneSignup(
-        $signupToken: String!
-        $nickname: String!
-        $intro: String
-        $termsAccepted: Boolean!
-      ) {
-        completePhoneSignup(
-          signupToken: $signupToken
-          nickname: $nickname
-          intro: $intro
-          termsAccepted: $termsAccepted
-        ) {
-          session {
-            token
-            userId
-          }
-          user {
-            id
-            nickname
-            intro
-          }
+      mutation CompletePhoneSignup($input: CompletePhoneSignupInput!) {
+        completePhoneSignup(input: $input) {
+          accessToken
         }
       }
     `,
-    { signupToken, nickname, intro, termsAccepted: true },
+    { input: { phoneVerificationToken: signupToken, userName, email, password } },
   );
 
-  return data.completePhoneSignup;
+  return { session: tokenPayloadToSession(data.completePhoneSignup) };
 };
 
 export const loginWithKakao = async (accessToken: string): Promise<KakaoLoginResult> => {
-  const data = await graphQLRequest<{ loginWithKakao: KakaoLoginResult }>(
+  const data = await graphQLRequest<{
+    loginWithKakao:
+      | { __typename: "KakaoLoginSuccessPayload"; requiresPhone: false; session: { accessToken: string } }
+      | {
+          __typename: "KakaoRequiresPhonePayload";
+          requiresPhone: true;
+          kakaoPhoneVerificationToken: string;
+          userName: string | null;
+        };
+  }>(
     gql`
       mutation LoginWithKakao($accessToken: String!) {
         loginWithKakao(accessToken: $accessToken) {
@@ -117,19 +105,13 @@ export const loginWithKakao = async (accessToken: string): Promise<KakaoLoginRes
           ... on KakaoLoginSuccessPayload {
             requiresPhone
             session {
-              token
-              userId
-            }
-            user {
-              id
-              nickname
-              intro
+              accessToken
             }
           }
           ... on KakaoRequiresPhonePayload {
             requiresPhone
-            kakaoToken
-            nickname
+            kakaoPhoneVerificationToken
+            userName
           }
         }
       }
@@ -137,72 +119,51 @@ export const loginWithKakao = async (accessToken: string): Promise<KakaoLoginRes
     { accessToken },
   );
 
-  return data.loginWithKakao;
+  return data.loginWithKakao.requiresPhone
+    ? data.loginWithKakao
+    : {
+        __typename: "KakaoLoginSuccessPayload",
+        requiresPhone: false,
+        session: tokenPayloadToSession(data.loginWithKakao.session),
+      };
 };
 
 export const completeKakaoPhoneSignup = async (
-  kakaoToken: string,
+  kakaoPhoneVerificationToken: string,
   signupToken: string,
-  nickname: string,
-  intro = "",
+  userName: string,
 ): Promise<CompletePhoneSignupResult> => {
-  const data = await graphQLRequest<{ completeKakaoPhoneSignup: CompletePhoneSignupResult }>(
+  const data = await graphQLRequest<{ completeKakaoPhoneSignup: { accessToken: string } }>(
     gql`
-      mutation CompleteKakaoPhoneSignup(
-        $kakaoToken: String!
-        $signupToken: String!
-        $nickname: String!
-        $intro: String
-        $termsAccepted: Boolean!
-      ) {
-        completeKakaoPhoneSignup(
-          kakaoToken: $kakaoToken
-          signupToken: $signupToken
-          nickname: $nickname
-          intro: $intro
-          termsAccepted: $termsAccepted
-        ) {
-          session {
-            token
-            userId
-          }
-          user {
-            id
-            nickname
-            intro
-          }
+      mutation CompleteKakaoPhoneSignup($input: CompleteKakaoPhoneSignupInput!) {
+        completeKakaoPhoneSignup(input: $input) {
+          accessToken
         }
       }
     `,
-    { kakaoToken, signupToken, nickname, intro, termsAccepted: true },
+    { input: { kakaoPhoneVerificationToken, phoneVerificationToken: signupToken, userName } },
   );
 
-  return data.completeKakaoPhoneSignup;
+  return { session: tokenPayloadToSession(data.completeKakaoPhoneSignup) };
 };
 
 export const attachPhoneToMe = async (
-  kakaoToken: string,
+  _kakaoToken: string,
   phoneE164: string,
   code: string,
-): Promise<CompletePhoneSignupResult> => {
-  const data = await graphQLRequest<{ attachPhoneToMe: CompletePhoneSignupResult }>(
+): Promise<boolean> => {
+  const data = await graphQLRequest<{ attachPhoneToMe: boolean }>(
     gql`
-      mutation AttachPhoneToMe($kakaoToken: String!, $phone: String!, $code: String!) {
-        attachPhoneToMe(kakaoToken: $kakaoToken, phone: $phone, code: $code) {
-          session {
-            token
-            userId
-          }
-          user {
-            id
-            nickname
-            intro
-          }
-        }
+      mutation AttachPhoneToMe($input: AttachPhoneToMeInput!) {
+        attachPhoneToMe(input: $input)
       }
     `,
-    { kakaoToken, phone: phoneE164, code },
+    { input: { phone: phoneE164, code } },
   );
 
   return data.attachPhoneToMe;
 };
+
+const tokenPayloadToSession = (tokenPayload?: { accessToken: string } | null): Session => ({
+  token: tokenPayload?.accessToken ?? "",
+});

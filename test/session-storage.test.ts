@@ -23,8 +23,8 @@ describe("session storage", () => {
     const { loadStoredSession, saveStoredSession } =
       await import("../src/providers/session-storage");
 
-    await saveStoredSession({ token: "token", userId: "user" });
-    await expect(loadStoredSession()).resolves.toEqual({ token: "token", userId: "user" });
+    await saveStoredSession({ token: "token" });
+    await expect(loadStoredSession()).resolves.toEqual({ token: "token" });
 
     await saveStoredSession(null);
     await expect(loadStoredSession()).resolves.toBeNull();

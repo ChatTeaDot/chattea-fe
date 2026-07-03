@@ -23,13 +23,17 @@ export const useCompletePhoneSignup = () => {
   return useMutation({
     mutationFn: ({
       signupToken,
-      nickname,
+      userName,
+      email,
+      password,
       intro,
     }: {
       signupToken: string;
-      nickname: string;
+      userName: string;
+      email: string;
+      password: string;
       intro?: string;
-    }) => completePhoneSignup(signupToken, nickname, intro),
+    }) => completePhoneSignup(signupToken, userName, email, password),
   });
 };
 
@@ -40,16 +44,15 @@ export const useLoginWithKakao = () => {
 export const useCompleteKakaoPhoneSignup = () => {
   return useMutation({
     mutationFn: ({
-      kakaoToken,
+      kakaoPhoneVerificationToken,
       signupToken,
-      nickname,
-      intro,
+      userName,
     }: {
-      kakaoToken: string;
+      kakaoPhoneVerificationToken: string;
       signupToken: string;
-      nickname: string;
+      userName: string;
       intro?: string;
-    }) => completeKakaoPhoneSignup(kakaoToken, signupToken, nickname, intro),
+    }) => completeKakaoPhoneSignup(kakaoPhoneVerificationToken, signupToken, userName),
   });
 };
 
