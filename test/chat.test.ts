@@ -18,7 +18,7 @@ import {
   listRooms,
   listSubscriptionPlans,
   markRoomRead,
-  rateProfile,
+  rateScore,
   reportCommunityPost,
   reportMessage,
   sendMessage,
@@ -56,13 +56,13 @@ describe("chat api", () => {
     setGraphQLRequester(async <T>(query: string, variables?: Record<string, unknown>) => {
       calls.push({ query, variables });
 
-      if (query.includes("query Rooms")) {
-        return { rooms: [{ id: "demo-room", name: "오늘의 대화", lastMessage: "hi" }] } as T;
+      if (query.includes("query ChatRooms")) {
+        return { chatRooms: [{ id: "demo-room", name: "오늘의 대화", lastMessage: "hi" }] } as T;
       }
 
-      if (query.includes("query Messages")) {
+      if (query.includes("query ChatMessages")) {
         return {
-          messages: [
+          chatMessages: [
             {
               id: "message-1",
               roomId: "demo-room",
@@ -78,7 +78,7 @@ describe("chat api", () => {
           communityPosts: [
             {
               id: "post-1",
-              anonymousNickname: "익명1",
+              anonymousName: "익명1",
               title: "연애 상담",
               body: "첫 대화가 어려워요",
               commentCount: 0,
@@ -93,7 +93,7 @@ describe("chat api", () => {
           matchCandidates: [
             {
               id: "match-user",
-              nickname: "차한잔",
+              userName: "차한잔",
               intro: "천천히 대화해요",
               likedByMe: false,
               planId: "black",
@@ -108,7 +108,7 @@ describe("chat api", () => {
           blackMatchCandidates: [
             {
               id: "match-user",
-              nickname: "차한잔",
+              userName: "차한잔",
               intro: "천천히 대화해요",
               likedByMe: false,
               planId: "black",
@@ -123,7 +123,7 @@ describe("chat api", () => {
           likedMeCandidates: [
             {
               id: "liked-me-user",
-              nickname: "누군가",
+              userName: "누군가",
               intro: "반갑습니다",
               likedByMe: false,
               planId: "basic",
@@ -144,8 +144,8 @@ describe("chat api", () => {
         } as T;
       }
 
-      if (query.includes("query MySubscription")) {
-        return { mySubscription: { planId: "black" } } as T;
+      if (query.includes("query CurrentSubscription")) {
+        return { currentSubscription: { planId: "black" } } as T;
       }
 
       if (query.includes("query UnreadMessageSummary")) {
@@ -160,9 +160,9 @@ describe("chat api", () => {
         } as T;
       }
 
-      if (query.includes("mutation EditMessage")) {
+      if (query.includes("mutation EditChatMessage")) {
         return {
-          editMessage: {
+          editChatMessage: {
             id: "server-message",
             roomId: "demo-room",
             text: "edited",
@@ -171,17 +171,17 @@ describe("chat api", () => {
         } as T;
       }
 
-      if (query.includes("mutation DeleteMessage")) {
-        return { deleteMessage: true } as T;
+      if (query.includes("mutation DeleteChatMessage")) {
+        return { deleteChatMessage: true } as T;
       }
 
       if (query.includes("mutation CreateCommunityPost")) {
         return {
           createCommunityPost: {
             id: "post-1",
-            anonymousNickname: "익명1",
-            title: variables?.title,
-            body: variables?.body,
+            anonymousName: "익명1",
+            title: (variables?.input as { title?: string })?.title,
+            body: (variables?.input as { body?: string })?.body,
             commentCount: 0,
             createdAt: "2026-06-25T00:00:00.000Z",
           },
@@ -192,36 +192,42 @@ describe("chat api", () => {
         return {
           createCommunityComment: {
             id: "comment-1",
-            postId: variables?.postId,
-            anonymousNickname: "익명2",
-            body: variables?.body,
+            postId: (variables?.input as { postId?: string })?.postId,
+            anonymousName: "익명2",
+            body: (variables?.input as { body?: string })?.body,
             createdAt: "2026-06-25T00:00:01.000Z",
           },
         } as T;
       }
 
-      if (query.includes("mutation MarkRoomRead")) {
-        return { markRoomRead: true } as T;
+      if (query.includes("mutation MarkChatRoomRead")) {
+        return { markChatRoomRead: true } as T;
       }
 
-      if (query.includes("mutation SetTyping")) {
-        return { setTyping: true } as T;
+      if (query.includes("mutation SetChatTyping")) {
+        return { setChatTyping: true } as T;
       }
 
       if (query.includes("mutation LikeUser")) {
         return { likeUser: { matched: true, roomId: "room-1" } } as T;
       }
 
-      if (query.includes("mutation RateProfile")) {
-        return { rateProfile: { userId: variables?.userId, averageScore: 5, ratingCount: 1 } } as T;
+      if (query.includes("mutation RateScore")) {
+        return {
+          rateScore: {
+            userId: (variables?.input as { userId?: string })?.userId,
+            averageScore: 5,
+            scoreCount: 1,
+          },
+        } as T;
       }
 
       if (query.includes("mutation BlockUser")) {
         return { blockUser: true } as T;
       }
 
-      if (query.includes("mutation ReportMessage")) {
-        return { reportMessage: true } as T;
+      if (query.includes("mutation ReportChatMessage")) {
+        return { reportChatMessage: true } as T;
       }
 
       if (query.includes("mutation ReportCommunityPost")) {
@@ -229,7 +235,7 @@ describe("chat api", () => {
       }
 
       return {
-        sendMessage: {
+        sendChatMessage: {
           id: "server-message",
           roomId: "demo-room",
           text: "hello",
@@ -272,7 +278,7 @@ describe("chat api", () => {
     await expect(listMatchCandidates()).resolves.toEqual([
       {
         id: "match-user",
-        nickname: "차한잔",
+        userName: "차한잔",
         intro: "천천히 대화해요",
         likedByMe: false,
         planId: "black",
@@ -282,7 +288,7 @@ describe("chat api", () => {
     await expect(listBlackMatchCandidates()).resolves.toEqual([
       {
         id: "match-user",
-        nickname: "차한잔",
+        userName: "차한잔",
         intro: "천천히 대화해요",
         likedByMe: false,
         planId: "black",
@@ -292,7 +298,7 @@ describe("chat api", () => {
     await expect(listLikedMeCandidates()).resolves.toEqual([
       {
         id: "liked-me-user",
-        nickname: "누군가",
+        userName: "누군가",
         intro: "반갑습니다",
         likedByMe: false,
         planId: "basic",
@@ -300,15 +306,15 @@ describe("chat api", () => {
       },
     ]);
     await expect(likeUser("match-user")).resolves.toEqual({ matched: true, roomId: "room-1" });
-    await expect(rateProfile({ userId: "match-user", score: 5 })).resolves.toEqual({
+    await expect(rateScore({ userId: "match-user", score: 5 })).resolves.toEqual({
       userId: "match-user",
       averageScore: 5,
-      ratingCount: 1,
+      scoreCount: 1,
     });
     await expect(listCommunityPosts()).resolves.toEqual([
       {
         id: "post-1",
-        anonymousNickname: "익명1",
+        anonymousName: "익명1",
         title: "연애 상담",
         body: "첫 대화가 어려워요",
         commentCount: 0,
@@ -318,7 +324,7 @@ describe("chat api", () => {
     await expect(
       createCommunityPost({ title: "연애 상담", body: "첫 대화가 어려워요" }),
     ).resolves.toMatchObject({
-      anonymousNickname: "익명1",
+      anonymousName: "익명1",
       title: "연애 상담",
     });
     await expect(
@@ -368,32 +374,34 @@ describe("chat api", () => {
 
     expect(calls.map((call) => call.variables)).toEqual([
       undefined,
-      { roomId: "demo-room", first: 50, after: null },
-      { roomId: "demo-room", first: 10, after: "message-1" },
-      { roomId: "demo-room", text: "hello", idempotencyKey: "temp-1" },
+      { input: { roomId: "demo-room", first: 50, after: null } },
+      { input: { roomId: "demo-room", first: 10, after: "message-1" } },
+      { input: { roomId: "demo-room", text: "hello", idempotencyKey: "temp-1" } },
       undefined,
       undefined,
       undefined,
       { userId: "match-user" },
-      { userId: "match-user", score: 5 },
+      { input: { userId: "match-user", score: 5 } },
       undefined,
-      { title: "연애 상담", body: "첫 대화가 어려워요" },
-      { postId: "post-1", body: "공감해요" },
-      { postId: "post-1", reason: "사용자 신고" },
+      { input: { title: "연애 상담", body: "첫 대화가 어려워요" } },
+      { input: { postId: "post-1", body: "공감해요" } },
+      { input: { postId: "post-1", reason: "사용자 신고" } },
       undefined,
       undefined,
       {
-        planId: "gold",
-        unreadTexts: ["오늘 대화가 길어져서 안읽은 메시지 요약을 보여줄 수 있습니다."],
-        enabled: true,
+        input: {
+          planId: "gold",
+          unreadTexts: ["오늘 대화가 길어져서 안읽은 메시지 요약을 보여줄 수 있습니다."],
+          enabled: true,
+        },
       },
-      { messageId: "server-message", text: "edited" },
+      { input: { messageId: "server-message", text: "edited" } },
       { messageId: "server-message" },
-      { roomId: "demo-room" },
-      { roomId: "demo-room", typing: true },
+      { input: { roomId: "demo-room" } },
+      { input: { roomId: "demo-room", typing: true } },
       { userId: "blocked-user" },
-      { messageId: "server-message", reason: "사용자 신고" },
-      { filename: "photo.jpg", contentType: "image/jpeg" },
+      { input: { messageId: "server-message", reason: "사용자 신고" } },
+      { input: { filename: "photo.jpg", contentType: "image/jpeg" } },
     ]);
   });
 

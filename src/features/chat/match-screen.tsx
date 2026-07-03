@@ -12,7 +12,7 @@ import {
   useLikeUser,
   useMatchCandidates,
   useMySubscription,
-  useRateProfile,
+  useRateScore,
 } from "./hooks";
 import { MatchCandidateCard } from "./match-candidate-card";
 import { MatchHeader } from "./match-header";
@@ -28,7 +28,7 @@ export const MatchScreen = () => {
       subscription.data?.planId === "black",
   );
   const like = useLikeUser();
-  const rate = useRateProfile();
+  const rate = useRateScore();
   const isPaidPlan =
     subscription.data?.planId === "basic" ||
     subscription.data?.planId === "gold" ||

@@ -17,7 +17,7 @@ import {
   listRooms,
   listSubscriptionPlans,
   markRoomRead,
-  rateProfile,
+  rateScore,
   reportCommunityPost,
   reportMessage,
   sendMessage,
@@ -112,8 +112,8 @@ export const useLikeUser = () => {
   });
 };
 
-export const useRateProfile = () => {
-  return useMutation({ mutationFn: rateProfile });
+export const useRateScore = () => {
+  return useMutation({ mutationFn: rateScore });
 };
 
 export const useMessages = (roomId: string) => {
