@@ -26,7 +26,7 @@ export const MatchCandidateCard = ({
   return (
     <View style={styles.card}>
       <View style={styles.photo}>
-        <Text style={styles.initial}>{candidate.nickname.slice(0, 1)}</Text>
+        <Text style={styles.initial}>{candidate.userName.slice(0, 1)}</Text>
         <View style={styles.badge}>
           <Text style={styles.badgeText}>
             {candidate.planId === "black" ? "Black" : "오늘 추천"}
@@ -35,7 +35,7 @@ export const MatchCandidateCard = ({
       </View>
       <View style={styles.profile}>
         <View>
-          <Text style={styles.name}>{candidate.nickname}</Text>
+          <Text style={styles.name}>{candidate.userName}</Text>
           <Text style={styles.meta}>{detail.meta}</Text>
         </View>
         <Text style={styles.intro}>{candidate.intro || "소개가 아직 없어요"}</Text>

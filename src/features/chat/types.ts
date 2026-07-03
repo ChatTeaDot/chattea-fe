@@ -28,7 +28,7 @@ export type AttachmentDraft = {
 
 export type MatchCandidate = {
   id: string;
-  nickname: string;
+  userName: string;
   intro: string;
   likedByMe: boolean;
   planId: string;
@@ -40,10 +40,10 @@ export type LikeUserResult = {
   roomId: string | null;
 };
 
-export type ProfileRatingSummary = {
+export type ScoreSummary = {
   userId: string;
   averageScore: number;
-  ratingCount: number;
+  scoreCount: number;
 };
 
 export type SubscriptionPlan = {
@@ -66,7 +66,7 @@ export type AiSummaryPreview = {
 
 export type CommunityPost = {
   id: string;
-  anonymousNickname: string;
+  anonymousName: string;
   title: string;
   body: string;
   commentCount: number;
@@ -76,7 +76,7 @@ export type CommunityPost = {
 export type CommunityComment = {
   id: string;
   postId: string;
-  anonymousNickname: string;
+  anonymousName: string;
   body: string;
   createdAt: string;
 };
