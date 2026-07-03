@@ -1,21 +1,19 @@
 export type Session = {
   token: string;
-  userId: string;
 };
 
 export type User = {
   id: string;
-  nickname: string;
+  userName: string;
   intro: string;
 };
 
 export type VerifyPhoneResult =
-  | { status: "LOGIN"; session: Session; user: User }
+  | { status: "LOGIN"; session: Session }
   | { status: "SIGNUP_REQUIRED"; signupToken: string };
 
 export type CompletePhoneSignupResult = {
   session: Session;
-  user: User;
 };
 
 export type KakaoLoginResult =
@@ -23,11 +21,10 @@ export type KakaoLoginResult =
       __typename: "KakaoLoginSuccessPayload";
       requiresPhone: false;
       session: Session;
-      user: User;
     }
   | {
       __typename: "KakaoRequiresPhonePayload";
       requiresPhone: true;
-      kakaoToken: string;
-      nickname: string | null;
+      kakaoPhoneVerificationToken: string;
+      userName: string | null;
     };

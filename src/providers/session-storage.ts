@@ -2,7 +2,6 @@ import * as SecureStore from "expo-secure-store";
 
 export type StoredSession = {
   token: string;
-  userId: string;
 };
 
 const SESSION_KEY = "chattea.session";
@@ -15,9 +14,7 @@ export const loadStoredSession = async (): Promise<StoredSession | null> => {
 
   try {
     const session = JSON.parse(value) as Partial<StoredSession>;
-    return typeof session.token === "string" && typeof session.userId === "string"
-      ? { token: session.token, userId: session.userId }
-      : null;
+    return typeof session.token === "string" ? { token: session.token } : null;
   } catch {
     await SecureStore.deleteItemAsync(SESSION_KEY);
     return null;

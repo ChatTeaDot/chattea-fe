@@ -16,8 +16,9 @@ export const SignupScreen = () => {
     kakaoToken?: string;
     signupToken: string;
   }>();
-  const [nickname, setNickname] = useState("");
-  const [intro, setIntro] = useState("");
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { setSession } = useSession();
   const completeKakao = useCompleteKakaoPhoneSignup();
   const complete = useCompletePhoneSignup();
@@ -29,8 +30,8 @@ export const SignupScreen = () => {
     }
 
     const result = kakaoToken
-      ? await completeKakao.mutateAsync({ kakaoToken, signupToken, nickname, intro })
-      : await complete.mutateAsync({ signupToken, nickname, intro });
+      ? await completeKakao.mutateAsync({ kakaoPhoneVerificationToken: kakaoToken, signupToken, userName })
+      : await complete.mutateAsync({ signupToken, userName, email, password });
     setSession(result.session);
     router.replace("/matches");
   };
@@ -42,16 +43,30 @@ export const SignupScreen = () => {
         <Text style={styles.title}>첫인상을 만들어주세요</Text>
         <Text style={styles.copy}>짧아도 좋아요. 대화가 시작될 이유 하나면 충분합니다.</Text>
       </View>
-      <AppInput label="닉네임" maxLength={20} onChangeText={setNickname} value={nickname} />
+      <AppInput label="사용자 이름" maxLength={20} onChangeText={setUserName} value={userName} />
       <AppInput
-        label={`소개 ${intro.length}/60`}
-        maxLength={60}
-        onChangeText={setIntro}
-        value={intro}
+        autoCapitalize="none"
+        keyboardType="email-address"
+        label="이메일"
+        onChangeText={setEmail}
+        value={email}
       />
+      {!kakaoToken ? (
+        <AppInput
+          label="비밀번호"
+          onChangeText={setPassword}
+          secureTextEntry
+          value={password}
+        />
+      ) : null}
       <Text style={styles.terms}>가입하면 필수 약관에 동의합니다.</Text>
       <AuthActionButton
-        disabled={!nickname.trim() || complete.isPending || completeKakao.isPending}
+        disabled={
+          !userName.trim() ||
+          (!kakaoToken && (!email.trim() || !password.trim())) ||
+          complete.isPending ||
+          completeKakao.isPending
+        }
         onPress={submit}
         title="시작하기"
       />

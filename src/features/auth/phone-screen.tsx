@@ -41,7 +41,10 @@ export const PhoneScreen = () => {
         return;
       }
 
-      router.push({ pathname: "/phone", params: { kakaoToken: result.kakaoToken } });
+      router.push({
+        pathname: "/phone",
+        params: { kakaoToken: result.kakaoPhoneVerificationToken },
+      });
     } catch {
       Alert.alert("카카오 로그인을 완료하지 못했어요");
     }

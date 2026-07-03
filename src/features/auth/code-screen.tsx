@@ -6,7 +6,7 @@ import { useSession } from "@/providers/session-provider";
 import { Screen } from "@/shared/components/screen";
 
 import { CodeVerificationForm } from "./code-verification-form";
-import { useAttachPhoneToMe, useRequestPhoneCode, useVerifyPhoneCode } from "./hooks";
+import { useRequestPhoneCode, useVerifyPhoneCode } from "./hooks";
 import { getNextResendSeconds, PHONE_CODE_RESEND_SECONDS } from "./resend-timer";
 
 export const CodeScreen = () => {
@@ -14,7 +14,6 @@ export const CodeScreen = () => {
   const [code, setCode] = useState("");
   const [resendSeconds, setResendSeconds] = useState(PHONE_CODE_RESEND_SECONDS);
   const { setSession } = useSession();
-  const attachPhone = useAttachPhoneToMe();
   const requestCode = useRequestPhoneCode();
   const verify = useVerifyPhoneCode();
 
@@ -50,32 +49,6 @@ export const CodeScreen = () => {
       return;
     }
 
-    if (kakaoToken) {
-      try {
-        const attached = await attachPhone.mutateAsync({ kakaoToken, phone, code });
-        setSession(attached.session);
-        router.replace("/matches");
-        return;
-      } catch (error) {
-        if (!String(error).includes("PHONE_SIGNUP_REQUIRED")) {
-          Alert.alert("인증번호를 확인해주세요");
-          return;
-        }
-
-        const result = await verify.mutateAsync({ phone, code });
-        if (result.status === "SIGNUP_REQUIRED") {
-          router.push({
-            pathname: "/signup",
-            params: { kakaoToken, signupToken: result.signupToken },
-          });
-          return;
-        }
-        setSession(result.session);
-        router.replace("/matches");
-        return;
-      }
-    }
-
     const result = await verify.mutateAsync({ phone, code });
     if (result.status === "LOGIN") {
       setSession(result.session);
@@ -83,13 +56,13 @@ export const CodeScreen = () => {
       return;
     }
 
-    router.push({ pathname: "/signup", params: { signupToken: result.signupToken } });
+    router.push({ pathname: "/signup", params: { kakaoToken, signupToken: result.signupToken } });
   };
 
   return (
     <Screen>
       <CodeVerificationForm
-        attachPending={attachPhone.isPending}
+        attachPending={false}
         code={code}
         onChangeCode={setCode}
         onResend={resend}

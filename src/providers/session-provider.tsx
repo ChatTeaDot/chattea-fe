@@ -6,7 +6,6 @@ import { loadStoredSession, saveStoredSession } from "./session-storage";
 
 type Session = {
   token: string;
-  userId: string;
 };
 
 type SessionContextValue = {
