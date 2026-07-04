@@ -15,7 +15,6 @@ import {
   useRateScore,
 } from "./hooks";
 import { MatchCandidateCard } from "./match-candidate-card";
-import { MatchHeader } from "./match-header";
 import { MatchCandidate } from "./types";
 
 export const MatchScreen = () => {
@@ -73,7 +72,6 @@ export const MatchScreen = () => {
 
   return (
     <Screen>
-      <MatchHeader />
       {subscription.data?.planId === "black" ? (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Black 추천</Text>
