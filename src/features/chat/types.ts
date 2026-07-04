@@ -29,6 +29,9 @@ export type AttachmentDraft = {
 export type MatchCandidate = {
   id: string;
   userName: string;
+  age?: number;
+  region?: string;
+  profileImageUrl?: string;
   intro: string;
   likedByMe: boolean;
   planId: string;
