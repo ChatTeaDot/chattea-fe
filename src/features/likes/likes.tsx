@@ -2,7 +2,8 @@ import { LegendList } from "@legendapp/list/react-native";
 import { useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
 
-import { MatchCandidate, useMatchCandidates } from "@/features/match";
+import { useMatchCandidates } from "@/features/match/hooks";
+import { MatchCandidate } from "@/features/match/types";
 import { Screen } from "@/shared/components";
 import { spacing } from "@/theme/tokens";
 
