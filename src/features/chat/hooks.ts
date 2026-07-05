@@ -27,8 +27,8 @@ import {
   subscribeToMessageUpdated,
   subscribeToReadReceiptUpdated,
   subscribeToTypingChanged,
-  uploadFileToSignedUrl,
   updateCommunityProfile,
+  uploadFileToSignedUrl,
 } from "./api";
 import { pickImageAttachment } from "./image-picker";
 import { AttachmentDraft, Message, SUBSCRIPTION_PLANS } from "./types";
@@ -46,7 +46,7 @@ export const useCreateCommunityPost = () => {
 
   return useMutation({
     mutationFn: createCommunityPost,
-    onSuccess() {
+    onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["community-posts"] });
     },
   });
@@ -57,7 +57,7 @@ export const useCreateCommunityComment = () => {
 
   return useMutation({
     mutationFn: createCommunityComment,
-    onSuccess() {
+    onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["community-posts"] });
     },
   });
@@ -76,7 +76,7 @@ export const useUpdateCommunityProfile = () => {
 
   return useMutation({
     mutationFn: updateCommunityProfile,
-    onSuccess() {
+    onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["community-profile"] });
       void queryClient.invalidateQueries({ queryKey: ["community-posts"] });
     },
@@ -122,7 +122,7 @@ export const useLikeUser = () => {
 
   return useMutation({
     mutationFn: likeUser,
-    onSuccess() {
+    onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["match-candidates"] });
       void queryClient.invalidateQueries({ queryKey: ["rooms"] });
     },
@@ -143,7 +143,7 @@ export const useMessages = (roomId: string) => {
   useEffect(() => {
     const disposeCreated = subscribeToMessageCreated({
       roomId,
-      onMessage(message) {
+      onMessage: (message) => {
         queryClient.setQueryData<Message[]>(["messages", roomId], (current = []) =>
           current.some((item) => item.id === message.id) ? current : [...current, message],
         );
@@ -152,7 +152,7 @@ export const useMessages = (roomId: string) => {
     });
     const disposeUpdated = subscribeToMessageUpdated({
       roomId,
-      onMessage(message) {
+      onMessage: (message) => {
         queryClient.setQueryData<Message[]>(["messages", roomId], (current = []) =>
           current.map((item) => (item.id === message.id ? { ...item, ...message } : item)),
         );
@@ -161,7 +161,7 @@ export const useMessages = (roomId: string) => {
     });
     const disposeDeleted = subscribeToMessageDeleted({
       roomId,
-      onMessageId(messageId) {
+      onMessageId: (messageId) => {
         queryClient.setQueryData<Message[]>(["messages", roomId], (current = []) =>
           current.filter((item) => item.id !== messageId),
         );
@@ -184,7 +184,7 @@ export const useSendMessage = (roomId: string) => {
 
   return useMutation({
     mutationFn: sendMessage,
-    onSuccess(serverMessage, variables) {
+    onSuccess: (serverMessage, variables) => {
       queryClient.setQueryData<Message[]>(["messages", roomId], (current = []) =>
         current.map((message) =>
           message.id === variables.idempotencyKey ? serverMessage : message,
@@ -205,7 +205,7 @@ export const useRoomRealtime = (roomId: string) => {
     });
     const disposeRead = subscribeToReadReceiptUpdated({
       roomId,
-      onRead(read) {
+      onRead: (read) => {
         if (read) {
           setReadReceiptVersion((version) => version + 1);
         }

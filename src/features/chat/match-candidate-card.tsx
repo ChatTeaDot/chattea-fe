@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { AppButton } from "@/shared/components/app-button";
+import { AppButton } from "@/shared/components";
 import { colors, spacing } from "@/theme/tokens";
 
 import { MatchCandidate } from "./types";

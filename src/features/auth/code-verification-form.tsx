@@ -1,7 +1,7 @@
 import { Text } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { AppInput } from "@/shared/components/app-input";
+import { AppInput } from "@/shared/components";
 import { colors } from "@/theme/tokens";
 
 import { AuthActionButton } from "./auth-action-button";

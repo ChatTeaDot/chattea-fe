@@ -1,6 +1,6 @@
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 
-import { useLikedMeCandidates } from "@/features/chat/hooks";
+import { useLikedMeCandidates } from "@/features/chat";
 import { colors } from "@/theme/tokens";
 
 const TabsLayout = () => {

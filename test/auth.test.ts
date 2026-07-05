@@ -80,14 +80,18 @@ describe("normalizeKoreanPhone", () => {
       status: "SIGNUP_REQUIRED",
       signupToken: "signup-token",
     });
-    await expect(completePhoneSignup("signup-token", "tea", "female", "tea@example.com", "password")).resolves.toMatchObject({
+    await expect(
+      completePhoneSignup("signup-token", "tea", "female", "tea@example.com", "password"),
+    ).resolves.toMatchObject({
       session: { token: "session-token" },
     });
     await expect(loginWithKakao("access-token")).resolves.toMatchObject({
       kakaoPhoneVerificationToken: "kakao-token",
       requiresPhone: true,
     });
-    await expect(completeKakaoPhoneSignup("kakao-token", "signup-token", "tea", "female")).resolves.toMatchObject({
+    await expect(
+      completeKakaoPhoneSignup("kakao-token", "signup-token", "tea", "female"),
+    ).resolves.toMatchObject({
       session: { token: "session-token" },
     });
     await expect(attachPhoneToMe("kakao-token", "+821012345678", "123456")).resolves.toBe(true);

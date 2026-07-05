@@ -1,1 +1,1 @@
-export { RoomListScreen as default } from "@/features/chat/room-list-screen";
+export { RoomListScreen as default } from "@/features/chat";

@@ -3,11 +3,13 @@ import { useEffect, useRef, useState } from "react";
 import { ScrollView, Text } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { Screen } from "@/shared/components/screen";
-import { colors, spacing } from "@/theme/tokens";
+import { Screen } from "@/shared/components";
+import { colors } from "@/theme/tokens";
 
 import { AttachmentList } from "./attachment-list";
 import { ChatComposer } from "./chat-composer";
+import { ChatMessageList } from "./chat-message-list";
+import { ChatRoomStatus } from "./chat-room-status";
 import {
   useChatAttachments,
   useMarkRoomRead,
@@ -17,7 +19,6 @@ import {
   useSendMessage,
   useSetTyping,
 } from "./hooks";
-import { MessageBubble } from "./message-bubble";
 import { getMessageTextLimit, normalizeMessageDraft } from "./message-limits";
 import { Message } from "./types";
 
@@ -76,13 +77,13 @@ export const ChatRoomScreen = () => {
     sendMessage.mutate(
       { roomId, text, idempotencyKey: tempId },
       {
-        onSuccess(serverMessage) {
+        onSuccess: (serverMessage) => {
           setLocalMessages((current) =>
             current.map((message) => (message.id === tempId ? serverMessage : message)),
           );
           void messages.refetch();
         },
-        onError() {
+        onError: () => {
           setLocalMessages((current) =>
             current.map((message) =>
               message.id === tempId ? { ...message, status: "failed" } : message,
@@ -111,24 +112,16 @@ export const ChatRoomScreen = () => {
   return (
     <Screen>
       <Text style={styles.title}>대화</Text>
-      <ScrollView
-        ref={listRef}
-        contentContainerStyle={styles.list}
+      <ChatMessageList
+        messages={data}
         onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: true })}
-        style={styles.listFrame}
-      >
-        {data.map((item) => (
-          <MessageBubble
-            key={item.id}
-            message={item}
-            onReport={() => reportMessage.mutate({ messageId: item.id, reason: "사용자 신고" })}
-          />
-        ))}
-      </ScrollView>
-      {roomRealtime.isPeerTyping ? <Text style={styles.presence}>상대가 입력 중...</Text> : null}
-      {roomRealtime.readReceiptVersion > 0 ? (
-        <Text style={styles.status}>읽음 상태 업데이트됨</Text>
-      ) : null}
+        onReportMessage={(messageId) => reportMessage.mutate({ messageId, reason: "사용자 신고" })}
+        scrollRef={listRef}
+      />
+      <ChatRoomStatus
+        isPeerTyping={roomRealtime.isPeerTyping}
+        readReceiptVersion={roomRealtime.readReceiptVersion}
+      />
       <AttachmentList attachments={attachments} />
       <ChatComposer
         draft={draft}
@@ -152,20 +145,5 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 24,
     fontWeight: "800",
-  },
-  list: {
-    gap: spacing.sm,
-  },
-  listFrame: {
-    flex: 1,
-  },
-  status: {
-    color: colors.muted,
-    fontSize: 12,
-    marginTop: spacing.xs,
-  },
-  presence: {
-    color: colors.primary,
-    fontSize: 13,
   },
 });

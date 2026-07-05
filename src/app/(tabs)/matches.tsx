@@ -1,1 +1,1 @@
-export { MatchScreen as default } from "@/features/chat/match-screen";
+export { MatchScreen as default } from "@/features/chat";

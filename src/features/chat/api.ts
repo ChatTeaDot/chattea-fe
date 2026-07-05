@@ -1,6 +1,6 @@
 import { gql } from "graphql-request";
 
-import { createGraphQLSubscriptionClient, graphQLRequest } from "@/shared/graphql/client";
+import { createGraphQLSubscriptionClient, graphQLRequest } from "@/shared/graphql";
 
 import {
   AiSummaryPreview,
@@ -112,7 +112,9 @@ export const getCommunityProfile = async (): Promise<CommunityProfile> => {
   return data.communityProfile;
 };
 
-export const updateCommunityProfile = async (input: { name: string }): Promise<CommunityProfile> => {
+export const updateCommunityProfile = async (input: {
+  name: string;
+}): Promise<CommunityProfile> => {
   const data = await graphQLRequest<{ updateCommunityProfile: CommunityProfile }>(
     gql`
       mutation UpdateCommunityProfile($input: UpdateCommunityProfileInput!) {
@@ -453,7 +455,7 @@ export const subscribeToMessageCreated = (input: {
       variables: { roomId: input.roomId },
     },
     {
-      next(value) {
+      next: (value) => {
         const message = value.data?.messageCreated as Omit<Message, "status" | "mine"> | undefined;
         if (message) {
           input.onMessage({ ...message, status: "sent", mine: false });
@@ -487,7 +489,7 @@ export const subscribeToMessageUpdated = (input: {
       variables: { roomId: input.roomId },
     },
     {
-      next(value) {
+      next: (value) => {
         const message = value.data?.messageUpdated as Omit<Message, "status" | "mine"> | undefined;
         if (message) {
           input.onMessage({ ...message, status: "sent", mine: false });
@@ -516,7 +518,7 @@ export const subscribeToMessageDeleted = (input: {
       variables: { roomId: input.roomId },
     },
     {
-      next(value) {
+      next: (value) => {
         const messageId = value.data?.messageDeleted;
         if (typeof messageId === "string") {
           input.onMessageId(messageId);
@@ -545,7 +547,7 @@ export const subscribeToTypingChanged = (input: {
       variables: { roomId: input.roomId },
     },
     {
-      next(value) {
+      next: (value) => {
         const typing = value.data?.typingChanged;
         if (typeof typing === "boolean") {
           input.onTyping(typing);
@@ -574,7 +576,7 @@ export const subscribeToReadReceiptUpdated = (input: {
       variables: { roomId: input.roomId },
     },
     {
-      next(value) {
+      next: (value) => {
         const read = value.data?.readReceiptUpdated;
         if (typeof read === "boolean") {
           input.onRead(read);
