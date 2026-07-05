@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 
 import { useSession } from "@/providers/session-provider";
-import { Screen } from "@/shared/components/screen";
+import { Screen } from "@/shared/components";
 
 import { CodeVerificationForm } from "./code-verification-form";
 import { useRequestPhoneCode, useVerifyPhoneCode } from "./hooks";

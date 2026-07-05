@@ -1,6 +1,6 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
 
-import { setGraphQLSessionToken } from "@/shared/graphql/client";
+import { setGraphQLSessionToken } from "@/shared/graphql";
 
 import { loadStoredSession, saveStoredSession } from "./session-storage";
 

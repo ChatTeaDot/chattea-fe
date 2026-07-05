@@ -390,7 +390,7 @@ describe("chat api", () => {
 
   it("maps messageCreated subscription payloads into chat messages", () => {
     setGraphQLSubscriptionClientFactory(() => ({
-      subscribe(_payload, sink) {
+      subscribe: (_payload, sink) => {
         sink.next({
           data: {
             messageCreated: {
@@ -408,7 +408,7 @@ describe("chat api", () => {
     const messages: unknown[] = [];
     const dispose = subscribeToMessageCreated({
       roomId: "demo-room",
-      onMessage(message) {
+      onMessage: (message) => {
         messages.push(message);
       },
     });
@@ -428,7 +428,7 @@ describe("chat api", () => {
 
   it("maps messageUpdated and messageDeleted subscription payloads", () => {
     setGraphQLSubscriptionClientFactory(() => ({
-      subscribe(payload, sink) {
+      subscribe: (payload, sink) => {
         if (payload.query.includes("MessageUpdated")) {
           sink.next({
             data: {
@@ -454,13 +454,13 @@ describe("chat api", () => {
     const deleted: string[] = [];
     const disposeUpdated = subscribeToMessageUpdated({
       roomId: "demo-room",
-      onMessage(message) {
+      onMessage: (message) => {
         updated.push(message);
       },
     });
     const disposeDeleted = subscribeToMessageDeleted({
       roomId: "demo-room",
-      onMessageId(messageId) {
+      onMessageId: (messageId) => {
         deleted.push(messageId);
       },
     });
@@ -482,7 +482,7 @@ describe("chat api", () => {
 
   it("maps typing and read receipt subscription payloads", () => {
     setGraphQLSubscriptionClientFactory(() => ({
-      subscribe(payload, sink) {
+      subscribe: (payload, sink) => {
         if (payload.query.includes("TypingChanged")) {
           sink.next({ data: { typingChanged: true } } as never);
         }
@@ -499,13 +499,13 @@ describe("chat api", () => {
     const readEvents: boolean[] = [];
     const disposeTyping = subscribeToTypingChanged({
       roomId: "demo-room",
-      onTyping(typing) {
+      onTyping: (typing) => {
         typingEvents.push(typing);
       },
     });
     const disposeRead = subscribeToReadReceiptUpdated({
       roomId: "demo-room",
-      onRead(read) {
+      onRead: (read) => {
         readEvents.push(read);
       },
     });

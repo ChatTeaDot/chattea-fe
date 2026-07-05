@@ -1,8 +1,7 @@
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { AppButton } from "@/shared/components/app-button";
-import { AppInput } from "@/shared/components/app-input";
+import { AppButton, AppInput } from "@/shared/components";
 import { spacing } from "@/theme/tokens";
 
 type CommunityPostFormProps = {

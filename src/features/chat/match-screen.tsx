@@ -1,10 +1,10 @@
 import { LegendList } from "@legendapp/list/react-native";
 import { router } from "expo-router";
-import { Alert, Text, View } from "react-native";
+import { Alert } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { Screen } from "@/shared/components/screen";
-import { colors, spacing } from "@/theme/tokens";
+import { Screen } from "@/shared/components";
+import { spacing } from "@/theme/tokens";
 
 import {
   useBlackMatchCandidates,
@@ -15,6 +15,7 @@ import {
   useRateScore,
 } from "./hooks";
 import { MatchCandidateCard } from "./match-candidate-card";
+import { MatchCandidateSection } from "./match-candidate-section";
 import { MatchCandidate } from "./types";
 
 export const MatchScreen = () => {
@@ -47,12 +48,12 @@ export const MatchScreen = () => {
 
   const likeCandidate = (userId: string) => {
     like.mutate(userId, {
-      onSuccess(result) {
+      onSuccess: (result) => {
         if (result.roomId) {
           router.push(`/room/${result.roomId}`);
         }
       },
-      onError(error) {
+      onError: (error) => {
         const message = (error instanceof Error ? error.message : String(error)) ?? "";
         if (message.includes("LIKE_LIMIT_REACHED")) {
           Alert.alert(
@@ -73,24 +74,18 @@ export const MatchScreen = () => {
   return (
     <Screen>
       {subscription.data?.planId === "black" ? (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Black 추천</Text>
-          <View style={styles.list}>
-            {(blackCandidates.data ?? []).map((item) => (
-              <View key={`black-${item.id}`}>{renderCandidate({ item })}</View>
-            ))}
-          </View>
-        </View>
+        <MatchCandidateSection
+          candidates={blackCandidates.data ?? []}
+          renderCandidate={renderCandidate}
+          title="Black 추천"
+        />
       ) : null}
       {isPaidPlan ? (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>나를 좋아한 사람</Text>
-          <View style={styles.list}>
-            {(likedMeCandidates.data ?? []).map((item) => (
-              <View key={`liked-me-${item.id}`}>{renderCandidate({ item })}</View>
-            ))}
-          </View>
-        </View>
+        <MatchCandidateSection
+          candidates={likedMeCandidates.data ?? []}
+          renderCandidate={renderCandidate}
+          title="나를 좋아한 사람"
+        />
       ) : null}
       <LegendList
         recycleItems={false}
@@ -110,13 +105,5 @@ const styles = StyleSheet.create({
   },
   listFrame: {
     flex: 1,
-  },
-  section: {
-    gap: spacing.sm,
-  },
-  sectionTitle: {
-    color: colors.text,
-    fontSize: 18,
-    fontWeight: "800",
   },
 });

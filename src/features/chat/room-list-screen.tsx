@@ -1,33 +1,19 @@
 import { LegendList } from "@legendapp/list/react-native";
-import { router } from "expo-router";
-import { Pressable, Text, View } from "react-native";
+import { Text } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { Screen } from "@/shared/components/screen";
+import { Screen } from "@/shared/components";
 import { colors, spacing } from "@/theme/tokens";
 
 import { useRooms } from "./hooks";
+import { RoomListItem } from "./room-list-item";
 import { Room } from "./types";
 
 export const RoomListScreen = () => {
   const rooms = useRooms();
 
   const renderRoom = ({ item }: { item: Room }) => {
-    return (
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => router.push(`/room/${item.id}`)}
-        style={styles.row}
-      >
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{item.name.slice(0, 1)}</Text>
-        </View>
-        <View style={styles.roomText}>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.message}>{item.lastMessage ?? "먼저 대화를 걸어보세요"}</Text>
-        </View>
-      </Pressable>
-    );
+    return <RoomListItem room={item} />;
   };
 
   return (
@@ -56,40 +42,5 @@ const styles = StyleSheet.create({
   },
   listFrame: {
     flex: 1,
-  },
-  row: {
-    alignItems: "center",
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 22,
-    borderWidth: 1,
-    flexDirection: "row",
-    gap: spacing.xs,
-    padding: spacing.md,
-  },
-  avatar: {
-    alignItems: "center",
-    backgroundColor: colors.surfaceSoft,
-    borderRadius: 24,
-    height: 48,
-    justifyContent: "center",
-    width: 48,
-  },
-  avatarText: {
-    color: colors.primary,
-    fontSize: 18,
-    fontWeight: "900",
-  },
-  roomText: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  name: {
-    color: colors.text,
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  message: {
-    color: colors.muted,
   },
 });

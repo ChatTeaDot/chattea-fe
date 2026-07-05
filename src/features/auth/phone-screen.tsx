@@ -1,17 +1,15 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { Alert, Text, View } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
+import { Alert } from "react-native";
 
 import { useSession } from "@/providers/session-provider";
-import { AppInput } from "@/shared/components/app-input";
-import { Screen } from "@/shared/components/screen";
-import { colors } from "@/theme/tokens";
+import { AppInput, Screen } from "@/shared/components";
 
 import { normalizeKoreanPhone } from "./api";
 import { AuthActionButton } from "./auth-action-button";
 import { useLoginWithKakao, useRequestPhoneCode } from "./hooks";
 import { loginWithKakaoNative } from "./kakao-native";
+import { PhoneHero } from "./phone-hero";
 
 export const PhoneScreen = () => {
   const { kakaoToken } = useLocalSearchParams<{ kakaoToken?: string }>();
@@ -52,13 +50,7 @@ export const PhoneScreen = () => {
 
   return (
     <Screen>
-      <View style={styles.hero}>
-        <Text style={styles.kicker}>소개팅은 가볍게, 대화는 진하게</Text>
-        <Text style={styles.title}>오늘 마실 차 한 잔 같은 인연</Text>
-        <Text style={styles.copy}>
-          전화번호 인증 후 맞는 사람을 추천받고 바로 대화를 시작하세요.
-        </Text>
-      </View>
+      <PhoneHero />
       <AppInput
         keyboardType="phone-pad"
         label="전화번호"
@@ -76,30 +68,3 @@ export const PhoneScreen = () => {
     </Screen>
   );
 };
-
-const styles = StyleSheet.create({
-  hero: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 28,
-    borderWidth: 1,
-    gap: 10,
-    padding: 22,
-  },
-  kicker: {
-    color: colors.primary,
-    fontSize: 13,
-    fontWeight: "900",
-  },
-  title: {
-    color: colors.text,
-    fontSize: 32,
-    fontWeight: "900",
-    lineHeight: 38,
-  },
-  copy: {
-    color: colors.muted,
-    fontSize: 15,
-    lineHeight: 22,
-  },
-});
