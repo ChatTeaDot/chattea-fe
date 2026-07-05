@@ -8,6 +8,7 @@ import {
   requestPhoneCode,
   verifyPhoneCode,
 } from "./api";
+import { Gender } from "./types";
 
 export const useRequestPhoneCode = () => {
   return useMutation({ mutationFn: requestPhoneCode });
@@ -24,16 +25,16 @@ export const useCompletePhoneSignup = () => {
     mutationFn: ({
       signupToken,
       userName,
+      gender,
       email,
       password,
-      intro,
     }: {
       signupToken: string;
       userName: string;
+      gender: Gender;
       email: string;
       password: string;
-      intro?: string;
-    }) => completePhoneSignup(signupToken, userName, email, password),
+    }) => completePhoneSignup(signupToken, userName, gender, email, password),
   });
 };
 
@@ -47,12 +48,13 @@ export const useCompleteKakaoPhoneSignup = () => {
       kakaoPhoneVerificationToken,
       signupToken,
       userName,
+      gender,
     }: {
       kakaoPhoneVerificationToken: string;
       signupToken: string;
       userName: string;
-      intro?: string;
-    }) => completeKakaoPhoneSignup(kakaoPhoneVerificationToken, signupToken, userName),
+      gender: Gender;
+    }) => completeKakaoPhoneSignup(kakaoPhoneVerificationToken, signupToken, userName, gender),
   });
 };
 

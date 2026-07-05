@@ -2,7 +2,7 @@ import { gql } from "graphql-request";
 
 import { graphQLRequest, type Requester, setGraphQLRequester } from "@/shared/graphql/client";
 
-import { CompletePhoneSignupResult, KakaoLoginResult, Session, VerifyPhoneResult } from "./types";
+import { CompletePhoneSignupResult, Gender, KakaoLoginResult, Session, VerifyPhoneResult } from "./types";
 
 export const setAuthApiRequester = (requester: Requester) => {
   setGraphQLRequester(requester);
@@ -70,6 +70,7 @@ export const verifyPhoneCode = async (
 export const completePhoneSignup = async (
   signupToken: string,
   userName: string,
+  gender: Gender,
   email: string,
   password: string,
 ): Promise<CompletePhoneSignupResult> => {
@@ -81,7 +82,7 @@ export const completePhoneSignup = async (
         }
       }
     `,
-    { input: { phoneVerificationToken: signupToken, userName, email, password } },
+    { input: { phoneVerificationToken: signupToken, userName, gender, email, password } },
   );
 
   return { session: tokenPayloadToSession(data.completePhoneSignup) };
@@ -132,6 +133,7 @@ export const completeKakaoPhoneSignup = async (
   kakaoPhoneVerificationToken: string,
   signupToken: string,
   userName: string,
+  gender: Gender,
 ): Promise<CompletePhoneSignupResult> => {
   const data = await graphQLRequest<{ completeKakaoPhoneSignup: { accessToken: string } }>(
     gql`
@@ -141,7 +143,7 @@ export const completeKakaoPhoneSignup = async (
         }
       }
     `,
-    { input: { kakaoPhoneVerificationToken, phoneVerificationToken: signupToken, userName } },
+    { input: { kakaoPhoneVerificationToken, phoneVerificationToken: signupToken, userName, gender } },
   );
 
   return { session: tokenPayloadToSession(data.completeKakaoPhoneSignup) };

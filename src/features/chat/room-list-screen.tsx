@@ -24,7 +24,7 @@ export const RoomListScreen = () => {
         </View>
         <View style={styles.roomText}>
           <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.message}>{item.lastMessage || "아직 대화가 없어요"}</Text>
+          <Text style={styles.message}>{item.lastMessage ?? "먼저 대화를 걸어보세요"}</Text>
         </View>
       </Pressable>
     );

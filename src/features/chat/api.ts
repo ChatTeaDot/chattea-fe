@@ -6,13 +6,13 @@ import {
   AiSummaryPreview,
   CommunityComment,
   CommunityPost,
+  CommunityProfile,
   CurrentSubscription,
   LikeUserResult,
   MatchCandidate,
   Message,
   Room,
   ScoreSummary,
-  SubscriptionPlan,
   Upload,
 } from "./types";
 
@@ -43,7 +43,7 @@ export const listCommunityPosts = async (): Promise<CommunityPost[]> => {
     query CommunityPosts {
       communityPosts {
         id
-        anonymousName
+        authorName
         title
         body
         commentCount
@@ -64,7 +64,7 @@ export const createCommunityPost = async (input: {
       mutation CreateCommunityPost($input: CreateCommunityPostInput!) {
         createCommunityPost(input: $input) {
           id
-          anonymousName
+          authorName
           title
           body
           commentCount
@@ -88,7 +88,7 @@ export const createCommunityComment = async (input: {
         createCommunityComment(input: $input) {
           id
           postId
-          anonymousName
+          authorName
           body
           createdAt
         }
@@ -98,6 +98,33 @@ export const createCommunityComment = async (input: {
   );
 
   return data.createCommunityComment;
+};
+
+export const getCommunityProfile = async (): Promise<CommunityProfile> => {
+  const data = await graphQLRequest<{ communityProfile: CommunityProfile }>(gql`
+    query CommunityProfile {
+      communityProfile {
+        name
+      }
+    }
+  `);
+
+  return data.communityProfile;
+};
+
+export const updateCommunityProfile = async (input: { name: string }): Promise<CommunityProfile> => {
+  const data = await graphQLRequest<{ updateCommunityProfile: CommunityProfile }>(
+    gql`
+      mutation UpdateCommunityProfile($input: UpdateCommunityProfileInput!) {
+        updateCommunityProfile(input: $input) {
+          name
+        }
+      }
+    `,
+    { input },
+  );
+
+  return data.updateCommunityProfile;
 };
 
 export const reportCommunityPost = async (input: {
@@ -114,21 +141,6 @@ export const reportCommunityPost = async (input: {
   );
 
   return data.reportCommunityPost;
-};
-
-export const listSubscriptionPlans = async (): Promise<SubscriptionPlan[]> => {
-  const data = await graphQLRequest<{ subscriptionPlans: SubscriptionPlan[] }>(gql`
-    query SubscriptionPlans {
-      subscriptionPlans {
-        id
-        name
-        monthlyPriceKrw
-        benefits
-      }
-    }
-  `);
-
-  return data.subscriptionPlans;
 };
 
 export const getMySubscription = async (): Promise<CurrentSubscription> => {
@@ -171,6 +183,7 @@ export const listMatchCandidates = async (): Promise<MatchCandidate[]> => {
       matchCandidates {
         id
         userName
+        gender
         intro
         likedByMe
         planId
@@ -188,6 +201,7 @@ export const listBlackMatchCandidates = async (): Promise<MatchCandidate[]> => {
       blackMatchCandidates {
         id
         userName
+        gender
         intro
         likedByMe
         planId
@@ -205,6 +219,7 @@ export const listLikedMeCandidates = async (): Promise<MatchCandidate[]> => {
       likedMeCandidates {
         id
         userName
+        gender
         intro
         likedByMe
         planId
