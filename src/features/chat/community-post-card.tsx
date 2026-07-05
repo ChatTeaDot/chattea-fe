@@ -12,7 +12,7 @@ type CommunityPostCardProps = {
 export const CommunityPostCard = ({ post }: CommunityPostCardProps) => {
   return (
     <View style={styles.row}>
-      <Text style={styles.author}>{post.anonymousName}</Text>
+      <Text style={styles.author}>{post.authorName}</Text>
       <Text style={styles.name}>{post.title}</Text>
       <Text style={styles.body}>{post.body}</Text>
       <Text style={styles.meta}>댓글 {post.commentCount}</Text>

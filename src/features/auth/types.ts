@@ -2,9 +2,12 @@ export type Session = {
   token: string;
 };
 
+export type Gender = "male" | "female";
+
 export type User = {
   id: string;
   userName: string;
+  gender: Gender;
   intro: string;
 };
 

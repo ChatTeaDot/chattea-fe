@@ -21,7 +21,7 @@ export const CommunityScreen = () => {
   return (
     <Screen>
       <View style={styles.header}>
-        <Text style={styles.title}>익명 커뮤니티</Text>
+        <Text style={styles.title}>커뮤니티</Text>
         <View style={styles.headerActions}>
           <Pressable accessibilityLabel="알림" accessibilityRole="button" style={styles.iconButton}>
             <View style={styles.notificationGlyph}>
@@ -31,7 +31,7 @@ export const CommunityScreen = () => {
               <View style={styles.notificationClapper} />
             </View>
           </Pressable>
-          <Pressable accessibilityLabel="익명 프로필" accessibilityRole="button" style={styles.profileButton}>
+          <Pressable accessibilityLabel="커뮤니티 프로필" accessibilityRole="button" style={styles.profileButton}>
             <View style={styles.profileGlyph}>
               <View style={styles.profileGlyphHead} />
               <View style={styles.profileGlyphBody} />

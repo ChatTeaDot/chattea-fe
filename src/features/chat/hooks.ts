@@ -6,6 +6,7 @@ import {
   createCommunityComment,
   createCommunityPost,
   createUpload,
+  getCommunityProfile,
   getMySubscription,
   getUnreadMessageSummary,
   likeUser,
@@ -15,7 +16,6 @@ import {
   listMatchCandidates,
   listMessages,
   listRooms,
-  listSubscriptionPlans,
   markRoomRead,
   rateScore,
   reportCommunityPost,
@@ -28,9 +28,10 @@ import {
   subscribeToReadReceiptUpdated,
   subscribeToTypingChanged,
   uploadFileToSignedUrl,
+  updateCommunityProfile,
 } from "./api";
 import { pickImageAttachment } from "./image-picker";
-import { AttachmentDraft, Message } from "./types";
+import { AttachmentDraft, Message, SUBSCRIPTION_PLANS } from "./types";
 
 export const useRooms = () => {
   return useQuery({ queryKey: ["rooms"], queryFn: listRooms });
@@ -66,8 +67,24 @@ export const useReportCommunityPost = () => {
   return useMutation({ mutationFn: reportCommunityPost });
 };
 
+export const useCommunityProfile = () => {
+  return useQuery({ queryKey: ["community-profile"], queryFn: getCommunityProfile });
+};
+
+export const useUpdateCommunityProfile = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateCommunityProfile,
+    onSuccess() {
+      void queryClient.invalidateQueries({ queryKey: ["community-profile"] });
+      void queryClient.invalidateQueries({ queryKey: ["community-posts"] });
+    },
+  });
+};
+
 export const useSubscriptionPlans = () => {
-  return useQuery({ queryKey: ["subscription-plans"], queryFn: listSubscriptionPlans });
+  return useQuery({ queryKey: ["subscription-plans"], queryFn: async () => SUBSCRIPTION_PLANS });
 };
 
 export const useMySubscription = () => {

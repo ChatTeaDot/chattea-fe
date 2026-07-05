@@ -16,7 +16,6 @@ import {
   listMatchCandidates,
   listMessages,
   listRooms,
-  listSubscriptionPlans,
   markRoomRead,
   rateScore,
   reportCommunityPost,
@@ -37,6 +36,7 @@ import {
   MESSAGE_MAX_LENGTH,
   normalizeMessageDraft,
 } from "../src/features/chat/message-limits";
+import { SUBSCRIPTION_PLANS } from "../src/features/chat/types";
 import {
   setGraphQLRequester,
   setGraphQLSubscriptionClientFactory,
@@ -57,7 +57,7 @@ describe("chat api", () => {
       calls.push({ query, variables });
 
       if (query.includes("query ChatRooms")) {
-        return { chatRooms: [{ id: "demo-room", name: "오늘의 대화", lastMessage: "hi" }] } as T;
+        return { chatRooms: [{ id: "demo-room", name: "오늘의 대화", lastMessage: null }] } as T;
       }
 
       if (query.includes("query ChatMessages")) {
@@ -78,7 +78,7 @@ describe("chat api", () => {
           communityPosts: [
             {
               id: "post-1",
-              anonymousName: "익명1",
+              authorName: "커뮤닉",
               title: "연애 상담",
               body: "첫 대화가 어려워요",
               commentCount: 0,
@@ -133,17 +133,6 @@ describe("chat api", () => {
         } as T;
       }
 
-      if (query.includes("query SubscriptionPlans")) {
-        return {
-          subscriptionPlans: [
-            { id: "free", name: "Free", monthlyPriceKrw: 0, benefits: ["기본 매칭"] },
-            { id: "basic", name: "Basic", monthlyPriceKrw: 4900, benefits: ["좋아요 증가"] },
-            { id: "gold", name: "Gold", monthlyPriceKrw: 9900, benefits: ["우선 추천"] },
-            { id: "black", name: "Black", monthlyPriceKrw: 24900, benefits: ["Black 전용 추천"] },
-          ],
-        } as T;
-      }
-
       if (query.includes("query CurrentSubscription")) {
         return { currentSubscription: { planId: "black" } } as T;
       }
@@ -179,7 +168,7 @@ describe("chat api", () => {
         return {
           createCommunityPost: {
             id: "post-1",
-            anonymousName: "익명1",
+            authorName: "커뮤닉",
             title: (variables?.input as { title?: string })?.title,
             body: (variables?.input as { body?: string })?.body,
             commentCount: 0,
@@ -193,7 +182,7 @@ describe("chat api", () => {
           createCommunityComment: {
             id: "comment-1",
             postId: (variables?.input as { postId?: string })?.postId,
-            anonymousName: "익명2",
+            authorName: "커뮤닉",
             body: (variables?.input as { body?: string })?.body,
             createdAt: "2026-06-25T00:00:01.000Z",
           },
@@ -246,7 +235,7 @@ describe("chat api", () => {
     });
 
     await expect(listRooms()).resolves.toEqual([
-      { id: "demo-room", name: "오늘의 대화", lastMessage: "hi" },
+      { id: "demo-room", name: "오늘의 대화", lastMessage: null },
     ]);
     await expect(listMessages("demo-room")).resolves.toEqual([
       {
@@ -314,7 +303,7 @@ describe("chat api", () => {
     await expect(listCommunityPosts()).resolves.toEqual([
       {
         id: "post-1",
-        anonymousName: "익명1",
+        authorName: "커뮤닉",
         title: "연애 상담",
         body: "첫 대화가 어려워요",
         commentCount: 0,
@@ -324,7 +313,7 @@ describe("chat api", () => {
     await expect(
       createCommunityPost({ title: "연애 상담", body: "첫 대화가 어려워요" }),
     ).resolves.toMatchObject({
-      anonymousName: "익명1",
+      authorName: "커뮤닉",
       title: "연애 상담",
     });
     await expect(
@@ -336,12 +325,7 @@ describe("chat api", () => {
     await expect(reportCommunityPost({ postId: "post-1", reason: "사용자 신고" })).resolves.toBe(
       true,
     );
-    await expect(listSubscriptionPlans()).resolves.toEqual([
-      { id: "free", name: "Free", monthlyPriceKrw: 0, benefits: ["기본 매칭"] },
-      { id: "basic", name: "Basic", monthlyPriceKrw: 4900, benefits: ["좋아요 증가"] },
-      { id: "gold", name: "Gold", monthlyPriceKrw: 9900, benefits: ["우선 추천"] },
-      { id: "black", name: "Black", monthlyPriceKrw: 24900, benefits: ["Black 전용 추천"] },
-    ]);
+    expect(SUBSCRIPTION_PLANS.map((plan) => plan.id)).toEqual(["free", "basic", "gold", "black"]);
     await expect(getMySubscription()).resolves.toEqual({ planId: "black" });
     await expect(
       getUnreadMessageSummary({
@@ -386,7 +370,6 @@ describe("chat api", () => {
       { input: { title: "연애 상담", body: "첫 대화가 어려워요" } },
       { input: { postId: "post-1", body: "공감해요" } },
       { input: { postId: "post-1", reason: "사용자 신고" } },
-      undefined,
       undefined,
       {
         input: {
