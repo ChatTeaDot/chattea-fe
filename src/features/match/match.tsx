@@ -3,7 +3,7 @@ import { router } from "expo-router";
 import { Alert } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { useLikedMeCandidates } from "@/features/likes";
+import { useLikedMeCandidates } from "@/features/likes/hooks";
 import { useMySubscription } from "@/features/profile";
 import { Screen } from "@/shared/components";
 import { spacing } from "@/theme/tokens";

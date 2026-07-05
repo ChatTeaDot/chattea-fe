@@ -2,7 +2,7 @@ import { Image } from "expo-image";
 import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { MatchCandidate } from "@/features/match";
+import { MatchCandidate } from "@/features/match/types";
 import { colors, spacing } from "@/theme/tokens";
 
 type LikeCandidateRowProps = {
