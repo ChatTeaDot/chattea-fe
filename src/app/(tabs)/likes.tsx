@@ -1,1 +1,1 @@
-export { LikeScreen as default } from "@/features/chat";
+export { LikeScreen as default } from "@/features/likes";

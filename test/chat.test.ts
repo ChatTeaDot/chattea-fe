@@ -1,24 +1,13 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  blockUser,
-  createCommunityComment,
-  createCommunityPost,
   createUpload,
   deleteMessage,
   editMessage,
-  getMySubscription,
   getUnreadMessageSummary,
-  likeUser,
-  listBlackMatchCandidates,
-  listCommunityPosts,
-  listLikedMeCandidates,
-  listMatchCandidates,
   listMessages,
   listRooms,
   markRoomRead,
-  rateScore,
-  reportCommunityPost,
   reportMessage,
   sendMessage,
   setTyping,
@@ -35,8 +24,23 @@ import {
   getMessageTextLimit,
   MESSAGE_MAX_LENGTH,
   normalizeMessageDraft,
-} from "../src/features/chat/message-limits";
-import { SUBSCRIPTION_PLANS } from "../src/features/chat/types";
+} from "../src/features/chat/room/utils/message-limits";
+import {
+  createCommunityComment,
+  createCommunityPost,
+  listCommunityPosts,
+  reportCommunityPost,
+} from "../src/features/community/api";
+import { listLikedMeCandidates } from "../src/features/likes/api";
+import {
+  blockUser,
+  likeUser,
+  listBlackMatchCandidates,
+  listMatchCandidates,
+  rateScore,
+} from "../src/features/match/api";
+import { getMySubscription } from "../src/features/profile/api";
+import { SUBSCRIPTION_PLANS } from "../src/features/profile/types";
 import {
   setGraphQLRequester,
   setGraphQLSubscriptionClientFactory,

@@ -1,1 +1,1 @@
-export { CommunityScreen as default } from "@/features/chat";
+export { CommunityScreen as default } from "@/features/community";
