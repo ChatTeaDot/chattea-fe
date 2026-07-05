@@ -1,1 +1,1 @@
-export { ProfileScreen as default } from "@/features/chat";
+export { ProfileScreen as default } from "@/features/profile";

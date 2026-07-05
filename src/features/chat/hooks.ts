@@ -2,23 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 
 import {
-  blockUser,
-  createCommunityComment,
-  createCommunityPost,
   createUpload,
-  getCommunityProfile,
-  getMySubscription,
   getUnreadMessageSummary,
-  likeUser,
-  listBlackMatchCandidates,
-  listCommunityPosts,
-  listLikedMeCandidates,
-  listMatchCandidates,
   listMessages,
   listRooms,
   markRoomRead,
-  rateScore,
-  reportCommunityPost,
   reportMessage,
   sendMessage,
   setTyping,
@@ -27,110 +15,17 @@ import {
   subscribeToMessageUpdated,
   subscribeToReadReceiptUpdated,
   subscribeToTypingChanged,
-  updateCommunityProfile,
   uploadFileToSignedUrl,
 } from "./api";
-import { pickImageAttachment } from "./image-picker";
-import { AttachmentDraft, Message, SUBSCRIPTION_PLANS } from "./types";
+import { pickImageAttachment } from "./room/utils/image-picker";
+import { AttachmentDraft, Message } from "./types";
 
 export const useRooms = () => {
   return useQuery({ queryKey: ["rooms"], queryFn: listRooms });
 };
 
-export const useCommunityPosts = () => {
-  return useQuery({ queryKey: ["community-posts"], queryFn: listCommunityPosts });
-};
-
-export const useCreateCommunityPost = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: createCommunityPost,
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["community-posts"] });
-    },
-  });
-};
-
-export const useCreateCommunityComment = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: createCommunityComment,
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["community-posts"] });
-    },
-  });
-};
-
-export const useReportCommunityPost = () => {
-  return useMutation({ mutationFn: reportCommunityPost });
-};
-
-export const useCommunityProfile = () => {
-  return useQuery({ queryKey: ["community-profile"], queryFn: getCommunityProfile });
-};
-
-export const useUpdateCommunityProfile = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: updateCommunityProfile,
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["community-profile"] });
-      void queryClient.invalidateQueries({ queryKey: ["community-posts"] });
-    },
-  });
-};
-
-export const useSubscriptionPlans = () => {
-  return useQuery({ queryKey: ["subscription-plans"], queryFn: async () => SUBSCRIPTION_PLANS });
-};
-
-export const useMySubscription = () => {
-  return useQuery({ queryKey: ["my-subscription"], queryFn: getMySubscription });
-};
-
 export const useUnreadMessageSummary = () => {
   return useMutation({ mutationFn: getUnreadMessageSummary });
-};
-
-export const useMatchCandidates = () => {
-  return useQuery({ queryKey: ["match-candidates"], queryFn: listMatchCandidates });
-};
-
-export const useBlackMatchCandidates = (enabled: boolean) => {
-  return useQuery({
-    queryKey: ["black-match-candidates"],
-    queryFn: listBlackMatchCandidates,
-    enabled,
-  });
-};
-
-export const useLikedMeCandidates = (enabled: boolean) => {
-  return useQuery({
-    queryKey: ["liked-me-candidates"],
-    queryFn: listLikedMeCandidates,
-    enabled,
-    refetchOnWindowFocus: false,
-    staleTime: 60_000,
-  });
-};
-
-export const useLikeUser = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: likeUser,
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["match-candidates"] });
-      void queryClient.invalidateQueries({ queryKey: ["rooms"] });
-    },
-  });
-};
-
-export const useRateScore = () => {
-  return useMutation({ mutationFn: rateScore });
 };
 
 export const useMessages = (roomId: string) => {
@@ -227,10 +122,6 @@ export const useMarkRoomRead = () => {
 
 export const useSetTyping = () => {
   return useMutation({ mutationFn: setTyping });
-};
-
-export const useBlockUser = () => {
-  return useMutation({ mutationFn: blockUser });
 };
 
 export const useReportMessage = () => {

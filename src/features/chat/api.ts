@@ -2,19 +2,7 @@ import { gql } from "graphql-request";
 
 import { createGraphQLSubscriptionClient, graphQLRequest } from "@/shared/graphql";
 
-import {
-  AiSummaryPreview,
-  CommunityComment,
-  CommunityPost,
-  CommunityProfile,
-  CurrentSubscription,
-  LikeUserResult,
-  MatchCandidate,
-  Message,
-  Room,
-  ScoreSummary,
-  Upload,
-} from "./types";
+import { AiSummaryPreview, Message, Room, Upload } from "./types";
 
 type Fetcher = typeof fetch;
 
@@ -38,125 +26,6 @@ export const listRooms = async (): Promise<Room[]> => {
   return data.chatRooms;
 };
 
-export const listCommunityPosts = async (): Promise<CommunityPost[]> => {
-  const data = await graphQLRequest<{ communityPosts: CommunityPost[] }>(gql`
-    query CommunityPosts {
-      communityPosts {
-        id
-        authorName
-        title
-        body
-        commentCount
-        createdAt
-      }
-    }
-  `);
-
-  return data.communityPosts;
-};
-
-export const createCommunityPost = async (input: {
-  title: string;
-  body: string;
-}): Promise<CommunityPost> => {
-  const data = await graphQLRequest<{ createCommunityPost: CommunityPost }>(
-    gql`
-      mutation CreateCommunityPost($input: CreateCommunityPostInput!) {
-        createCommunityPost(input: $input) {
-          id
-          authorName
-          title
-          body
-          commentCount
-          createdAt
-        }
-      }
-    `,
-    { input },
-  );
-
-  return data.createCommunityPost;
-};
-
-export const createCommunityComment = async (input: {
-  postId: string;
-  body: string;
-}): Promise<CommunityComment> => {
-  const data = await graphQLRequest<{ createCommunityComment: CommunityComment }>(
-    gql`
-      mutation CreateCommunityComment($input: CreateCommunityCommentInput!) {
-        createCommunityComment(input: $input) {
-          id
-          postId
-          authorName
-          body
-          createdAt
-        }
-      }
-    `,
-    { input },
-  );
-
-  return data.createCommunityComment;
-};
-
-export const getCommunityProfile = async (): Promise<CommunityProfile> => {
-  const data = await graphQLRequest<{ communityProfile: CommunityProfile }>(gql`
-    query CommunityProfile {
-      communityProfile {
-        name
-      }
-    }
-  `);
-
-  return data.communityProfile;
-};
-
-export const updateCommunityProfile = async (input: {
-  name: string;
-}): Promise<CommunityProfile> => {
-  const data = await graphQLRequest<{ updateCommunityProfile: CommunityProfile }>(
-    gql`
-      mutation UpdateCommunityProfile($input: UpdateCommunityProfileInput!) {
-        updateCommunityProfile(input: $input) {
-          name
-        }
-      }
-    `,
-    { input },
-  );
-
-  return data.updateCommunityProfile;
-};
-
-export const reportCommunityPost = async (input: {
-  postId: string;
-  reason: string;
-}): Promise<boolean> => {
-  const data = await graphQLRequest<{ reportCommunityPost: boolean }>(
-    gql`
-      mutation ReportCommunityPost($input: ReportCommunityPostInput!) {
-        reportCommunityPost(input: $input)
-      }
-    `,
-    { input },
-  );
-
-  return data.reportCommunityPost;
-};
-
-export const getMySubscription = async (): Promise<CurrentSubscription> => {
-  const data = await graphQLRequest<{ currentSubscription: CurrentSubscription }>(gql`
-    query CurrentSubscription {
-      currentSubscription {
-        planId
-      }
-    }
-  `);
-
-  return data.currentSubscription;
-};
-
 export const getUnreadMessageSummary = async (input: {
   planId: string;
   unreadTexts: string[];
@@ -177,96 +46,6 @@ export const getUnreadMessageSummary = async (input: {
   );
 
   return data.unreadMessageSummary;
-};
-
-export const listMatchCandidates = async (): Promise<MatchCandidate[]> => {
-  const data = await graphQLRequest<{ matchCandidates: MatchCandidate[] }>(gql`
-    query MatchCandidates {
-      matchCandidates {
-        id
-        userName
-        gender
-        intro
-        likedByMe
-        planId
-        blackRecommended
-      }
-    }
-  `);
-
-  return data.matchCandidates;
-};
-
-export const listBlackMatchCandidates = async (): Promise<MatchCandidate[]> => {
-  const data = await graphQLRequest<{ blackMatchCandidates: MatchCandidate[] }>(gql`
-    query BlackMatchCandidates {
-      blackMatchCandidates {
-        id
-        userName
-        gender
-        intro
-        likedByMe
-        planId
-        blackRecommended
-      }
-    }
-  `);
-
-  return data.blackMatchCandidates;
-};
-
-export const listLikedMeCandidates = async (): Promise<MatchCandidate[]> => {
-  const data = await graphQLRequest<{ likedMeCandidates: MatchCandidate[] }>(gql`
-    query LikedMeCandidates {
-      likedMeCandidates {
-        id
-        userName
-        gender
-        intro
-        likedByMe
-        planId
-        blackRecommended
-      }
-    }
-  `);
-
-  return data.likedMeCandidates;
-};
-
-export const likeUser = async (userId: string): Promise<LikeUserResult> => {
-  const data = await graphQLRequest<{ likeUser: LikeUserResult }>(
-    gql`
-      mutation LikeUser($userId: String!) {
-        likeUser(userId: $userId) {
-          matched
-          roomId
-        }
-      }
-    `,
-    { userId },
-  );
-
-  return data.likeUser;
-};
-
-export const rateScore = async (input: {
-  userId: string;
-  score: number;
-}): Promise<ScoreSummary> => {
-  const data = await graphQLRequest<{ rateScore: ScoreSummary }>(
-    gql`
-      mutation RateScore($input: RateScoreInput!) {
-        rateScore(input: $input) {
-          userId
-          averageScore
-          scoreCount
-        }
-      }
-    `,
-    { input },
-  );
-
-  return data.rateScore;
 };
 
 export const listMessages = async (
@@ -367,19 +146,6 @@ export const setTyping = async (input: { roomId: string; typing: boolean }): Pro
   );
 
   return data.setChatTyping;
-};
-
-export const blockUser = async (userId: string): Promise<boolean> => {
-  const data = await graphQLRequest<{ blockUser: boolean }>(
-    gql`
-      mutation BlockUser($userId: String!) {
-        blockUser(input: { userId: $userId })
-      }
-    `,
-    { userId },
-  );
-
-  return data.blockUser;
 };
 
 export const reportMessage = async (input: {
