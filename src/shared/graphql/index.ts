@@ -1,8 +1,6 @@
 export {
-  createGraphQLSubscriptionClient,
-  graphQLRequest,
-  type Requester,
-  setGraphQLRequester,
+  apolloClient,
+  createApolloClient,
+  getGraphQLAuthorizationHeaders,
   setGraphQLSessionToken,
-  setGraphQLSubscriptionClientFactory,
 } from "./client";

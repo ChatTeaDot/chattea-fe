@@ -1,73 +1,146 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation } from "@apollo/client/react";
 
 import {
-  attachPhoneToMe,
-  completeKakaoPhoneSignup,
-  completePhoneSignup,
-  loginWithKakao,
-  requestPhoneCode,
-  verifyPhoneCode,
+  ATTACH_PHONE_TO_ME_MUTATION,
+  COMPLETE_KAKAO_PHONE_SIGNUP_MUTATION,
+  COMPLETE_PHONE_SIGNUP_MUTATION,
+  LOGIN_WITH_KAKAO_MUTATION,
+  mapAttachPhoneToMeResult,
+  mapCompleteKakaoPhoneSignupResult,
+  mapCompletePhoneSignupResult,
+  mapLoginWithKakaoResult,
+  mapRequestPhoneCodeResult,
+  mapVerifyPhoneCodeResult,
+  REQUEST_PHONE_CODE_MUTATION,
+  VERIFY_PHONE_CODE_MUTATION,
 } from "./api";
-import { Gender } from "./types";
+import type { Gender } from "./types";
 
 export const useRequestPhoneCode = () => {
-  return useMutation({ mutationFn: requestPhoneCode });
+  const [mutate, result] = useMutation(REQUEST_PHONE_CODE_MUTATION);
+
+  return {
+    ...result,
+    isPending: result.loading,
+    mutateAsync: async (phoneE164: string) => {
+      const { data } = await mutate({
+        variables: { input: { phone: phoneE164, purpose: "signup" } },
+      });
+
+      return mapRequestPhoneCodeResult(data);
+    },
+  };
 };
 
 export const useVerifyPhoneCode = () => {
-  return useMutation({
-    mutationFn: ({ phone, code }: { phone: string; code: string }) => verifyPhoneCode(phone, code),
-  });
+  const [mutate, result] = useMutation(VERIFY_PHONE_CODE_MUTATION);
+
+  return {
+    ...result,
+    isPending: result.loading,
+    mutateAsync: async ({ phone, code }: { readonly phone: string; readonly code: string }) => {
+      const { data } = await mutate({ variables: { input: { phone, code } } });
+
+      return mapVerifyPhoneCodeResult(data);
+    },
+  };
 };
 
 export const useCompletePhoneSignup = () => {
-  return useMutation({
-    mutationFn: ({
+  const [mutate, result] = useMutation(COMPLETE_PHONE_SIGNUP_MUTATION);
+
+  return {
+    ...result,
+    isPending: result.loading,
+    mutateAsync: async ({
       signupToken,
       userName,
       gender,
       email,
       password,
     }: {
-      signupToken: string;
-      userName: string;
-      gender: Gender;
-      email: string;
-      password: string;
-    }) => completePhoneSignup(signupToken, userName, gender, email, password),
-  });
+      readonly signupToken: string;
+      readonly userName: string;
+      readonly gender: Gender;
+      readonly email: string;
+      readonly password: string;
+    }) => {
+      const { data } = await mutate({
+        variables: {
+          input: { phoneVerificationToken: signupToken, userName, gender, email, password },
+        },
+      });
+
+      return mapCompletePhoneSignupResult(data);
+    },
+  };
 };
 
 export const useLoginWithKakao = () => {
-  return useMutation({ mutationFn: loginWithKakao });
+  const [mutate, result] = useMutation(LOGIN_WITH_KAKAO_MUTATION);
+
+  return {
+    ...result,
+    isPending: result.loading,
+    mutateAsync: async (accessToken: string) => {
+      const { data } = await mutate({ variables: { accessToken } });
+
+      return mapLoginWithKakaoResult(data);
+    },
+  };
 };
 
 export const useCompleteKakaoPhoneSignup = () => {
-  return useMutation({
-    mutationFn: ({
+  const [mutate, result] = useMutation(COMPLETE_KAKAO_PHONE_SIGNUP_MUTATION);
+
+  return {
+    ...result,
+    isPending: result.loading,
+    mutateAsync: async ({
       kakaoPhoneVerificationToken,
       signupToken,
       userName,
       gender,
     }: {
-      kakaoPhoneVerificationToken: string;
-      signupToken: string;
-      userName: string;
-      gender: Gender;
-    }) => completeKakaoPhoneSignup(kakaoPhoneVerificationToken, signupToken, userName, gender),
-  });
+      readonly kakaoPhoneVerificationToken: string;
+      readonly signupToken: string;
+      readonly userName: string;
+      readonly gender: Gender;
+    }) => {
+      const { data } = await mutate({
+        variables: {
+          input: {
+            kakaoPhoneVerificationToken,
+            phoneVerificationToken: signupToken,
+            userName,
+            gender,
+          },
+        },
+      });
+
+      return mapCompleteKakaoPhoneSignupResult(data);
+    },
+  };
 };
 
 export const useAttachPhoneToMe = () => {
-  return useMutation({
-    mutationFn: ({
-      kakaoToken,
+  const [mutate, result] = useMutation(ATTACH_PHONE_TO_ME_MUTATION);
+
+  return {
+    ...result,
+    isPending: result.loading,
+    mutateAsync: async ({
+      kakaoToken: _kakaoToken,
       phone,
       code,
     }: {
-      kakaoToken: string;
-      phone: string;
-      code: string;
-    }) => attachPhoneToMe(kakaoToken, phone, code),
-  });
+      readonly kakaoToken: string;
+      readonly phone: string;
+      readonly code: string;
+    }) => {
+      const { data } = await mutate({ variables: { input: { phone, code } } });
+
+      return mapAttachPhoneToMeResult(data);
+    },
+  };
 };

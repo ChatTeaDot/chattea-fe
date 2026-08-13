@@ -18,6 +18,7 @@ import {
 import { Message } from "../types";
 import { AttachmentList, ChatComposer, ChatMessageList, ChatRoomStatus } from "./components";
 import { getMessageTextLimit, normalizeMessageDraft } from "./utils/message-limits";
+import { reconcileMessages } from "./utils/reconcile-messages";
 
 export const ChatRoomScreen = () => {
   const { "room-id": roomId = "demo-room" } = useLocalSearchParams<{ "room-id": string }>();
@@ -33,7 +34,7 @@ export const ChatRoomScreen = () => {
   const listRef = useRef<ScrollView | null>(null);
   const tempIdRef = useRef(0);
   const typingRef = useRef(false);
-  const data = dedupeMessages([...(messages.data ?? []), ...localMessages]);
+  const data = reconcileMessages(messages.data ?? [], localMessages);
   const textLimit = getMessageTextLimit(data.length > 0);
 
   useEffect(() => {
@@ -129,12 +130,6 @@ export const ChatRoomScreen = () => {
       />
     </Screen>
   );
-};
-
-const dedupeMessages = (messages: Message[]) => {
-  return messages.filter((message, index, source) => {
-    return source.findIndex((item) => item.id === message.id) === index;
-  });
 };
 
 const styles = StyleSheet.create({

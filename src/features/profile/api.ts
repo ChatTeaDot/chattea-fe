@@ -1,17 +1,14 @@
-import { gql } from "graphql-request";
+import type { TypedDocumentNode } from "@apollo/client";
+import { gql } from "@apollo/client";
 
-import { graphQLRequest } from "@/shared/graphql";
+import type { CurrentSubscription } from "./types";
 
-import { CurrentSubscription } from "./types";
+type CurrentSubscriptionData = { readonly currentSubscription: CurrentSubscription };
 
-export const getMySubscription = async (): Promise<CurrentSubscription> => {
-  const data = await graphQLRequest<{ currentSubscription: CurrentSubscription }>(gql`
-    query CurrentSubscription {
-      currentSubscription {
-        planId
-      }
+export const CURRENT_SUBSCRIPTION_QUERY: TypedDocumentNode<CurrentSubscriptionData> = gql`
+  query CurrentSubscription {
+    currentSubscription {
+      planId
     }
-  `);
-
-  return data.currentSubscription;
-};
+  }
+`;

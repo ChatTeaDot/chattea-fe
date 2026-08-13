@@ -1,139 +1,203 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useState } from "react";
+import { useApolloClient, useMutation, useQuery } from "@apollo/client/react";
+import { useCallback, useMemo, useState } from "react";
 
+import { formatReceivedMessage, formatSentMessage, uploadFileToSignedUrl } from "./api";
+import { replaceMessageInCache } from "./cache";
 import {
-  createUpload,
-  getUnreadMessageSummary,
-  listMessages,
-  listRooms,
-  markRoomRead,
-  reportMessage,
-  sendMessage,
-  setTyping,
-  subscribeToMessageCreated,
-  subscribeToMessageDeleted,
-  subscribeToMessageUpdated,
-  subscribeToReadReceiptUpdated,
-  subscribeToTypingChanged,
-  uploadFileToSignedUrl,
-} from "./api";
+  CHAT_MESSAGES_QUERY,
+  CHAT_ROOMS_QUERY,
+  CREATE_UPLOAD_MUTATION,
+  getChatMessagesQueryOptions,
+  MARK_CHAT_ROOM_READ_MUTATION,
+  REPORT_CHAT_MESSAGE_MUTATION,
+  SEND_CHAT_MESSAGE_MUTATION,
+  SET_CHAT_TYPING_MUTATION,
+  UNREAD_MESSAGE_SUMMARY_QUERY,
+} from "./operations";
 import { pickImageAttachment } from "./room/utils/image-picker";
-import { AttachmentDraft, Message } from "./types";
+import type { AiSummaryPreview, AttachmentDraft, Message, Upload } from "./types";
+
+type MutationCallbacks<T> = {
+  onSuccess?: (data: T) => void;
+  onError?: (error: unknown) => void;
+};
 
 export const useRooms = () => {
-  return useQuery({ queryKey: ["rooms"], queryFn: listRooms });
+  const query = useQuery(CHAT_ROOMS_QUERY);
+  return { ...query, data: query.data?.chatRooms };
 };
 
 export const useUnreadMessageSummary = () => {
-  return useMutation({ mutationFn: getUnreadMessageSummary });
+  const client = useApolloClient();
+  const execute = useCallback(
+    async (input: { planId: string; unreadTexts: string[]; enabled: boolean }) => {
+      const { data } = await client.query({
+        query: UNREAD_MESSAGE_SUMMARY_QUERY,
+        variables: { input },
+        fetchPolicy: "network-only",
+      });
+      if (!data) {
+        throw new Error("UNREAD_MESSAGE_SUMMARY_EMPTY_RESPONSE");
+      }
+      return data.unreadMessageSummary;
+    },
+    [client],
+  );
+  const mutate = useCallback(
+    (
+      input: { planId: string; unreadTexts: string[]; enabled: boolean },
+      callbacks?: MutationCallbacks<AiSummaryPreview>,
+    ) => {
+      void execute(input).then(callbacks?.onSuccess).catch(callbacks?.onError);
+    },
+    [execute],
+  );
+  return { mutate, mutateAsync: execute };
 };
 
 export const useMessages = (roomId: string) => {
-  const query = useQuery({ queryKey: ["messages", roomId], queryFn: () => listMessages(roomId) });
-  const queryClient = useQueryClient();
-  const refetchMessages = useCallback(() => {
-    void queryClient.invalidateQueries({ queryKey: ["messages", roomId] });
-  }, [queryClient, roomId]);
+  const options = useMemo(() => getChatMessagesQueryOptions(roomId), [roomId]);
+  const query = useQuery(CHAT_MESSAGES_QUERY, options);
 
-  useEffect(() => {
-    const disposeCreated = subscribeToMessageCreated({
-      roomId,
-      onMessage: (message) => {
-        queryClient.setQueryData<Message[]>(["messages", roomId], (current = []) =>
-          current.some((item) => item.id === message.id) ? current : [...current, message],
-        );
-      },
-      onError: refetchMessages,
-    });
-    const disposeUpdated = subscribeToMessageUpdated({
-      roomId,
-      onMessage: (message) => {
-        queryClient.setQueryData<Message[]>(["messages", roomId], (current = []) =>
-          current.map((item) => (item.id === message.id ? { ...item, ...message } : item)),
-        );
-      },
-      onError: refetchMessages,
-    });
-    const disposeDeleted = subscribeToMessageDeleted({
-      roomId,
-      onMessageId: (messageId) => {
-        queryClient.setQueryData<Message[]>(["messages", roomId], (current = []) =>
-          current.filter((item) => item.id !== messageId),
-        );
-      },
-      onError: refetchMessages,
-    });
-
-    return () => {
-      disposeCreated();
-      disposeUpdated();
-      disposeDeleted();
-    };
-  }, [queryClient, refetchMessages, roomId]);
-
-  return query;
+  return {
+    ...query,
+    data: query.data?.chatMessages.map(formatReceivedMessage),
+  };
 };
 
 export const useSendMessage = (roomId: string) => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: sendMessage,
-    onSuccess: (serverMessage, variables) => {
-      queryClient.setQueryData<Message[]>(["messages", roomId], (current = []) =>
-        current.map((message) =>
-          message.id === variables.idempotencyKey ? serverMessage : message,
-        ),
-      );
+  const [runMutation, result] = useMutation(SEND_CHAT_MESSAGE_MUTATION);
+  const execute = useCallback(
+    async (input: { roomId: string; text: string; idempotencyKey: string }) => {
+      const { data } = await runMutation({
+        variables: { input },
+        optimisticResponse: {
+          sendChatMessage: {
+            __typename: "ChatMessagePayload",
+            id: input.idempotencyKey,
+            roomId: input.roomId,
+            text: input.text,
+            createdAt: new Date().toISOString(),
+          },
+        },
+        update: (cache, mutationResult) => {
+          const message = mutationResult.data?.sendChatMessage;
+          if (!message) {
+            return;
+          }
+          replaceMessageInCache(cache, roomId, message, input.idempotencyKey);
+        },
+      });
+      if (!data) {
+        throw new Error("SEND_CHAT_MESSAGE_EMPTY_RESPONSE");
+      }
+      return formatSentMessage(data.sendChatMessage);
     },
-  });
-};
-
-export const useRoomRealtime = (roomId: string) => {
-  const [isPeerTyping, setIsPeerTyping] = useState(false);
-  const [readReceiptVersion, setReadReceiptVersion] = useState(0);
-
-  useEffect(() => {
-    const disposeTyping = subscribeToTypingChanged({
-      roomId,
-      onTyping: setIsPeerTyping,
-    });
-    const disposeRead = subscribeToReadReceiptUpdated({
-      roomId,
-      onRead: (read) => {
-        if (read) {
-          setReadReceiptVersion((version) => version + 1);
-        }
-      },
-    });
-
-    return () => {
-      disposeTyping();
-      disposeRead();
-    };
-  }, [roomId]);
-
-  return { isPeerTyping, readReceiptVersion };
+    [roomId, runMutation],
+  );
+  const mutate = useCallback(
+    (
+      input: { roomId: string; text: string; idempotencyKey: string },
+      callbacks?: MutationCallbacks<Message>,
+    ) => {
+      void execute(input).then(callbacks?.onSuccess).catch(callbacks?.onError);
+    },
+    [execute],
+  );
+  return { ...result, mutate, mutateAsync: execute };
 };
 
 export const useMarkRoomRead = () => {
-  return useMutation({ mutationFn: markRoomRead });
+  const [runMutation, result] = useMutation(MARK_CHAT_ROOM_READ_MUTATION);
+  const execute = useCallback(
+    async (roomId: string) => {
+      const { data } = await runMutation({ variables: { input: { roomId } } });
+      return data?.markChatRoomRead ?? false;
+    },
+    [runMutation],
+  );
+  const mutate = useCallback(
+    (roomId: string, callbacks?: MutationCallbacks<boolean>) => {
+      void execute(roomId).then(callbacks?.onSuccess).catch(callbacks?.onError);
+    },
+    [execute],
+  );
+  return { ...result, mutate, mutateAsync: execute };
 };
 
 export const useSetTyping = () => {
-  return useMutation({ mutationFn: setTyping });
+  const [runMutation, result] = useMutation(SET_CHAT_TYPING_MUTATION);
+  const execute = useCallback(
+    async (input: { roomId: string; typing: boolean }) => {
+      const { data } = await runMutation({ variables: { input } });
+      return data?.setChatTyping ?? false;
+    },
+    [runMutation],
+  );
+  const mutate = useCallback(
+    (input: { roomId: string; typing: boolean }, callbacks?: MutationCallbacks<boolean>) => {
+      void execute(input).then(callbacks?.onSuccess).catch(callbacks?.onError);
+    },
+    [execute],
+  );
+  return { ...result, mutate, mutateAsync: execute };
 };
 
 export const useReportMessage = () => {
-  return useMutation({ mutationFn: reportMessage });
+  const [runMutation, result] = useMutation(REPORT_CHAT_MESSAGE_MUTATION);
+  const execute = useCallback(
+    async (input: { messageId: string; reason: string }) => {
+      const { data } = await runMutation({ variables: { input } });
+      return data?.reportChatMessage ?? false;
+    },
+    [runMutation],
+  );
+  const mutate = useCallback(
+    (input: { messageId: string; reason: string }, callbacks?: MutationCallbacks<boolean>) => {
+      void execute(input).then(callbacks?.onSuccess).catch(callbacks?.onError);
+    },
+    [execute],
+  );
+  return { ...result, mutate, mutateAsync: execute };
 };
 
 export const useCreateUpload = () => {
-  return useMutation({ mutationFn: createUpload });
+  const [runMutation, result] = useMutation(CREATE_UPLOAD_MUTATION);
+  const execute = useCallback(
+    async (input: { filename: string; contentType: string }) => {
+      const { data } = await runMutation({ variables: { input } });
+      if (!data) {
+        throw new Error("CREATE_UPLOAD_EMPTY_RESPONSE");
+      }
+      return data.createUpload;
+    },
+    [runMutation],
+  );
+  const mutate = useCallback(
+    (input: { filename: string; contentType: string }, callbacks?: MutationCallbacks<Upload>) => {
+      void execute(input).then(callbacks?.onSuccess).catch(callbacks?.onError);
+    },
+    [execute],
+  );
+  return { ...result, mutate, mutateAsync: execute };
 };
 
 export const useUploadFileToSignedUrl = () => {
-  return useMutation({ mutationFn: uploadFileToSignedUrl });
+  const execute = useCallback(
+    (input: { putUrl: string; contentType: string; body: Blob | ArrayBuffer | string }) =>
+      uploadFileToSignedUrl(input),
+    [],
+  );
+  const mutate = useCallback(
+    (
+      input: { putUrl: string; contentType: string; body: Blob | ArrayBuffer | string },
+      callbacks?: MutationCallbacks<void>,
+    ) => {
+      void execute(input).then(callbacks?.onSuccess).catch(callbacks?.onError);
+    },
+    [execute],
+  );
+  return { mutate, mutateAsync: execute };
 };
 
 export const useChatAttachments = () => {
@@ -157,11 +221,13 @@ export const useChatAttachments = () => {
 
     setAttachments((current) => [...current, attachment]);
 
+    let uploadId: string | null = null;
     try {
       const upload = await createUploadMutation.mutateAsync({
         filename: attachment.filename,
         contentType: attachment.contentType,
       });
+      uploadId = upload.id;
       setAttachments((current) =>
         current.map((item) =>
           item.id === localId
@@ -179,10 +245,14 @@ export const useChatAttachments = () => {
       );
     } catch {
       setAttachments((current) =>
-        current.map((item) => (item.id === localId ? { ...item, status: "failed" } : item)),
+        current.map((item) =>
+          item.id === localId || item.id === uploadId ? { ...item, status: "failed" } : item,
+        ),
       );
     }
   };
 
   return { addAttachment, attachments };
 };
+
+export { useRoomRealtime } from "./realtime";

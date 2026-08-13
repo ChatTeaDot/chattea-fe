@@ -1,22 +1,24 @@
-import { gql } from "graphql-request";
+import type { TypedDocumentNode } from "@apollo/client";
+import { gql } from "@apollo/client";
 
-import { MatchCandidate } from "@/features/match/types";
-import { graphQLRequest } from "@/shared/graphql";
+import type { MatchCandidate } from "@/features/match/types";
 
-export const listLikedMeCandidates = async (): Promise<MatchCandidate[]> => {
-  const data = await graphQLRequest<{ likedMeCandidates: MatchCandidate[] }>(gql`
-    query LikedMeCandidates {
-      likedMeCandidates {
-        id
-        userName
-        gender
-        intro
-        likedByMe
-        planId
-        blackRecommended
-      }
-    }
-  `);
-
-  return data.likedMeCandidates;
+type MatchCandidatePayload = MatchCandidate & {
+  readonly __typename: "MatchCandidatePayload";
 };
+type LikedMeCandidatesData = { readonly likedMeCandidates: MatchCandidatePayload[] };
+
+export const LIKED_ME_CANDIDATES_QUERY: TypedDocumentNode<LikedMeCandidatesData> = gql`
+  query LikedMeCandidates {
+    likedMeCandidates {
+      __typename
+      id
+      userName
+      gender
+      intro
+      likedByMe
+      planId
+      blackRecommended
+    }
+  }
+`;

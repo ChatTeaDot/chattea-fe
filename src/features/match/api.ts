@@ -1,90 +1,108 @@
-import { gql } from "graphql-request";
+import type { ApolloCache, MutationUpdaterFunction, TypedDocumentNode } from "@apollo/client";
+import { gql } from "@apollo/client";
 
-import { graphQLRequest } from "@/shared/graphql";
+import type { LikeUserResult, MatchCandidate, ScoreSummary } from "./types";
 
-import { LikeUserResult, MatchCandidate, ScoreSummary } from "./types";
+export type RateScoreInput = {
+  readonly userId: string;
+  readonly score: number;
+};
 
-export const listMatchCandidates = async (): Promise<MatchCandidate[]> => {
-  const data = await graphQLRequest<{ matchCandidates: MatchCandidate[] }>(gql`
-    query MatchCandidates {
-      matchCandidates {
-        id
-        userName
-        gender
-        intro
-        likedByMe
-        planId
-        blackRecommended
-      }
+type MatchCandidatePayload = MatchCandidate & {
+  readonly __typename: "MatchCandidatePayload";
+};
+type MatchCandidatesData = { readonly matchCandidates: MatchCandidatePayload[] };
+type BlackMatchCandidatesData = { readonly blackMatchCandidates: MatchCandidatePayload[] };
+type LikeUserData = { readonly likeUser: LikeUserResult };
+type RateScoreData = { readonly rateScore: ScoreSummary };
+type BlockUserData = { readonly blockUser: boolean };
+
+export const MATCH_CANDIDATES_QUERY: TypedDocumentNode<MatchCandidatesData> = gql`
+  query MatchCandidates {
+    matchCandidates {
+      __typename
+      id
+      userName
+      gender
+      intro
+      likedByMe
+      planId
+      blackRecommended
     }
-  `);
+  }
+`;
 
-  return data.matchCandidates;
-};
-
-export const listBlackMatchCandidates = async (): Promise<MatchCandidate[]> => {
-  const data = await graphQLRequest<{ blackMatchCandidates: MatchCandidate[] }>(gql`
-    query BlackMatchCandidates {
-      blackMatchCandidates {
-        id
-        userName
-        gender
-        intro
-        likedByMe
-        planId
-        blackRecommended
-      }
+export const BLACK_MATCH_CANDIDATES_QUERY: TypedDocumentNode<BlackMatchCandidatesData> = gql`
+  query BlackMatchCandidates {
+    blackMatchCandidates {
+      __typename
+      id
+      userName
+      gender
+      intro
+      likedByMe
+      planId
+      blackRecommended
     }
-  `);
+  }
+`;
 
-  return data.blackMatchCandidates;
+export const LIKE_USER_MUTATION: TypedDocumentNode<LikeUserData, { readonly userId: string }> = gql`
+  mutation LikeUser($userId: String!) {
+    likeUser(userId: $userId) {
+      matched
+      roomId
+    }
+  }
+`;
+
+export const RATE_SCORE_MUTATION: TypedDocumentNode<
+  RateScoreData,
+  { readonly input: RateScoreInput }
+> = gql`
+  mutation RateScore($input: RateScoreInput!) {
+    rateScore(input: $input) {
+      userId
+      averageScore
+      scoreCount
+    }
+  }
+`;
+
+export const BLOCK_USER_MUTATION: TypedDocumentNode<
+  BlockUserData,
+  { readonly input: { readonly userId: string } }
+> = gql`
+  mutation BlockUser($input: BlockUserInput!) {
+    blockUser(input: $input)
+  }
+`;
+
+export const updateLikedCandidate: MutationUpdaterFunction<
+  LikeUserData,
+  { readonly userId: string },
+  ApolloCache
+> = (cache, result, options) => {
+  if (!options.variables) return;
+  cache.modify({
+    id: cache.identify({ __typename: "MatchCandidatePayload", id: options.variables.userId }),
+    fields: {
+      likedByMe: () => true,
+    },
+  });
+  if (result.data?.likeUser.matched) {
+    cache.evict({ id: "ROOT_QUERY", fieldName: "chatRooms" });
+  }
 };
 
-export const likeUser = async (userId: string): Promise<LikeUserResult> => {
-  const data = await graphQLRequest<{ likeUser: LikeUserResult }>(
-    gql`
-      mutation LikeUser($userId: String!) {
-        likeUser(userId: $userId) {
-          matched
-          roomId
-        }
-      }
-    `,
-    { userId },
-  );
-
-  return data.likeUser;
-};
-
-export const rateScore = async (input: {
-  userId: string;
-  score: number;
-}): Promise<ScoreSummary> => {
-  const data = await graphQLRequest<{ rateScore: ScoreSummary }>(
-    gql`
-      mutation RateScore($input: RateScoreInput!) {
-        rateScore(input: $input) {
-          userId
-          averageScore
-          scoreCount
-        }
-      }
-    `,
-    { input },
-  );
-
-  return data.rateScore;
-};
-
-export const blockUser = async (userId: string): Promise<boolean> => {
-  const data = await graphQLRequest<{ blockUser: boolean }>(
-    gql`
-      mutation BlockUser($userId: String!) {
-        blockUser(input: { userId: $userId })
-      }
-    `,
-    { userId },
-  );
-
-  return data.blockUser;
+export const removeBlockedCandidate: MutationUpdaterFunction<
+  BlockUserData,
+  { readonly input: { readonly userId: string } },
+  ApolloCache
+> = (cache, result, options) => {
+  if (!result.data?.blockUser || !options.variables) return;
+  cache.evict({
+    id: cache.identify({ __typename: "MatchCandidatePayload", id: options.variables.input.userId }),
+  });
+  cache.gc();
 };

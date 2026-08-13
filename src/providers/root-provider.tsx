@@ -1,16 +1,16 @@
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 
+import { ApolloProvider } from "./apollo-provider";
 import { ObservabilityProvider } from "./observability-provider";
-import { QueryProvider } from "./query-provider";
 import { SessionProvider } from "./session-provider";
 
 export const RootProvider = ({ children }: PropsWithChildren) => (
   <ObservabilityProvider>
-    <QueryProvider>
+    <ApolloProvider>
       <KeyboardProvider>
         <SessionProvider>{children}</SessionProvider>
       </KeyboardProvider>
-    </QueryProvider>
+    </ApolloProvider>
   </ObservabilityProvider>
 );
