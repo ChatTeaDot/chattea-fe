@@ -2,8 +2,8 @@ import { LegendList } from "@legendapp/list/react-native";
 import { Text } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { Screen } from "@/shared/components";
-import { colors, spacing } from "@/theme/tokens";
+import { ContentState, Screen } from "@/shared/components";
+import type { AppTheme } from "@/theme/unistyles";
 
 import {
   CommunityPostCard,
@@ -22,6 +22,37 @@ export const CommunityScreen = () => {
   const renderPost = ({ item }: { item: CommunityPost }) => {
     return <CommunityPostCard post={item} />;
   };
+
+  if (posts.loading) {
+    return (
+      <Screen>
+        <CommunityTopBar />
+        <ContentState kind="loading" />
+      </Screen>
+    );
+  }
+
+  if (posts.error) {
+    return (
+      <Screen>
+        <CommunityTopBar />
+        <ContentState kind="error" onRetry={() => void posts.refetch().catch(() => undefined)} />
+      </Screen>
+    );
+  }
+
+  if (posts.data?.length === 0) {
+    return (
+      <Screen>
+        <CommunityTopBar />
+        <ContentState
+          kind="empty"
+          title="아직 올라온 이야기가 없어요"
+          message="첫 이야기를 편하게 남겨보세요."
+        />
+      </Screen>
+    );
+  }
 
   return (
     <Screen>
@@ -43,18 +74,18 @@ export const CommunityScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   list: {
-    gap: spacing.sm,
+    gap: theme.spacing.sm,
     paddingBottom: 96,
-    paddingTop: spacing.sm,
+    paddingTop: theme.spacing.sm,
   },
   listFrame: {
     flex: 1,
   },
   sectionTitle: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 18,
     fontWeight: "900",
   },
-});
+}));

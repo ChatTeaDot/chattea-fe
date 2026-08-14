@@ -13,19 +13,6 @@ export type Message = {
   createdAt?: string;
 };
 
-export type Upload = {
-  id: string;
-  putUrl: string;
-};
-
-export type AttachmentDraft = {
-  id: string;
-  filename: string;
-  contentType: string;
-  status: "ready" | "signing" | "uploading" | "uploaded" | "failed";
-  putUrl?: string;
-};
-
 export type AiSummaryPreview = {
   available: boolean;
   reason: string | null;

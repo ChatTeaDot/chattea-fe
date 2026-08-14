@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 export const MatchHeader = () => {
   return (
@@ -15,25 +15,25 @@ export const MatchHeader = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   wrap: {
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
   },
   eyebrow: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontSize: 13,
     fontWeight: "800",
   },
   title: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 30,
     fontWeight: "900",
   },
   caption: {
-    color: colors.secondary,
+    color: theme.colors.secondary,
     fontSize: 13,
     fontWeight: "800",
   },
-});
+}));

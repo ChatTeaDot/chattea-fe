@@ -172,3 +172,9 @@ export const updateCachedCommunityProfile: MutationUpdaterFunction<
   if (!profile) return;
   cache.writeQuery({ query: COMMUNITY_PROFILE_QUERY, data: { communityProfile: profile } });
 };
+
+export const UPDATE_COMMUNITY_PROFILE_OPTIONS = {
+  awaitRefetchQueries: true,
+  refetchQueries: [COMMUNITY_POSTS_QUERY],
+  update: updateCachedCommunityProfile,
+};

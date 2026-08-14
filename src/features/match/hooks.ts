@@ -1,5 +1,8 @@
 import { useMutation, useQuery } from "@apollo/client/react";
 
+import type { MutationCallbacks } from "@/shared/graphql";
+import { settleMutation } from "@/shared/graphql";
+
 import type { RateScoreInput } from "./api";
 import {
   BLACK_MATCH_CANDIDATES_QUERY,
@@ -11,11 +14,6 @@ import {
   updateLikedCandidate,
 } from "./api";
 import type { LikeUserResult, ScoreSummary } from "./types";
-
-type MutationCallbacks<TResult> = {
-  readonly onSuccess?: (result: TResult) => void;
-  readonly onError?: (error: Error) => void;
-};
 
 class MissingMatchMutationDataError extends Error {
   constructor(readonly operation: string) {
@@ -53,7 +51,7 @@ export const useLikeUser = () => {
     return likeResult;
   };
   const mutate = (userId: string, callbacks?: MutationCallbacks<LikeUserResult>) => {
-    void mutateAsync(userId).then(callbacks?.onSuccess, callbacks?.onError);
+    void settleMutation(mutateAsync(userId), callbacks);
   };
   return {
     ...result,
@@ -73,7 +71,7 @@ export const useRateScore = () => {
     return score;
   };
   const mutate = (input: RateScoreInput, callbacks?: MutationCallbacks<ScoreSummary>) => {
-    void mutateAsync(input).then(callbacks?.onSuccess, callbacks?.onError);
+    void settleMutation(mutateAsync(input), callbacks);
   };
   return {
     ...result,
@@ -93,7 +91,7 @@ export const useBlockUser = () => {
     return blocked;
   };
   const mutate = (userId: string, callbacks?: MutationCallbacks<boolean>) => {
-    void mutateAsync(userId).then(callbacks?.onSuccess, callbacks?.onError);
+    void settleMutation(mutateAsync(userId), callbacks);
   };
   return {
     ...result,

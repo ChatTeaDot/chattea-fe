@@ -2,7 +2,7 @@ import { RefObject } from "react";
 import { ScrollView } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 import { Message } from "../../types";
 import { MessageBubble } from "./message-bubble";
@@ -34,11 +34,11 @@ export const ChatMessageList = ({
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   list: {
-    gap: spacing.sm,
+    gap: theme.spacing.sm,
   },
   listFrame: {
     flex: 1,
   },
-});
+}));

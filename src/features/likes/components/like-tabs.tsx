@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 export type LikeTab = "received" | "sent";
 
@@ -11,8 +11,8 @@ type LikeTabsProps = {
 };
 
 const tabs: { key: LikeTab; label: string }[] = [
-  { key: "received", label: "LIKE" },
-  { key: "sent", label: "내가 보낸 LIKE" },
+  { key: "received", label: "받은 좋아요" },
+  { key: "sent", label: "보낸 좋아요" },
 ];
 
 export const LikeTabs = ({ onChange, value }: LikeTabsProps) => {
@@ -21,7 +21,9 @@ export const LikeTabs = ({ onChange, value }: LikeTabsProps) => {
       {tabs.map((tab) => (
         <Pressable
           key={tab.key}
-          accessibilityRole="button"
+          accessibilityLabel={tab.label}
+          accessibilityRole="tab"
+          accessibilityState={{ selected: value === tab.key }}
           onPress={() => onChange(tab.key)}
           style={[styles.tab, value === tab.key && styles.activeTab]}
         >
@@ -34,31 +36,32 @@ export const LikeTabs = ({ onChange, value }: LikeTabsProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   activeTab: {
-    backgroundColor: colors.primary,
+    backgroundColor: theme.colors.primary,
   },
   activeTabText: {
-    color: colors.primaryText,
+    color: theme.colors.primaryText,
   },
   tab: {
     alignItems: "center",
-    borderRadius: 999,
+    borderRadius: theme.radii.pill,
     flex: 1,
     justifyContent: "center",
-    paddingVertical: spacing.sm,
+    minHeight: 44,
+    paddingVertical: theme.spacing.sm,
   },
   tabs: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 999,
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radii.pill,
     borderWidth: 1,
     flexDirection: "row",
     padding: 4,
   },
   tabText: {
-    color: colors.muted,
+    color: theme.colors.muted,
     fontSize: 14,
     fontWeight: "900",
   },
-});
+}));

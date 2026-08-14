@@ -1,14 +1,18 @@
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, spacing } from "./tokens";
+import { colors, darkColors, radii, spacing, typography } from "./tokens";
 
-export const theme = {
-  colors,
-  spacing,
+export type AppTheme = {
+  colors: { [Key in keyof typeof colors]: string };
+  radii: typeof radii;
+  spacing: typeof spacing;
+  typography: typeof typography;
 };
 
+export const theme: AppTheme = { colors, radii, spacing, typography };
+export const darkTheme: AppTheme = { ...theme, colors: darkColors };
+
 StyleSheet.configure({
-  themes: {
-    light: theme,
-  },
+  themes: { light: theme, dark: darkTheme },
+  settings: { adaptiveThemes: true },
 });

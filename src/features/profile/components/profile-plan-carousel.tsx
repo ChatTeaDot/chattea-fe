@@ -1,8 +1,9 @@
 import { useRef, useState } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, View } from "react-native";
+import { useReducedMotion } from "react-native-reanimated";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 import { SubscriptionPlan } from "../types";
 import { ProfilePlanCard } from "./profile-plan-card";
@@ -13,6 +14,7 @@ type ProfilePlanCarouselProps = {
 
 export const ProfilePlanCarousel = ({ plans }: ProfilePlanCarouselProps) => {
   const planScrollViewRef = useRef<ScrollView>(null);
+  const reducedMotion = useReducedMotion();
   const [activePlanIndex, setActivePlanIndex] = useState(0);
   const [planSectionWidth, setPlanSectionWidth] = useState(0);
   const planSlideWidth = planSectionWidth * 0.96;
@@ -22,7 +24,7 @@ export const ProfilePlanCarousel = ({ plans }: ProfilePlanCarouselProps) => {
     setActivePlanIndex(index);
     planScrollViewRef.current?.scrollTo({
       x: index * planSnapWidth,
-      animated: true,
+      animated: !reducedMotion,
     });
   };
 
@@ -51,7 +53,7 @@ export const ProfilePlanCarousel = ({ plans }: ProfilePlanCarouselProps) => {
         style={styles.planScroller}
       >
         {plans.map((plan) => (
-          <View key={plan.id} style={[styles.planSlide, { width: planSlideWidth }]}>
+          <View key={plan.id} style={styles.planSlide(planSlideWidth)}>
             <ProfilePlanCard plan={plan} />
           </View>
         ))}
@@ -60,31 +62,41 @@ export const ProfilePlanCarousel = ({ plans }: ProfilePlanCarouselProps) => {
         {plans.map((plan, index) => (
           <Pressable
             key={`dot-${plan.id}`}
+            accessibilityLabel={`${plan.name} 플랜 보기`}
             accessibilityRole="button"
+            accessibilityState={{ selected: activePlanIndex === index }}
             onPress={() => setPlanIndex(index)}
-            style={[styles.planDot, activePlanIndex === index && styles.planDotActive]}
-          />
+            style={styles.planDotButton}
+          >
+            <View style={[styles.planDot, activePlanIndex === index && styles.planDotActive]} />
+          </Pressable>
         ))}
       </View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   planDot: {
-    backgroundColor: colors.border,
-    borderRadius: 999,
+    backgroundColor: theme.colors.border,
+    borderRadius: theme.radii.pill,
     height: 6,
     width: 6,
   },
   planDotActive: {
-    backgroundColor: colors.primary,
+    backgroundColor: theme.colors.primary,
     width: 18,
+  },
+  planDotButton: {
+    alignItems: "center",
+    height: 44,
+    justifyContent: "center",
+    width: 44,
   },
   planDots: {
     alignItems: "center",
     flexDirection: "row",
-    gap: spacing.xs,
+    gap: theme.spacing.xs,
     justifyContent: "center",
   },
   planScroller: {
@@ -92,10 +104,11 @@ const styles = StyleSheet.create({
   },
   planSection: {
     alignItems: "center",
-    gap: spacing.sm,
+    gap: theme.spacing.sm,
     width: "100%",
   },
-  planSlide: {
+  planSlide: (width: number) => ({
     marginHorizontal: 2,
-  },
-});
+    width,
+  }),
+}));

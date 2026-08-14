@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 import { CommunityPost } from "../types";
 
@@ -20,29 +20,29 @@ export const CommunityPostCard = ({ post }: CommunityPostCardProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   row: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 22,
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radii.card,
     borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.md,
+    gap: theme.spacing.sm,
+    padding: theme.spacing.md,
   },
   author: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontWeight: "700",
   },
   name: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 18,
     fontWeight: "800",
   },
   body: {
-    color: colors.text,
+    color: theme.colors.text,
   },
   meta: {
-    color: colors.muted,
+    color: theme.colors.muted,
     fontSize: 13,
   },
-});
+}));

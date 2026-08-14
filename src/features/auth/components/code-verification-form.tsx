@@ -2,7 +2,7 @@ import { Text } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 import { AppInput } from "@/shared/components";
-import { colors } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 import { getResendTitle } from "../resend-timer";
 import { AuthActionButton } from "./auth-action-button";
@@ -30,7 +30,7 @@ export const CodeVerificationForm = ({
 }: CodeVerificationFormProps) => {
   return (
     <>
-      <Text style={styles.title}>인증번호</Text>
+      <Text style={styles.title}>문자로 받은 번호를 입력해 주세요</Text>
       <AppInput
         keyboardType="number-pad"
         label="6자리 코드"
@@ -41,7 +41,7 @@ export const CodeVerificationForm = ({
       <AuthActionButton
         disabled={code.length !== 6 || verifyPending || attachPending}
         onPress={onSubmit}
-        title="확인"
+        title="확인하고 계속하기"
       />
       <AuthActionButton
         disabled={resendSeconds > 0 || requestPending}
@@ -54,13 +54,13 @@ export const CodeVerificationForm = ({
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   title: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 22,
     fontWeight: "800",
   },
   help: {
-    color: colors.muted,
+    color: theme.colors.muted,
   },
-});
+}));

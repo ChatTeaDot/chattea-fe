@@ -2,7 +2,7 @@ import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 import { AppButton, AppInput } from "@/shared/components";
-import { spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 type CommunityPostFormProps = {
   body: string;
@@ -40,8 +40,8 @@ export const CommunityPostForm = ({
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   form: {
-    gap: spacing.sm,
+    gap: theme.spacing.sm,
   },
-});
+}));
