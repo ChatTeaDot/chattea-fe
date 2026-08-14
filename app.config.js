@@ -8,7 +8,7 @@ const plugins = [
   [
     "expo-image-picker",
     {
-      photosPermission: "채팅에 공유할 이미지를 선택하기 위해 사진 보관함에 접근합니다.",
+      photosPermission: "프로필과 채팅에 사진을 올리기 위해 사진 보관함에 접근합니다.",
     },
   ],
   [

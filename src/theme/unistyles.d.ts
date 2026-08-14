@@ -1,7 +1,8 @@
-import { theme } from "./unistyles";
+import { darkTheme, lightTheme } from "./unistyles";
 
 declare module "react-native-unistyles/lib/typescript/src/global" {
   export interface UnistylesThemes {
-    light: typeof theme;
+    light: typeof lightTheme;
+    dark: typeof darkTheme;
   }
 }

@@ -1,38 +1,42 @@
 import { NativeTabs } from "expo-router/unstable-native-tabs";
-
-import { useLikedMeCandidates } from "@/features/likes/hooks";
-import { colors } from "@/theme/tokens";
+import { useUnistyles } from "react-native-unistyles";
 
 const TabsLayout = () => {
-  const likedMeCandidates = useLikedMeCandidates(true);
-  const likeCount = likedMeCandidates.data?.length ?? 0;
-
+  const { theme } = useUnistyles();
   return (
     <NativeTabs
       blurEffect="systemDefault"
-      iconColor={{ default: colors.muted, selected: colors.primary }}
+      iconColor={{ default: theme.colors.muted, selected: theme.colors.primary }}
       minimizeBehavior="automatic"
       shadowColor="transparent"
-      tintColor={colors.primary}
+      tabBarRespectsIMEInsets
+      tintColor={theme.colors.primary}
     >
       <NativeTabs.Trigger name="matches">
-        <NativeTabs.Trigger.Label>스와이프</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf={{ default: "house", selected: "house" }} />
+        <NativeTabs.Trigger.Label>인연</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          md={{ default: "favorite_border", selected: "favorite" }}
+          sf={{ default: "heart", selected: "heart.fill" }}
+        />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="community">
         <NativeTabs.Trigger.Label>커뮤니티</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf={{ default: "person.2", selected: "person.2.fill" }} />
+        <NativeTabs.Trigger.Icon
+          md={{ default: "groups", selected: "groups" }}
+          sf={{ default: "person.2", selected: "person.2.fill" }}
+        />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="likes">
-        <NativeTabs.Trigger.Label>LIKE</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf={{ default: "heart", selected: "heart.fill" }} />
-        {likeCount > 0 ? (
-          <NativeTabs.Trigger.Badge>{String(likeCount)}</NativeTabs.Trigger.Badge>
-        ) : null}
+        <NativeTabs.Trigger.Label>좋아요</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          md={{ default: "favorite_border", selected: "favorite" }}
+          sf={{ default: "heart", selected: "heart.fill" }}
+        />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="rooms">
         <NativeTabs.Trigger.Label>채팅</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
+          md={{ default: "chat_bubble_outline", selected: "chat_bubble" }}
           sf={{
             default: "message",
             selected: "message.fill",
@@ -42,6 +46,7 @@ const TabsLayout = () => {
       <NativeTabs.Trigger name="profile">
         <NativeTabs.Trigger.Label>프로필</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
+          md={{ default: "account_circle", selected: "account_circle" }}
           sf={{ default: "person.crop.circle", selected: "person.crop.circle.fill" }}
         />
       </NativeTabs.Trigger>
