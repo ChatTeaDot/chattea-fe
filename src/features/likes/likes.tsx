@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native-unistyles";
 
 import { useMatchCandidates } from "@/features/match/hooks";
 import { MatchCandidate } from "@/features/match/types";
-import { Screen } from "@/shared/components";
+import { ContentState, Screen } from "@/shared/components";
 import { spacing } from "@/theme/tokens";
 
 import { LikeCandidateRow, LikeTab, LikeTabs } from "./components";
@@ -24,6 +24,22 @@ export const LikeScreen = () => {
   return (
     <Screen>
       <LikeTabs onChange={setActiveTab} value={activeTab} />
+      {(activeTab === "received" ? likedMeCandidates : matchCandidates).loading ? (
+        <ContentState kind="loading" />
+      ) : null}
+      {(activeTab === "received" ? likedMeCandidates : matchCandidates).error ? (
+        <ContentState kind="error" />
+      ) : null}
+      {!(activeTab === "received" ? likedMeCandidates : matchCandidates).loading &&
+      data.length === 0 ? (
+        <ContentState
+          kind="empty"
+          title={
+            activeTab === "received" ? "아직 받은 좋아요가 없어요" : "아직 보낸 좋아요가 없어요"
+          }
+          message="부담 없이 둘러보고 마음이 가는 사람에게 좋아요를 보내보세요."
+        />
+      ) : null}
       <LegendList
         contentContainerStyle={styles.list}
         data={data}

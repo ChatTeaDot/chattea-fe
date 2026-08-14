@@ -1,7 +1,7 @@
-import { Pressable, Text } from "react-native";
+import { Platform, Pressable, Text } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, spacing } from "@/theme/tokens";
+import { colors, minimumTouchTarget, radii, spacing } from "@/theme/tokens";
 
 type AppButtonProps = {
   title: string;
@@ -21,7 +21,13 @@ export const AppButton = ({
       accessibilityRole="button"
       disabled={disabled}
       onPress={onPress}
-      style={[styles.button, variant === "soft" && styles.soft, disabled && styles.disabled]}
+      android_ripple={{ color: "#ffffff33" }}
+      style={({ pressed }) => [
+        styles.button,
+        variant === "soft" && styles.soft,
+        pressed && styles.pressed,
+        disabled && styles.disabled,
+      ]}
     >
       <Text style={[styles.text, variant === "soft" && styles.softText]}>{title}</Text>
     </Pressable>
@@ -32,8 +38,8 @@ const styles = StyleSheet.create({
   button: {
     alignItems: "center",
     backgroundColor: colors.primary,
-    borderRadius: 18,
-    minHeight: 52,
+    borderRadius: radii.cta,
+    minHeight: Math.max(52, minimumTouchTarget),
     justifyContent: "center",
     paddingHorizontal: spacing.md,
   },
@@ -41,7 +47,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceSoft,
   },
   disabled: {
-    opacity: 0.5,
+    opacity: 0.38,
+  },
+  pressed: {
+    opacity: Platform.OS === "ios" ? 0.72 : 1,
   },
   text: {
     color: colors.primaryText,

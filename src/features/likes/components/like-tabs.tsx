@@ -11,8 +11,8 @@ type LikeTabsProps = {
 };
 
 const tabs: { key: LikeTab; label: string }[] = [
-  { key: "received", label: "LIKE" },
-  { key: "sent", label: "내가 보낸 LIKE" },
+  { key: "received", label: "받은 좋아요" },
+  { key: "sent", label: "보낸 좋아요" },
 ];
 
 export const LikeTabs = ({ onChange, value }: LikeTabsProps) => {

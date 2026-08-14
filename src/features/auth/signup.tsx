@@ -47,7 +47,7 @@ export const SignupScreen = () => {
   };
 
   return (
-    <Screen>
+    <Screen scroll>
       <SignupHeader />
       <AppInput label="사용자 이름" maxLength={20} onChangeText={setUserName} value={userName} />
       <GenderSelector onChange={setGender} value={gender} />
@@ -71,7 +71,7 @@ export const SignupScreen = () => {
           completeKakao.isPending
         }
         onPress={submit}
-        title="시작하기"
+        title="프로필 만들고 추천 보기"
       />
     </Screen>
   );

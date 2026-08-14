@@ -1,7 +1,7 @@
 import { Text, TextInput, TextInputProps, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, spacing } from "@/theme/tokens";
+import { colors, radii, spacing, typography } from "@/theme/tokens";
 
 type AppInputProps = TextInputProps & {
   label: string;
@@ -11,7 +11,13 @@ export const AppInput = ({ label, ...props }: AppInputProps) => {
   return (
     <View style={styles.wrap}>
       <Text style={styles.label}>{label}</Text>
-      <TextInput placeholderTextColor={colors.muted} style={styles.input} {...props} />
+      <TextInput
+        accessibilityLabel={props.accessibilityLabel ?? label}
+        placeholderTextColor={colors.muted}
+        selectionColor={colors.primary}
+        style={styles.input}
+        {...props}
+      />
     </View>
   );
 };
@@ -22,17 +28,14 @@ const styles = StyleSheet.create({
   },
   label: {
     color: colors.text,
-    fontSize: 14,
-    fontWeight: "700",
+    ...typography.label,
   },
   input: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 18,
-    borderWidth: 1,
+    backgroundColor: colors.surfaceSoft,
+    borderRadius: radii.utility,
     color: colors.text,
     fontSize: 16,
-    minHeight: 54,
+    minHeight: 56,
     paddingHorizontal: spacing.md,
   },
 });

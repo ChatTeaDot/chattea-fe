@@ -5,7 +5,7 @@ import { StyleSheet } from "react-native-unistyles";
 
 import { useLikedMeCandidates } from "@/features/likes/hooks";
 import { useMySubscription } from "@/features/profile";
-import { Screen } from "@/shared/components";
+import { ContentState, Screen } from "@/shared/components";
 import { spacing } from "@/theme/tokens";
 
 import { MatchCandidateCard, MatchCandidateSection } from "./components";
@@ -67,6 +67,15 @@ export const MatchScreen = () => {
 
   return (
     <Screen>
+      {candidates.loading ? <ContentState kind="loading" /> : null}
+      {candidates.error ? <ContentState kind="error" /> : null}
+      {!candidates.loading && !candidates.error && candidates.data?.length === 0 ? (
+        <ContentState
+          kind="empty"
+          title="새로운 추천을 준비하고 있어요"
+          message="조금 뒤 다시 열면 새로운 인연을 확인할 수 있어요."
+        />
+      ) : null}
       {subscription.data?.planId === "black" ? (
         <MatchCandidateSection
           candidates={blackCandidates.data ?? []}

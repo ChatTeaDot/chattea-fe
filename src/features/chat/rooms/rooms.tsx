@@ -1,9 +1,8 @@
 import { LegendList } from "@legendapp/list/react-native";
-import { Text } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { Screen } from "@/shared/components";
-import { colors, spacing } from "@/theme/tokens";
+import { ContentState, Screen } from "@/shared/components";
+import { spacing } from "@/theme/tokens";
 
 import { useRooms } from "../hooks";
 import { Room } from "../types";
@@ -18,7 +17,15 @@ export const RoomListScreen = () => {
 
   return (
     <Screen>
-      <Text style={styles.title}>채팅</Text>
+      {rooms.loading ? <ContentState kind="loading" /> : null}
+      {rooms.error ? <ContentState kind="error" /> : null}
+      {!rooms.loading && !rooms.error && rooms.data?.length === 0 ? (
+        <ContentState
+          kind="empty"
+          title="아직 시작한 대화가 없어요"
+          message="서로 좋아요를 보내면 대화를 시작할 수 있어요."
+        />
+      ) : null}
       <LegendList
         recycleItems={false}
         data={rooms.data ?? []}
@@ -32,11 +39,6 @@ export const RoomListScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  title: {
-    color: colors.text,
-    fontSize: 24,
-    fontWeight: "800",
-  },
   list: {
     gap: spacing.sm,
   },

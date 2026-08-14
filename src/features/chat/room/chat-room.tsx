@@ -1,10 +1,8 @@
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { ScrollView, Text } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
+import { ScrollView } from "react-native";
 
 import { Screen } from "@/shared/components";
-import { colors } from "@/theme/tokens";
 
 import {
   useChatAttachments,
@@ -109,7 +107,6 @@ export const ChatRoomScreen = () => {
 
   return (
     <Screen>
-      <Text style={styles.title}>대화</Text>
       <ChatMessageList
         messages={data}
         onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: true })}
@@ -131,11 +128,3 @@ export const ChatRoomScreen = () => {
     </Screen>
   );
 };
-
-const styles = StyleSheet.create({
-  title: {
-    color: colors.text,
-    fontSize: 24,
-    fontWeight: "800",
-  },
-});

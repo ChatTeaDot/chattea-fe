@@ -48,7 +48,7 @@ export const PhoneScreen = () => {
   };
 
   return (
-    <Screen>
+    <Screen scroll>
       <PhoneHero />
       <AppInput
         keyboardType="phone-pad"
@@ -57,7 +57,11 @@ export const PhoneScreen = () => {
         placeholder="01012345678"
         value={phone}
       />
-      <AuthActionButton disabled={requestCode.isPending} onPress={submit} title="인증번호 받기" />
+      <AuthActionButton
+        disabled={requestCode.isPending}
+        onPress={submit}
+        title="인증번호 받고 계속하기"
+      />
       <AuthActionButton
         disabled={kakaoLogin.isPending}
         onPress={submitKakao}

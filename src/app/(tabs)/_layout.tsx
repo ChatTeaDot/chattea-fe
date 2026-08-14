@@ -16,7 +16,7 @@ const TabsLayout = () => {
       tintColor={colors.primary}
     >
       <NativeTabs.Trigger name="matches">
-        <NativeTabs.Trigger.Label>스와이프</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>추천</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf={{ default: "house", selected: "house" }} />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="community">
@@ -24,7 +24,7 @@ const TabsLayout = () => {
         <NativeTabs.Trigger.Icon sf={{ default: "person.2", selected: "person.2.fill" }} />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="likes">
-        <NativeTabs.Trigger.Label>LIKE</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>좋아요</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf={{ default: "heart", selected: "heart.fill" }} />
         {likeCount > 0 ? (
           <NativeTabs.Trigger.Badge>{String(likeCount)}</NativeTabs.Trigger.Badge>

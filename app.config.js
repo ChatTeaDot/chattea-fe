@@ -60,6 +60,7 @@ module.exports = {
       bundleIdentifier: "com.cyjoon.chattea",
     },
     android: {
+      edgeToEdgeEnabled: true,
       package: "com.cyjoon.chattea",
     },
   },

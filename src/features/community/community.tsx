@@ -2,7 +2,7 @@ import { LegendList } from "@legendapp/list/react-native";
 import { Text } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { Screen } from "@/shared/components";
+import { ContentState, Screen } from "@/shared/components";
 import { colors, spacing } from "@/theme/tokens";
 
 import {
@@ -26,6 +26,15 @@ export const CommunityScreen = () => {
   return (
     <Screen>
       <CommunityTopBar />
+      {posts.loading ? <ContentState kind="loading" /> : null}
+      {posts.error ? <ContentState kind="error" /> : null}
+      {!posts.loading && !posts.error && posts.data?.length === 0 ? (
+        <ContentState
+          kind="empty"
+          title="아직 올라온 이야기가 없어요"
+          message="첫 이야기를 편하게 남겨보세요."
+        />
+      ) : null}
       <CommunityPostSection posts={bestPosts} title="BEST 글" />
 
       <Text style={styles.sectionTitle}>최신 글</Text>
