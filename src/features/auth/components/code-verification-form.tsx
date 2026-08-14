@@ -2,7 +2,7 @@ import { Text } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 import { AppInput } from "@/shared/components";
-import { colors } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 import { getResendTitle } from "../resend-timer";
 import { AuthActionButton } from "./auth-action-button";
@@ -54,13 +54,13 @@ export const CodeVerificationForm = ({
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   title: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 22,
     fontWeight: "800",
   },
   help: {
-    color: colors.muted,
+    color: theme.colors.muted,
   },
-});
+}));

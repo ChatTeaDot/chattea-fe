@@ -1,7 +1,7 @@
 import { Text } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 type ChatRoomStatusProps = {
   isPeerTyping: boolean;
@@ -17,14 +17,14 @@ export const ChatRoomStatus = ({ isPeerTyping, readReceiptVersion }: ChatRoomSta
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   presence: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontSize: 13,
   },
   status: {
-    color: colors.muted,
+    color: theme.colors.muted,
     fontSize: 12,
-    marginTop: spacing.xs,
+    marginTop: theme.spacing.xs,
   },
-});
+}));

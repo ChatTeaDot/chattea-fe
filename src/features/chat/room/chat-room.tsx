@@ -1,11 +1,11 @@
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { ScrollView } from "react-native";
+import { Alert, ScrollView } from "react-native";
+import { useReducedMotion } from "react-native-reanimated";
 
-import { Screen } from "@/shared/components";
+import { ContentState, Screen } from "@/shared/components";
 
 import {
-  useChatAttachments,
   useMarkRoomRead,
   useMessages,
   useReportMessage,
@@ -14,7 +14,7 @@ import {
   useSetTyping,
 } from "../hooks";
 import { Message } from "../types";
-import { AttachmentList, ChatComposer, ChatMessageList, ChatRoomStatus } from "./components";
+import { ChatComposer, ChatMessageList, ChatRoomStatus } from "./components";
 import { getMessageTextLimit, normalizeMessageDraft } from "./utils/message-limits";
 import { reconcileMessages } from "./utils/reconcile-messages";
 
@@ -26,12 +26,12 @@ export const ChatRoomScreen = () => {
   const roomRealtime = useRoomRealtime(roomId);
   const reportMessage = useReportMessage();
   const { mutate: setTyping } = useSetTyping();
-  const { addAttachment, attachments } = useChatAttachments();
   const [draft, setDraft] = useState("");
   const [localMessages, setLocalMessages] = useState<Message[]>([]);
   const listRef = useRef<ScrollView | null>(null);
   const tempIdRef = useRef(0);
   const typingRef = useRef(false);
+  const reducedMotion = useReducedMotion();
   const data = reconcileMessages(messages.data ?? [], localMessages);
   const textLimit = getMessageTextLimit(data.length > 0);
 
@@ -43,9 +43,9 @@ export const ChatRoomScreen = () => {
 
   useEffect(() => {
     if (data.length > 0) {
-      void listRef.current?.scrollToEnd({ animated: true });
+      void listRef.current?.scrollToEnd({ animated: !reducedMotion });
     }
-  }, [data.length]);
+  }, [data.length, reducedMotion]);
 
   useEffect(() => {
     return () => {
@@ -77,7 +77,7 @@ export const ChatRoomScreen = () => {
           setLocalMessages((current) =>
             current.map((message) => (message.id === tempId ? serverMessage : message)),
           );
-          void messages.refetch();
+          void messages.refetch().catch(() => undefined);
         },
         onError: () => {
           setLocalMessages((current) =>
@@ -105,26 +105,62 @@ export const ChatRoomScreen = () => {
     setTyping({ roomId, typing });
   };
 
+  const retryMessages = () => {
+    void messages.refetch().catch(() => undefined);
+  };
+
+  const report = (messageId: string) => {
+    const showError = () => {
+      Alert.alert("메시지를 신고하지 못했어요", "연결을 확인한 뒤 다시 시도해주세요.", [
+        { text: "취소", style: "cancel" },
+        { text: "다시 시도", onPress: () => report(messageId) },
+      ]);
+    };
+
+    reportMessage.mutate(
+      { messageId, reason: "사용자 신고" },
+      {
+        onSuccess: (reported) => {
+          if (reported) {
+            Alert.alert("신고했어요", "검토 후 필요한 조치를 진행할게요.");
+            return;
+          }
+          showError();
+        },
+        onError: showError,
+      },
+    );
+  };
+
+  if (messages.loading && !messages.data) {
+    return (
+      <Screen avoidKeyboard includeTopInset={false}>
+        <ContentState kind="loading" title="대화를 불러오고 있어요" />
+      </Screen>
+    );
+  }
+
+  if (messages.error && !messages.data) {
+    return (
+      <Screen avoidKeyboard includeTopInset={false}>
+        <ContentState kind="error" onRetry={retryMessages} title="대화를 불러오지 못했어요" />
+      </Screen>
+    );
+  }
+
   return (
-    <Screen>
+    <Screen avoidKeyboard includeTopInset={false}>
       <ChatMessageList
         messages={data}
-        onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: true })}
-        onReportMessage={(messageId) => reportMessage.mutate({ messageId, reason: "사용자 신고" })}
+        onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: !reducedMotion })}
+        onReportMessage={report}
         scrollRef={listRef}
       />
       <ChatRoomStatus
         isPeerTyping={roomRealtime.isPeerTyping}
         readReceiptVersion={roomRealtime.readReceiptVersion}
       />
-      <AttachmentList attachments={attachments} />
-      <ChatComposer
-        draft={draft}
-        onAddAttachment={addAttachment}
-        onChangeDraft={updateDraft}
-        onSend={send}
-        textLimit={textLimit}
-      />
+      <ChatComposer draft={draft} onChangeDraft={updateDraft} onSend={send} textLimit={textLimit} />
     </Screen>
   );
 };

@@ -6,7 +6,7 @@ import { StyleSheet } from "react-native-unistyles";
 import { useLikedMeCandidates } from "@/features/likes/hooks";
 import { useMySubscription } from "@/features/profile";
 import { ContentState, Screen } from "@/shared/components";
-import { spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 import { MatchCandidateCard, MatchCandidateSection } from "./components";
 import { useBlackMatchCandidates, useLikeUser, useMatchCandidates, useRateScore } from "./hooks";
@@ -65,17 +65,39 @@ export const MatchScreen = () => {
     });
   };
 
-  return (
-    <Screen>
-      {candidates.loading ? <ContentState kind="loading" /> : null}
-      {candidates.error ? <ContentState kind="error" /> : null}
-      {!candidates.loading && !candidates.error && candidates.data?.length === 0 ? (
+  if (candidates.loading) {
+    return (
+      <Screen>
+        <ContentState kind="loading" />
+      </Screen>
+    );
+  }
+
+  if (candidates.error) {
+    return (
+      <Screen>
+        <ContentState
+          kind="error"
+          onRetry={() => void candidates.refetch().catch(() => undefined)}
+        />
+      </Screen>
+    );
+  }
+
+  if (candidates.data?.length === 0) {
+    return (
+      <Screen>
         <ContentState
           kind="empty"
           title="새로운 추천을 준비하고 있어요"
           message="조금 뒤 다시 열면 새로운 인연을 확인할 수 있어요."
         />
-      ) : null}
+      </Screen>
+    );
+  }
+
+  return (
+    <Screen>
       {subscription.data?.planId === "black" ? (
         <MatchCandidateSection
           candidates={blackCandidates.data ?? []}
@@ -102,11 +124,11 @@ export const MatchScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   list: {
-    gap: spacing.sm,
+    gap: theme.spacing.sm,
   },
   listFrame: {
     flex: 1,
   },
-});
+}));

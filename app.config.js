@@ -6,12 +6,6 @@ const plugins = [
   "expo-splash-screen",
   "expo-image",
   [
-    "expo-image-picker",
-    {
-      photosPermission: "채팅에 공유할 이미지를 선택하기 위해 사진 보관함에 접근합니다.",
-    },
-  ],
-  [
     "@react-native-kakao/core",
     {
       nativeAppKey: kakaoNativeAppKey,
@@ -62,6 +56,7 @@ module.exports = {
     android: {
       edgeToEdgeEnabled: true,
       package: "com.cyjoon.chattea",
+      softwareKeyboardLayoutMode: "resize",
     },
   },
 };

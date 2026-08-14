@@ -1,6 +1,6 @@
 import { gql, type TypedDocumentNode } from "@apollo/client";
 
-import type { AiSummaryPreview, Message, Room, Upload } from "./types";
+import type { AiSummaryPreview, Message, Room } from "./types";
 
 export type WireMessage = Omit<Message, "status" | "mine"> & {
   readonly __typename?: "ChatMessagePayload";
@@ -32,11 +32,6 @@ export type UnreadMessageSummaryInput = {
 export type ReportMessageInput = {
   readonly messageId: string;
   readonly reason: string;
-};
-
-export type CreateUploadInput = {
-  readonly filename: string;
-  readonly contentType: string;
 };
 
 export const CHAT_MESSAGES_POLL_INTERVAL = 5_000;
@@ -145,19 +140,6 @@ export const REPORT_CHAT_MESSAGE_MUTATION: TypedDocumentNode<
 > = gql`
   mutation ReportChatMessage($input: ReportMessageInput!) {
     reportChatMessage(input: $input)
-  }
-`;
-
-export const CREATE_UPLOAD_MUTATION: TypedDocumentNode<
-  { createUpload: Upload },
-  { input: CreateUploadInput }
-> = gql`
-  mutation CreateUpload($input: CreateUploadInput!) {
-    createUpload(input: $input) {
-      __typename
-      id
-      putUrl
-    }
   }
 `;
 

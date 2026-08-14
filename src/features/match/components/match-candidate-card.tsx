@@ -2,7 +2,7 @@ import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 import { AppButton } from "@/shared/components";
-import { colors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 import { MatchCandidate } from "../types";
 
@@ -81,82 +81,82 @@ const getCandidateDetail = (candidate: MatchCandidate) => {
   };
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   card: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 24,
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radii.card,
     borderWidth: 1,
-    gap: spacing.md,
+    gap: theme.spacing.md,
     overflow: "hidden",
-    padding: spacing.md,
+    padding: theme.spacing.md,
   },
   photo: {
     alignItems: "center",
-    backgroundColor: colors.surfaceSoft,
-    borderRadius: 20,
+    backgroundColor: theme.colors.surfaceSoft,
+    borderRadius: theme.radii.utility,
     height: 210,
     justifyContent: "center",
   },
   initial: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontSize: 72,
     fontWeight: "900",
   },
   badge: {
-    backgroundColor: colors.primary,
-    borderRadius: 999,
-    bottom: spacing.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
+    backgroundColor: theme.colors.primary,
+    borderRadius: theme.radii.pill,
+    bottom: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.xs,
     position: "absolute",
-    right: spacing.md,
+    right: theme.spacing.md,
   },
   badgeText: {
-    color: colors.primaryText,
+    color: theme.colors.primaryText,
     fontSize: 12,
     fontWeight: "800",
   },
   profile: {
-    gap: spacing.sm,
+    gap: theme.spacing.sm,
   },
   name: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 24,
     fontWeight: "900",
   },
   meta: {
-    color: colors.secondary,
+    color: theme.colors.secondary,
     fontSize: 13,
     fontWeight: "700",
   },
   intro: {
-    color: colors.muted,
+    color: theme.colors.muted,
     fontSize: 15,
     lineHeight: 22,
   },
   chips: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: spacing.xs,
+    gap: theme.spacing.xs,
   },
   chip: {
-    backgroundColor: colors.surfaceSoft,
-    borderRadius: 999,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
+    backgroundColor: theme.colors.surfaceSoft,
+    borderRadius: theme.radii.pill,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
   },
   chipText: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontSize: 12,
     fontWeight: "800",
   },
   prompt: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 13,
     lineHeight: 19,
   },
   actions: {
-    gap: spacing.sm,
+    gap: theme.spacing.sm,
   },
-});
+}));

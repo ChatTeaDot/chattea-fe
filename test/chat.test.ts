@@ -1,8 +1,7 @@
 import { MockLink } from "@apollo/client/testing";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
-  createUpload,
   deleteMessage,
   editMessage,
   getUnreadMessageSummary,
@@ -12,14 +11,11 @@ import {
   reportMessage,
   sendMessage,
   setTyping,
-  setUploadFetcher,
-  uploadFileToSignedUrl,
 } from "../src/features/chat/api";
 import {
   CHAT_MESSAGES_POLL_INTERVAL,
   CHAT_MESSAGES_QUERY,
   CHAT_ROOMS_QUERY,
-  CREATE_UPLOAD_MUTATION,
   DELETE_CHAT_MESSAGE_MUTATION,
   EDIT_CHAT_MESSAGE_MUTATION,
   getChatMessagesQueryOptions,
@@ -30,7 +26,7 @@ import {
   SET_CHAT_TYPING_MUTATION,
   UNREAD_MESSAGE_SUMMARY_QUERY,
 } from "../src/features/chat/operations";
-import { apolloClient } from "../src/shared/graphql";
+import { apolloClient, settleMutation } from "../src/shared/graphql";
 
 const room = {
   __typename: "ChatRoomPayload" as const,
@@ -138,21 +134,6 @@ describe("chat Apollo operations", () => {
       },
       {
         request: {
-          query: CREATE_UPLOAD_MUTATION,
-          variables: { input: { filename: "photo.jpg", contentType: "image/jpeg" } },
-        },
-        result: {
-          data: {
-            createUpload: {
-              __typename: "UploadPayload",
-              id: "upload-id",
-              putUrl: "https://uploads.invalid/upload-id",
-            },
-          },
-        },
-      },
-      {
-        request: {
           query: UNREAD_MESSAGE_SUMMARY_QUERY,
           variables: {
             input: { planId: "gold", unreadTexts: ["긴 대화"], enabled: true },
@@ -202,9 +183,6 @@ describe("chat Apollo operations", () => {
       reportMessage({ messageId: "server-message", reason: "사용자 신고" }),
     ).resolves.toBe(true);
     await expect(
-      createUpload({ filename: "photo.jpg", contentType: "image/jpeg" }),
-    ).resolves.toMatchObject({ id: "upload-id" });
-    await expect(
       getUnreadMessageSummary({ planId: "gold", unreadTexts: ["긴 대화"], enabled: true }),
     ).resolves.toMatchObject({ available: true, summary: "요약" });
   });
@@ -216,36 +194,16 @@ describe("chat Apollo operations", () => {
     });
     expect(CHAT_MESSAGES_POLL_INTERVAL).toBe(5_000);
   });
+});
 
-  it("puts attachment bytes to signed upload URL", async () => {
-    const calls: { url: string; init: RequestInit }[] = [];
-    setUploadFetcher(async (url, init) => {
-      calls.push({ url: String(url), init: init! });
-      return new Response(null, { status: 200 });
-    });
-
-    await uploadFileToSignedUrl({
-      putUrl: "https://uploads.invalid/upload-id",
-      contentType: "image/jpeg",
-      body: "bytes",
-    });
-
-    expect(calls[0]).toMatchObject({
-      url: "https://uploads.invalid/upload-id",
-      init: { method: "PUT", body: "bytes" },
-    });
-    expect((calls[0]!.init.headers as Record<string, string>)["content-type"]).toBe("image/jpeg");
-  });
-
-  it("fails closed when attachment upload PUT fails", async () => {
-    setUploadFetcher(async () => new Response(null, { status: 500 }));
+describe("chat mutation callbacks", () => {
+  it("settles background failures with or without an error callback", async () => {
+    const onError = vi.fn();
 
     await expect(
-      uploadFileToSignedUrl({
-        putUrl: "https://uploads.invalid/upload-id",
-        contentType: "image/jpeg",
-        body: "bytes",
-      }),
-    ).rejects.toThrow("UPLOAD_PUT_FAILED");
+      settleMutation(Promise.reject(new Error("network")), { onError }),
+    ).resolves.toBeUndefined();
+    expect(onError).toHaveBeenCalledOnce();
+    await expect(settleMutation(Promise.reject(new Error("network")))).resolves.toBeUndefined();
   });
 });

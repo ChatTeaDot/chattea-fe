@@ -27,8 +27,16 @@ export const colors = {
   primaryText: palette.onPrimary,
   secondary: palette.ink,
   accent: palette.magenta,
+  accentText: palette.body,
   danger: palette.danger,
   success: palette.success,
+  ripple: "#ffffff33",
+  transparent: "transparent",
+  planBasic: "#e8f2ff",
+  planBasicBorder: "#9cc6ff",
+  planGold: "#fff4cc",
+  planGoldBorder: "#e7bc45",
+  planBlack: "#07080b",
   shadow: palette.primary,
 };
 
@@ -41,6 +49,13 @@ export const darkColors = {
   body: "#ffffff",
   muted: "#aaaab0",
   border: "#38383e",
+  ripple: "#ffffff24",
+  transparent: "transparent",
+  planBasic: "#17263a",
+  planBasicBorder: "#38689a",
+  planGold: "#342d17",
+  planGoldBorder: "#806b31",
+  planBlack: "#07080b",
 };
 
 export const spacing = { xs: 4, sm: 8, control: 10, md: 16, lg: 24, screen: 34, xl: 48, xxl: 64 };

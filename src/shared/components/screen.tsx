@@ -1,55 +1,64 @@
 import { PropsWithChildren } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, useColorScheme, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, darkColors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
-type ScreenProps = PropsWithChildren<{ scroll?: boolean }>;
+type ScreenProps = PropsWithChildren<{
+  avoidKeyboard?: boolean;
+  includeTopInset?: boolean;
+  scroll?: boolean;
+}>;
 
-/** Native-stack owns the top safe area; this container owns keyboard and horizontal rhythm. */
-export const Screen = ({ children, scroll = false }: ScreenProps) => {
+export const Screen = ({
+  avoidKeyboard = false,
+  children,
+  includeTopInset = true,
+  scroll = false,
+}: ScreenProps) => {
   const insets = useSafeAreaInsets();
-  const scheme = useColorScheme();
-  const content = scroll ? (
-    <ScrollView
-      automaticallyAdjustKeyboardInsets
-      contentContainerStyle={styles.scrollContent}
-      keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
-      keyboardShouldPersistTaps="handled"
-    >
-      {children}
-    </ScrollView>
-  ) : (
-    <View style={styles.content}>{children}</View>
-  );
+  const insetStyle = {
+    paddingBottom: Math.max(insets.bottom, 16),
+    paddingTop: includeTopInset ? insets.top : 0,
+  };
+
+  if (scroll) {
+    return (
+      <View style={styles.safeArea}>
+        <ScrollView
+          automaticallyAdjustKeyboardInsets={Platform.OS === "ios"}
+          contentContainerStyle={[styles.scrollContent, insetStyle]}
+          keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
+          keyboardShouldPersistTaps="handled"
+        >
+          {children}
+        </ScrollView>
+      </View>
+    );
+  }
+
+  const content = <View style={[styles.safeArea, styles.content, insetStyle]}>{children}</View>;
+
+  if (!avoidKeyboard) return content;
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      keyboardVerticalOffset={Platform.OS === "ios" ? insets.top : 0}
-      style={[
-        styles.safeArea,
-        { backgroundColor: scheme === "dark" ? darkColors.background : colors.background },
-      ]}
+      enabled={Platform.OS === "ios"}
+      style={styles.safeArea}
     >
       {content}
     </KeyboardAvoidingView>
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: { flex: 1 },
-  content: {
-    flex: 1,
-    gap: spacing.md,
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.md,
-  },
+const styles = StyleSheet.create((theme: AppTheme) => ({
+  safeArea: { backgroundColor: theme.colors.background, flex: 1 },
+  content: { gap: theme.spacing.md, paddingHorizontal: theme.spacing.md },
   scrollContent: {
     flexGrow: 1,
-    gap: spacing.md,
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.screen,
+    gap: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
   },
-});
+}));

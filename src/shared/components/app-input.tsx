@@ -1,20 +1,21 @@
 import { Text, TextInput, TextInputProps, View } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-import { colors, radii, spacing, typography } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 type AppInputProps = TextInputProps & {
   label: string;
 };
 
 export const AppInput = ({ label, ...props }: AppInputProps) => {
+  const { theme } = useUnistyles() as { theme: AppTheme };
   return (
     <View style={styles.wrap}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         accessibilityLabel={props.accessibilityLabel ?? label}
-        placeholderTextColor={colors.muted}
-        selectionColor={colors.primary}
+        placeholderTextColor={theme.colors.muted}
+        selectionColor={theme.colors.primary}
         style={styles.input}
         {...props}
       />
@@ -22,20 +23,20 @@ export const AppInput = ({ label, ...props }: AppInputProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   wrap: {
-    gap: spacing.xs,
+    gap: theme.spacing.xs,
   },
   label: {
-    color: colors.text,
-    ...typography.label,
+    color: theme.colors.text,
+    ...theme.typography.label,
   },
   input: {
-    backgroundColor: colors.surfaceSoft,
-    borderRadius: radii.utility,
-    color: colors.text,
+    backgroundColor: theme.colors.surfaceSoft,
+    borderRadius: theme.radii.utility,
+    color: theme.colors.text,
     fontSize: 16,
     minHeight: 56,
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: theme.spacing.md,
   },
-});
+}));

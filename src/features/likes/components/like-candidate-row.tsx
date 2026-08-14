@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 import { MatchCandidate } from "@/features/match/types";
-import { colors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 type LikeCandidateRowProps = {
   candidate: MatchCandidate;
@@ -31,21 +31,21 @@ export const LikeCandidateRow = ({ candidate }: LikeCandidateRowProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   initial: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontSize: 24,
     fontWeight: "900",
   },
   name: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 17,
     fontWeight: "900",
   },
   photo: {
     alignItems: "center",
-    backgroundColor: colors.surfaceSoft,
-    borderRadius: 28,
+    backgroundColor: theme.colors.surfaceSoft,
+    borderRadius: theme.radii.card,
     height: 56,
     justifyContent: "center",
     overflow: "hidden",
@@ -56,22 +56,22 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   region: {
-    color: colors.muted,
+    color: theme.colors.muted,
     fontSize: 13,
     fontWeight: "700",
   },
   row: {
     alignItems: "center",
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 18,
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radii.utility,
     borderWidth: 1,
     flexDirection: "row",
-    gap: spacing.md,
-    padding: spacing.md,
+    gap: theme.spacing.md,
+    padding: theme.spacing.md,
   },
   rowText: {
     flex: 1,
-    gap: spacing.xs,
+    gap: theme.spacing.xs,
   },
-});
+}));

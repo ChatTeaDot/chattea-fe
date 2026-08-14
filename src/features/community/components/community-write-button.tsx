@@ -1,7 +1,7 @@
 import { Pressable, Text } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 export const CommunityWriteButton = () => {
   return (
@@ -11,21 +11,21 @@ export const CommunityWriteButton = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   writeButton: {
     alignItems: "center",
-    backgroundColor: colors.primary,
-    borderRadius: 999,
-    bottom: spacing.xl,
+    backgroundColor: theme.colors.primary,
+    borderRadius: theme.radii.pill,
+    bottom: theme.spacing.xl,
     height: 52,
     justifyContent: "center",
     position: "absolute",
-    right: spacing.lg,
+    right: theme.spacing.lg,
     width: 52,
   },
   writeIcon: {
-    color: colors.primaryText,
+    color: theme.colors.primaryText,
     fontSize: 26,
     fontWeight: "900",
   },
-});
+}));

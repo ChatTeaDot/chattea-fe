@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 import { SubscriptionPlan } from "../types";
 
@@ -29,32 +29,32 @@ const formatPrice = (price: number): string => {
   return price === 0 ? "무료" : `월 ${price.toLocaleString("ko-KR")}원`;
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   row: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 22,
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radii.card,
     borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.md,
+    gap: theme.spacing.sm,
+    padding: theme.spacing.md,
   },
   planTitle: {
     alignItems: "baseline",
     flexDirection: "row",
-    gap: spacing.sm,
+    gap: theme.spacing.sm,
   },
   name: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 18,
     fontWeight: "800",
   },
   price: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontSize: 15,
     fontWeight: "700",
   },
   benefit: {
-    color: colors.muted,
+    color: theme.colors.muted,
     fontSize: 14,
   },
-});
+}));
