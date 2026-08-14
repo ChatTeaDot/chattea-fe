@@ -1042,8 +1042,8 @@ const ProductCard = ({ product, onPress }: { product: BillingProduct; onPress: (
         <MetaText>
           {product.kind === "subscription" ? "매월 자동 갱신" : "필요할 때 한 번만 사용"}
         </MetaText>
+        <MetaText>가격은 앱 스토어에서 확인할 수 있어요.</MetaText>
       </View>
-      <Text style={styles.price}>{product.priceKrw.toLocaleString("ko-KR")}원</Text>
     </View>
     <NativeButton label="구매하기" onPress={onPress} fullWidth />
   </NativeCard>
@@ -1186,5 +1186,4 @@ const styles = StyleSheet.create((theme) => ({
   choiceSelected: { backgroundColor: theme.colors.primary },
   choiceText: { color: theme.colors.text, fontSize: 15, fontWeight: "700" },
   choiceTextSelected: { color: theme.colors.primaryText },
-  price: { color: theme.colors.text, fontSize: 17, fontWeight: "800" },
 }));

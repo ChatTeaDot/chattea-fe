@@ -90,7 +90,6 @@ export type BillingProduct = {
   id: string;
   kind: string;
   name: string;
-  priceKrw: number;
 };
 
 export type ConsumableBalance = {

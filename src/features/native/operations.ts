@@ -273,7 +273,6 @@ export const BILLING_PRODUCTS_QUERY = gql`
       id
       kind
       name
-      priceKrw
     }
   }
 `;
