@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 import { MatchCandidate } from "../types";
 
@@ -29,16 +29,16 @@ export const MatchCandidateSection = ({
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   list: {
-    gap: spacing.sm,
+    gap: theme.spacing.sm,
   },
   section: {
-    gap: spacing.sm,
+    gap: theme.spacing.sm,
   },
   sectionTitle: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 18,
     fontWeight: "800",
   },
-});
+}));

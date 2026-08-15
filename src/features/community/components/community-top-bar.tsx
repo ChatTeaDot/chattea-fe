@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 export const CommunityTopBar = () => {
   return (
@@ -31,28 +31,28 @@ export const CommunityTopBar = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   header: {
     alignItems: "center",
     flexDirection: "row",
-    gap: spacing.md,
+    gap: theme.spacing.md,
     justifyContent: "space-between",
   },
   headerActions: {
     alignItems: "center",
     flexDirection: "row",
-    gap: spacing.sm,
+    gap: theme.spacing.sm,
   },
   iconButton: {
     alignItems: "center",
-    borderRadius: 999,
-    height: 36,
+    borderRadius: theme.radii.pill,
+    height: 44,
     justifyContent: "center",
-    width: 36,
+    width: 44,
   },
   notificationBell: {
     borderBottomWidth: 0,
-    borderColor: colors.text,
+    borderColor: theme.colors.text,
     borderTopLeftRadius: 9,
     borderTopRightRadius: 9,
     borderWidth: 1.8,
@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
     width: 16,
   },
   notificationClapper: {
-    backgroundColor: colors.text,
-    borderRadius: 999,
+    backgroundColor: theme.colors.text,
+    borderRadius: theme.radii.pill,
     height: 3,
     marginTop: 1,
     width: 5,
@@ -73,25 +73,25 @@ const styles = StyleSheet.create({
     width: 22,
   },
   notificationHandle: {
-    backgroundColor: colors.text,
-    borderRadius: 999,
+    backgroundColor: theme.colors.text,
+    borderRadius: theme.radii.pill,
     height: 2,
     marginBottom: -1,
     width: 5,
   },
   notificationRim: {
-    backgroundColor: colors.text,
-    borderRadius: 999,
+    backgroundColor: theme.colors.text,
+    borderRadius: theme.radii.pill,
     height: 2,
     marginTop: -1,
     width: 19,
   },
   profileButton: {
     alignItems: "center",
-    borderRadius: 999,
-    height: 36,
+    borderRadius: theme.radii.pill,
+    height: 44,
     justifyContent: "center",
-    width: 36,
+    width: 44,
   },
   profileGlyph: {
     alignItems: "center",
@@ -100,23 +100,23 @@ const styles = StyleSheet.create({
     width: 22,
   },
   profileGlyphBody: {
-    borderColor: colors.text,
-    borderRadius: 999,
+    borderColor: theme.colors.text,
+    borderRadius: theme.radii.pill,
     borderWidth: 1.8,
     height: 8,
     marginTop: 2,
     width: 18,
   },
   profileGlyphHead: {
-    borderColor: colors.text,
-    borderRadius: 999,
+    borderColor: theme.colors.text,
+    borderRadius: theme.radii.pill,
     borderWidth: 1.8,
     height: 8,
     width: 8,
   },
   title: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 28,
     fontWeight: "900",
   },
-});
+}));

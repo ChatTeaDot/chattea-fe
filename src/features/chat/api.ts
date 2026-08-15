@@ -2,7 +2,6 @@ import { apolloClient } from "@/shared/graphql";
 
 import { removeMessageFromCache, replaceMessageInCache } from "./cache";
 import type {
-  CreateUploadInput,
   EditMessageInput,
   ReportMessageInput,
   SendMessageInput,
@@ -12,7 +11,6 @@ import type {
 import {
   CHAT_MESSAGES_QUERY,
   CHAT_ROOMS_QUERY,
-  CREATE_UPLOAD_MUTATION,
   DELETE_CHAT_MESSAGE_MUTATION,
   EDIT_CHAT_MESSAGE_MUTATION,
   getChatMessagesVariables,
@@ -22,15 +20,7 @@ import {
   SET_CHAT_TYPING_MUTATION,
   UNREAD_MESSAGE_SUMMARY_QUERY,
 } from "./operations";
-import type { AiSummaryPreview, Message, Room, Upload } from "./types";
-
-type Fetcher = typeof fetch;
-
-let uploadFetch: Fetcher = fetch;
-
-export const setUploadFetcher = (fetcher: Fetcher) => {
-  uploadFetch = fetcher;
-};
+import type { AiSummaryPreview, Message, Room } from "./types";
 
 export const formatReceivedMessage = (message: WireMessage): Message => ({
   id: message.id,
@@ -148,30 +138,4 @@ export const reportMessage = async (input: ReportMessageInput): Promise<boolean>
     variables: { input },
   });
   return data?.reportChatMessage ?? false;
-};
-
-export const createUpload = async (input: CreateUploadInput): Promise<Upload> => {
-  const { data } = await apolloClient.mutate({
-    mutation: CREATE_UPLOAD_MUTATION,
-    variables: { input },
-  });
-  if (!data) {
-    throw new Error("CREATE_UPLOAD_EMPTY_RESPONSE");
-  }
-  return data.createUpload;
-};
-
-export const uploadFileToSignedUrl = async (input: {
-  readonly putUrl: string;
-  readonly contentType: string;
-  readonly body: Blob | ArrayBuffer | string;
-}) => {
-  const response = await uploadFetch(input.putUrl, {
-    method: "PUT",
-    headers: { "content-type": input.contentType },
-    body: input.body,
-  });
-  if (!response.ok) {
-    throw new Error("UPLOAD_PUT_FAILED");
-  }
 };

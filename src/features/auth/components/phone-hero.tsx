@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 export const PhoneHero = () => {
   return (
@@ -13,29 +13,29 @@ export const PhoneHero = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   copy: {
-    color: colors.muted,
+    color: theme.colors.muted,
     fontSize: 15,
     lineHeight: 22,
   },
   hero: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 28,
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radii.card,
     borderWidth: 1,
     gap: 10,
     padding: 22,
   },
   kicker: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontSize: 13,
     fontWeight: "900",
   },
   title: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 32,
     fontWeight: "900",
     lineHeight: 38,
   },
-});
+}));

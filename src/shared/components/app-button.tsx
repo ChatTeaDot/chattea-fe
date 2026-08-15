@@ -1,13 +1,14 @@
-import { Pressable, Text } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
+import { Platform, Pressable, Text } from "react-native";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-import { colors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 type AppButtonProps = {
   title: string;
   onPress: () => void;
   disabled?: boolean;
-  variant?: "filled" | "soft";
+  variant?: "filled" | "outlined" | "soft" | "text";
+  accessibilityLabel?: string;
 };
 
 export const AppButton = ({
@@ -15,40 +16,62 @@ export const AppButton = ({
   onPress,
   disabled = false,
   variant = "filled",
+  accessibilityLabel,
 }: AppButtonProps) => {
+  const { theme } = useUnistyles() as { theme: AppTheme };
   return (
     <Pressable
+      accessibilityLabel={accessibilityLabel ?? title}
       accessibilityRole="button"
       disabled={disabled}
       onPress={onPress}
-      style={[styles.button, variant === "soft" && styles.soft, disabled && styles.disabled]}
+      android_ripple={{ color: theme.colors.ripple }}
+      style={({ pressed }) => [
+        styles.button,
+        variant === "soft" && styles.soft,
+        variant === "outlined" && styles.outlined,
+        variant === "text" && styles.textButton,
+        pressed && styles.pressed,
+        disabled && styles.disabled,
+      ]}
     >
-      <Text style={[styles.text, variant === "soft" && styles.softText]}>{title}</Text>
+      <Text style={[styles.text, variant !== "filled" && styles.secondaryText]}>{title}</Text>
     </Pressable>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   button: {
     alignItems: "center",
-    backgroundColor: colors.primary,
-    borderRadius: 18,
+    backgroundColor: theme.colors.primary,
+    borderRadius: theme.radii.cta,
     minHeight: 52,
     justifyContent: "center",
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: theme.spacing.md,
   },
   soft: {
-    backgroundColor: colors.surfaceSoft,
+    backgroundColor: theme.colors.surfaceSoft,
+  },
+  outlined: {
+    backgroundColor: theme.colors.transparent,
+    borderColor: theme.colors.primary,
+    borderWidth: 1,
+  },
+  textButton: {
+    backgroundColor: theme.colors.transparent,
   },
   disabled: {
-    opacity: 0.5,
+    opacity: 0.38,
+  },
+  pressed: {
+    opacity: Platform.OS === "ios" ? 0.72 : 1,
   },
   text: {
-    color: colors.primaryText,
+    color: theme.colors.primaryText,
     fontSize: 16,
     fontWeight: "800",
   },
-  softText: {
-    color: colors.primary,
+  secondaryText: {
+    color: theme.colors.primary,
   },
-});
+}));

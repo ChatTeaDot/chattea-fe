@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 type ProfilePurchaseGridProps = {
   onSubscriptionPress: () => void;
@@ -34,50 +34,50 @@ export const ProfilePurchaseGrid = ({ onSubscriptionPress }: ProfilePurchaseGrid
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   plusIcon: {
-    backgroundColor: colors.surface,
-    borderColor: colors.primary,
-    borderRadius: 999,
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.primary,
+    borderRadius: theme.radii.pill,
     borderWidth: 1,
-    color: colors.primary,
+    color: theme.colors.primary,
     fontSize: 18,
     fontWeight: "900",
     height: 24,
     lineHeight: 22,
     position: "absolute",
-    right: -spacing.xs,
+    right: -theme.spacing.xs,
     textAlign: "center",
-    top: -spacing.xs,
+    top: -theme.spacing.xs,
     width: 24,
     zIndex: 1,
   },
   purchaseAction: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontSize: 13,
     fontWeight: "900",
     textAlign: "center",
   },
   purchaseBox: {
     alignItems: "center",
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 18,
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radii.utility,
     borderWidth: 1,
     flex: 1,
     justifyContent: "center",
     minHeight: 88,
     overflow: "visible",
-    padding: spacing.md,
-    paddingTop: spacing.lg,
+    padding: theme.spacing.md,
+    paddingTop: theme.spacing.lg,
   },
   purchaseGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: spacing.sm,
+    gap: theme.spacing.sm,
   },
   purchaseName: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 16,
     fontWeight: "900",
     textAlign: "center",
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   purchaseText: {
     alignItems: "center",
     flex: 1,
-    gap: spacing.xs,
+    gap: theme.spacing.xs,
     justifyContent: "center",
   },
-});
+}));

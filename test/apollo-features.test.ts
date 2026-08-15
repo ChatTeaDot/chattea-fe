@@ -6,6 +6,8 @@ import {
   COMMUNITY_POSTS_QUERY,
   CREATE_COMMUNITY_COMMENT_MUTATION,
   CREATE_COMMUNITY_POST_MUTATION,
+  UPDATE_COMMUNITY_PROFILE_MUTATION,
+  UPDATE_COMMUNITY_PROFILE_OPTIONS,
   updateCommunityPostList,
 } from "../src/features/community/api";
 import { LIKED_ME_CANDIDATES_QUERY } from "../src/features/likes/api";
@@ -148,5 +150,55 @@ describe("Apollo feature operations", () => {
     expect(cache.readQuery({ query: MATCH_CANDIDATES_QUERY })).toMatchObject({
       matchCandidates: [{ id: "user-2", likedByMe: true }],
     });
+  });
+
+  it("waits for the profile post refetch and surfaces its failure", async () => {
+    let postRequests = 0;
+    const client = new ApolloClient({
+      cache: new InMemoryCache(),
+      link: new ApolloLink(
+        (operation) =>
+          new Observable((observer) => {
+            if (operation.operationName === "UpdateCommunityProfile") {
+              observer.next({ data: { updateCommunityProfile: { name: "새 이름" } } });
+              observer.complete();
+              return;
+            }
+
+            postRequests += 1;
+            if (postRequests === 1) {
+              observer.next({ data: { communityPosts: [] } });
+              observer.complete();
+              return;
+            }
+
+            observer.error(new Error("refetch failed"));
+          }),
+      ),
+    });
+    const watchedPosts = client.watchQuery({
+      fetchPolicy: "network-only",
+      query: COMMUNITY_POSTS_QUERY,
+    });
+    let subscription: ReturnType<typeof watchedPosts.subscribe>;
+
+    await new Promise<void>((resolve, reject) => {
+      subscription = watchedPosts.subscribe({
+        error: reject,
+        next: (result) => {
+          if (!result.loading) resolve();
+        },
+      });
+    });
+
+    await expect(
+      client.mutate({
+        ...UPDATE_COMMUNITY_PROFILE_OPTIONS,
+        mutation: UPDATE_COMMUNITY_PROFILE_MUTATION,
+        variables: { input: { name: "새 이름" } },
+      }),
+    ).rejects.toThrow("refetch failed");
+    subscription!.unsubscribe();
+    expect(postRequests).toBeGreaterThan(1);
   });
 });

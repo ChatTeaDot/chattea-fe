@@ -1,8 +1,8 @@
+import { useQuery } from "@apollo/client/react";
+import { router, useSegments } from "expo-router";
 import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
 import { Text, View } from "react-native";
-import { useQuery } from "@apollo/client/react";
-import { router, useSegments } from "expo-router";
 import { StyleSheet } from "react-native-unistyles";
 
 import { useSession } from "@/providers/session-provider";
@@ -16,7 +16,7 @@ const PUBLIC_ROOTS = new Set(["index", "phone", "code", "signup"]);
 
 export const NativeSessionGate = ({ children }: PropsWithChildren) => {
   const { hydrated, session, setSession } = useSession();
-  const segments = useSegments();
+  const segments = useSegments() as string[];
   const user = useQuery<MeData>(ME_QUERY, {
     skip: !hydrated || !session,
     fetchPolicy: "cache-and-network",

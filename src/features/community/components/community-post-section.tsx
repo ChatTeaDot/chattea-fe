@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 import { CommunityPost } from "../types";
 import { CommunityPostCard } from "./community-post-card";
@@ -16,7 +16,7 @@ export const CommunityPostSection = ({ posts, title }: CommunityPostSectionProps
     <>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>{title}</Text>
-        <Pressable accessibilityRole="button">
+        <Pressable accessibilityRole="button" style={styles.moreButton}>
           <Text style={styles.moreText}>더보기</Text>
         </Pressable>
       </View>
@@ -30,24 +30,30 @@ export const CommunityPostSection = ({ posts, title }: CommunityPostSectionProps
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   bestList: {
-    gap: spacing.sm,
+    gap: theme.spacing.sm,
   },
   moreText: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontSize: 13,
     fontWeight: "900",
+  },
+  moreButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 44,
+    minWidth: 44,
   },
   sectionHeader: {
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: spacing.md,
+    marginTop: theme.spacing.md,
   },
   sectionTitle: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 18,
     fontWeight: "900",
   },
-});
+}));

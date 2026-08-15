@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 export const SignupHeader = () => {
   return (
@@ -13,9 +13,9 @@ export const SignupHeader = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   copy: {
-    color: colors.muted,
+    color: theme.colors.muted,
     fontSize: 15,
     lineHeight: 22,
   },
@@ -23,13 +23,13 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   kicker: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontSize: 13,
     fontWeight: "900",
   },
   title: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 28,
     fontWeight: "900",
   },
-});
+}));

@@ -1,46 +1,61 @@
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
-import { useColorScheme } from "react-native";
+import { Stack } from "expo-router";
+import { Platform } from "react-native";
+import { useReducedMotion } from "react-native-reanimated";
+import { useUnistyles } from "react-native-unistyles";
 
 import { NativeSessionGate } from "@/features/native/session-gate";
 import { RootProvider, withSentry } from "@/providers";
+import type { AppTheme } from "@/theme/unistyles";
 
-const RootLayout = () => {
-  const colorScheme = useColorScheme();
+const ThemedStack = () => {
+  const { theme } = useUnistyles() as { theme: AppTheme };
+  const reducedMotion = useReducedMotion();
   return (
-    <RootProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <NativeSessionGate>
-          <Stack screenOptions={{ headerShadowVisible: false }}>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="phone" options={{ headerShown: false }} />
-            <Stack.Screen name="code" options={{ headerShown: false }} />
-            <Stack.Screen name="signup" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="profile-completion"
-              options={{ presentation: "formSheet", title: "프로필 완성" }}
-            />
-            <Stack.Screen
-              name="profile/edit"
-              options={{ presentation: "formSheet", title: "프로필 편집" }}
-            />
-            <Stack.Screen name="settings" options={{ title: "설정" }} />
-            <Stack.Screen name="notifications" options={{ title: "알림" }} />
-            <Stack.Screen
-              name="premium"
-              options={{ presentation: "formSheet", title: "구독과 아이템" }}
-            />
-            <Stack.Screen
-              name="community/new"
-              options={{ presentation: "formSheet", title: "글 쓰기" }}
-            />
-            <Stack.Screen name="community/[post-id]" options={{ title: "커뮤니티" }} />
-            <Stack.Screen name="rooms/[room-id]" options={{ title: "대화" }} />
-          </Stack>
-        </NativeSessionGate>
-      </ThemeProvider>
-    </RootProvider>
+    <Stack
+      screenOptions={{
+        animation: reducedMotion ? "none" : Platform.OS === "ios" ? "default" : "slide_from_right",
+        contentStyle: { backgroundColor: theme.colors.background },
+        headerBackButtonDisplayMode: "minimal",
+        headerShadowVisible: false,
+        headerStyle: { backgroundColor: theme.colors.background },
+        headerTintColor: theme.colors.primary,
+        headerTitleStyle: { color: theme.colors.text, fontWeight: "700" },
+      }}
+    >
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="phone" options={{ title: "로그인" }} />
+      <Stack.Screen name="code" options={{ title: "전화번호 인증" }} />
+      <Stack.Screen name="signup" options={{ title: "프로필 만들기" }} />
+      <Stack.Screen name="room/[room-id]" options={{ title: "대화", gestureEnabled: true }} />
+      <Stack.Screen
+        name="profile-completion"
+        options={{ presentation: "formSheet", title: "프로필 완성" }}
+      />
+      <Stack.Screen
+        name="profile/edit"
+        options={{ presentation: "formSheet", title: "프로필 편집" }}
+      />
+      <Stack.Screen name="settings" options={{ title: "설정" }} />
+      <Stack.Screen name="notifications" options={{ title: "알림" }} />
+      <Stack.Screen
+        name="premium"
+        options={{ presentation: "formSheet", title: "구독과 아이템" }}
+      />
+      <Stack.Screen
+        name="community/new"
+        options={{ presentation: "formSheet", title: "글 쓰기" }}
+      />
+      <Stack.Screen name="community/[post-id]" options={{ title: "커뮤니티" }} />
+      <Stack.Screen name="rooms/[room-id]" options={{ title: "대화" }} />
+    </Stack>
   );
 };
-
+const RootLayout = () => (
+  <RootProvider>
+    <NativeSessionGate>
+      <ThemedStack />
+    </NativeSessionGate>
+  </RootProvider>
+);
 export default withSentry(RootLayout);

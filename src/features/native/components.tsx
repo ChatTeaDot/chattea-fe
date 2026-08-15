@@ -1,6 +1,6 @@
+import { Image } from "expo-image";
 import type { PropsWithChildren, ReactNode } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
-import { Image } from "expo-image";
 import { StyleSheet } from "react-native-unistyles";
 
 type ButtonProps = {

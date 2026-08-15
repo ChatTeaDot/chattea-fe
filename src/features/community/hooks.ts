@@ -1,5 +1,8 @@
 import { useMutation, useQuery } from "@apollo/client/react";
 
+import type { MutationCallbacks } from "@/shared/graphql";
+import { settleMutation } from "@/shared/graphql";
+
 import type {
   CreateCommunityCommentInput,
   CreateCommunityPostInput,
@@ -13,16 +16,11 @@ import {
   CREATE_COMMUNITY_POST_MUTATION,
   REPORT_COMMUNITY_POST_MUTATION,
   UPDATE_COMMUNITY_PROFILE_MUTATION,
-  updateCachedCommunityProfile,
+  UPDATE_COMMUNITY_PROFILE_OPTIONS,
   updateCommunityCommentCount,
   updateCommunityPostList,
 } from "./api";
 import type { CommunityComment, CommunityPost, CommunityProfile } from "./types";
-
-type MutationCallbacks<TResult> = {
-  readonly onSuccess?: (result: TResult) => void;
-  readonly onError?: (error: Error) => void;
-};
 
 class MissingCommunityMutationDataError extends Error {
   constructor(readonly operation: string) {
@@ -55,7 +53,7 @@ export const useCreateCommunityPost = () => {
     input: CreateCommunityPostInput,
     callbacks?: MutationCallbacks<CommunityPost>,
   ) => {
-    void mutateAsync(input).then(callbacks?.onSuccess, callbacks?.onError);
+    void settleMutation(mutateAsync(input), callbacks);
   };
   return {
     ...result,
@@ -80,7 +78,7 @@ export const useCreateCommunityComment = () => {
     input: CreateCommunityCommentInput,
     callbacks?: MutationCallbacks<CommunityComment>,
   ) => {
-    void mutateAsync(input).then(callbacks?.onSuccess, callbacks?.onError);
+    void settleMutation(mutateAsync(input), callbacks);
   };
   return {
     ...result,
@@ -100,7 +98,7 @@ export const useReportCommunityPost = () => {
     return reported;
   };
   const mutate = (input: ReportCommunityPostInput, callbacks?: MutationCallbacks<boolean>) => {
-    void mutateAsync(input).then(callbacks?.onSuccess, callbacks?.onError);
+    void settleMutation(mutateAsync(input), callbacks);
   };
   return {
     ...result,
@@ -122,10 +120,10 @@ export const useCommunityProfile = () => {
 };
 
 export const useUpdateCommunityProfile = () => {
-  const [execute, result] = useMutation(UPDATE_COMMUNITY_PROFILE_MUTATION, {
-    refetchQueries: [COMMUNITY_POSTS_QUERY],
-    update: updateCachedCommunityProfile,
-  });
+  const [execute, result] = useMutation(
+    UPDATE_COMMUNITY_PROFILE_MUTATION,
+    UPDATE_COMMUNITY_PROFILE_OPTIONS,
+  );
   const mutateAsync = async (input: UpdateCommunityProfileInput): Promise<CommunityProfile> => {
     const response = await execute({ variables: { input } });
     const profile = response.data?.updateCommunityProfile;
@@ -136,7 +134,7 @@ export const useUpdateCommunityProfile = () => {
     input: UpdateCommunityProfileInput,
     callbacks?: MutationCallbacks<CommunityProfile>,
   ) => {
-    void mutateAsync(input).then(callbacks?.onSuccess, callbacks?.onError);
+    void settleMutation(mutateAsync(input), callbacks);
   };
   return {
     ...result,

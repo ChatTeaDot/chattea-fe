@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 import { Gender } from "../types";
 
@@ -21,7 +21,8 @@ export const GenderSelector = ({ onChange, value }: GenderSelectorProps) => {
       {genderOptions.map((item) => (
         <Pressable
           key={item.value}
-          accessibilityRole="button"
+          accessibilityRole="radio"
+          accessibilityState={{ checked: value === item.value }}
           onPress={() => onChange(item.value)}
           style={[styles.genderButton, value === item.value && styles.genderButtonActive]}
         >
@@ -34,29 +35,29 @@ export const GenderSelector = ({ onChange, value }: GenderSelectorProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   genderButton: {
-    borderColor: colors.border,
-    borderRadius: 14,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radii.utility,
     borderWidth: 1,
     flex: 1,
     padding: 14,
   },
   genderButtonActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primary,
   },
   genderRow: {
     flexDirection: "row",
     gap: 8,
   },
   genderText: {
-    color: colors.muted,
+    color: theme.colors.muted,
     fontSize: 15,
     fontWeight: "800",
     textAlign: "center",
   },
   genderTextActive: {
-    color: colors.primaryText,
+    color: theme.colors.primaryText,
   },
-});
+}));

@@ -1,11 +1,23 @@
-import { useEffect, useMemo, useState } from "react";
-import { Alert, Pressable, Text, TextInput, type TextInputProps, View } from "react-native";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { router, Stack, useLocalSearchParams } from "expo-router";
+import { useEffect, useMemo, useState } from "react";
+import { Alert, Pressable, Text, TextInput, type TextInputProps, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 import { useSession } from "@/providers/session-provider";
 
+import {
+  ContentPhoto,
+  EmptyState,
+  formatRelativeDate,
+  LoadingState,
+  MetaText,
+  NativeButton,
+  NativeCard,
+  NativeScreen,
+  NativeScroll,
+  SectionHeading,
+} from "./components";
 import {
   ACTIVATE_BOOST_MUTATION,
   BILLING_PRODUCTS_QUERY,
@@ -46,18 +58,6 @@ import type {
   InteractionResult,
   MatchCandidate,
 } from "./types";
-import {
-  ContentPhoto,
-  EmptyState,
-  formatRelativeDate,
-  LoadingState,
-  MetaText,
-  NativeButton,
-  NativeCard,
-  NativeScreen,
-  NativeScroll,
-  SectionHeading,
-} from "./components";
 
 const KOREAN_REGIONS = [
   "서울",
@@ -106,11 +106,10 @@ export const TodayMatchesScreen = () => {
       if (kind === "skip") {
         await skip({ variables: { userId: candidate.id } });
       } else {
-        const response =
+        const result =
           kind === "like"
-            ? await like({ variables: { userId: candidate.id } })
-            : await superLike({ variables: { userId: candidate.id } });
-        const result = response.data?.[kind === "like" ? "likeUser" : "superLikeUser"];
+            ? (await like({ variables: { userId: candidate.id } })).data?.likeUser
+            : (await superLike({ variables: { userId: candidate.id } })).data?.superLikeUser;
         if (result?.matched && result.roomId) {
           Alert.alert("서로 관심이 닿았어요", "바로 대화를 시작해 볼까요?", [
             { text: "나중에", style: "cancel" },
@@ -709,29 +708,29 @@ export const ProfileScreen = () => {
 
 export const ProfileFormScreen = ({ completion = false }: { completion?: boolean }) => {
   const me = useQuery<MeData>(ME_QUERY);
+  if (!me.data?.me) {
+    return (
+      <NativeScreen>
+        <NativeScroll>{me.loading ? <LoadingState /> : <ErrorState />}</NativeScroll>
+      </NativeScreen>
+    );
+  }
+  return <ProfileFormFields key={me.data.me.id} user={me.data.me} completion={completion} />;
+};
+
+const ProfileFormFields = ({ user, completion }: { user: CurrentUser; completion: boolean }) => {
   const [updateProfile, updateState] = useMutation<{ updateUserProfile: CurrentUser }>(
     UPDATE_PROFILE_MUTATION,
   );
-  const [userName, setUserName] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [region, setRegion] = useState("");
-  const [interestedGender, setInterestedGender] = useState("everyone");
-  const [intro, setIntro] = useState("");
-  const [photoUrls, setPhotoUrls] = useState<string[]>([]);
+  const [userName, setUserName] = useState(user.userName);
+  const [birthDate, setBirthDate] = useState(user.birthDate ?? "");
+  const [region, setRegion] = useState(user.region ?? "");
+  const [interestedGender, setInterestedGender] = useState(user.interestedGender ?? "everyone");
+  const [intro, setIntro] = useState(user.intro);
+  const [photoUrls, setPhotoUrls] = useState(() =>
+    [...user.photos].sort((a, b) => a.position - b.position).map((photo) => photo.url),
+  );
   const [uploading, setUploading] = useState(false);
-
-  useEffect(() => {
-    const user = me.data?.me;
-    if (!user) return;
-    setUserName(user.userName);
-    setBirthDate(user.birthDate ?? "");
-    setRegion(user.region ?? "");
-    setInterestedGender(user.interestedGender ?? "everyone");
-    setIntro(user.intro);
-    setPhotoUrls(
-      [...user.photos].sort((a, b) => a.position - b.position).map((photo) => photo.url),
-    );
-  }, [me.data?.me]);
 
   const addPhoto = async () => {
     if (photoUrls.length >= 3) {

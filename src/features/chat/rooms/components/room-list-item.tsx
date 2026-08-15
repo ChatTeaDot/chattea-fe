@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 import { Room } from "../../types";
 
@@ -28,40 +28,40 @@ export const RoomListItem = ({ room }: RoomListItemProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   avatar: {
     alignItems: "center",
-    backgroundColor: colors.surfaceSoft,
-    borderRadius: 24,
+    backgroundColor: theme.colors.surfaceSoft,
+    borderRadius: theme.radii.card,
     height: 48,
     justifyContent: "center",
     width: 48,
   },
   avatarText: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontSize: 18,
     fontWeight: "900",
   },
   message: {
-    color: colors.muted,
+    color: theme.colors.muted,
   },
   name: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 16,
     fontWeight: "700",
   },
   roomText: {
     flex: 1,
-    gap: spacing.xs,
+    gap: theme.spacing.xs,
   },
   row: {
     alignItems: "center",
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 22,
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radii.card,
     borderWidth: 1,
     flexDirection: "row",
-    gap: spacing.xs,
-    padding: spacing.md,
+    gap: theme.spacing.xs,
+    padding: theme.spacing.md,
   },
-});
+}));

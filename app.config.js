@@ -8,7 +8,7 @@ const plugins = [
   [
     "expo-image-picker",
     {
-      photosPermission: "프로필과 채팅에 사진을 올리기 위해 사진 보관함에 접근합니다.",
+      photosPermission: "프로필 사진을 올리기 위해 사진 보관함에 접근합니다.",
     },
   ],
   [
@@ -60,7 +60,9 @@ module.exports = {
       bundleIdentifier: "com.cyjoon.chattea",
     },
     android: {
+      edgeToEdgeEnabled: true,
       package: "com.cyjoon.chattea",
+      softwareKeyboardLayoutMode: "resize",
     },
   },
 };

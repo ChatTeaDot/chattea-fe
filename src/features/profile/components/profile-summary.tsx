@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 export const ProfileSummary = () => {
   return (
@@ -12,7 +12,11 @@ export const ProfileSummary = () => {
         </View>
         <View style={styles.profileText}>
           <Text style={styles.name}>ChatTea User</Text>
-          <Pressable accessibilityRole="button" style={styles.editButton}>
+          <Pressable
+            accessibilityLabel="프로필 수정"
+            accessibilityRole="button"
+            style={styles.editButton}
+          >
             <Text style={styles.editText}>프로필 수정</Text>
           </Pressable>
         </View>
@@ -24,47 +28,49 @@ export const ProfileSummary = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   avatar: {
     alignItems: "center",
-    backgroundColor: colors.surfaceSoft,
-    borderColor: colors.border,
-    borderRadius: 28,
+    backgroundColor: theme.colors.surfaceSoft,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radii.card,
     borderWidth: 1,
     height: 56,
     justifyContent: "center",
     width: 56,
   },
   avatarText: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontSize: 24,
     fontWeight: "900",
   },
   editButton: {
     alignSelf: "flex-start",
+    justifyContent: "center",
+    minHeight: 44,
   },
   editText: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontSize: 13,
     fontWeight: "800",
   },
   iconButton: {
     alignItems: "center",
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 18,
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radii.utility,
     borderWidth: 1,
-    height: 40,
+    height: 44,
     justifyContent: "center",
-    width: 40,
+    width: 44,
   },
   iconText: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 18,
     fontWeight: "800",
   },
   name: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 22,
     fontWeight: "900",
   },
@@ -72,14 +78,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
     flexDirection: "row",
-    gap: spacing.md,
+    gap: theme.spacing.md,
   },
   profileText: {
-    gap: spacing.xs,
+    gap: theme.spacing.xs,
   },
   topBar: {
     alignItems: "center",
     flexDirection: "row",
-    gap: spacing.md,
+    gap: theme.spacing.md,
   },
-});
+}));

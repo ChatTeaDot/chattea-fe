@@ -1,14 +1,20 @@
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { useUnistyles } from "react-native-unistyles";
 
+import { useLikedMeCandidates } from "@/features/likes/hooks";
+import type { AppTheme } from "@/theme/unistyles";
+
 const TabsLayout = () => {
-  const { theme } = useUnistyles();
+  const { theme } = useUnistyles() as { theme: AppTheme };
+  const likedMeCandidates = useLikedMeCandidates(true);
+  const likeCount = likedMeCandidates.data?.length ?? 0;
+
   return (
     <NativeTabs
       blurEffect="systemDefault"
       iconColor={{ default: theme.colors.muted, selected: theme.colors.primary }}
       minimizeBehavior="automatic"
-      shadowColor="transparent"
+      shadowColor={theme.colors.transparent}
       tabBarRespectsIMEInsets
       tintColor={theme.colors.primary}
     >
@@ -32,15 +38,18 @@ const TabsLayout = () => {
           md={{ default: "favorite_border", selected: "favorite" }}
           sf={{ default: "heart", selected: "heart.fill" }}
         />
+        {likeCount > 0 ? (
+          <NativeTabs.Trigger.Badge>{String(likeCount)}</NativeTabs.Trigger.Badge>
+        ) : null}
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="rooms">
         <NativeTabs.Trigger.Label>채팅</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          md={{ default: "chat_bubble_outline", selected: "chat_bubble" }}
           sf={{
             default: "message",
             selected: "message.fill",
           }}
+          md={{ default: "chat_bubble_outline", selected: "chat_bubble" }}
         />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="profile">

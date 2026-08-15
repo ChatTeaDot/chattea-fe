@@ -1,1 +1,1 @@
-export { NativeSignupScreen as default } from "@/features/native/auth-screens";
+export { SignupScreen as default } from "@/features/auth";

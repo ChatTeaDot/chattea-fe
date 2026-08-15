@@ -39,7 +39,6 @@ pnpm test
 - Chat message report action.
 - Chat room read marking, typing status, and read receipt UI updates.
 - GraphQL WebSocket auth headers and retry/backoff.
-- Native image picker plus attachment signing and PUT upload state via `createUpload`.
 - Sentry React Native init via `EXPO_PUBLIC_SENTRY_DSN`.
 - Datadog RUM/log init via `EXPO_PUBLIC_DATADOG_CLIENT_TOKEN` and `EXPO_PUBLIC_DATADOG_RUM_APPLICATION_ID`.
 - Sentry and Datadog Metro/config-plugin hooks for sourcemaps/debug IDs when build secrets are present.

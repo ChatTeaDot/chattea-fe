@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { colors, spacing } from "@/theme/tokens";
+import type { AppTheme } from "@/theme/unistyles";
 
 import { SubscriptionPlan } from "../types";
 
@@ -19,6 +19,7 @@ export const ProfilePlanCard = ({ plan }: ProfilePlanCardProps) => {
           </Text>
         </View>
         <Pressable
+          accessibilityLabel={`${plan.name} 플랜으로 업그레이드`}
           accessibilityRole="button"
           style={[styles.upgradePill, getUpgradePillStyle(plan.name)]}
         >
@@ -89,45 +90,45 @@ const getUpgradePillStyle = (planName: string) => {
   }
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme: AppTheme) => ({
   basicPlanBox: {
-    backgroundColor: "#e8f2ff",
-    borderColor: "#9cc6ff",
+    backgroundColor: theme.colors.planBasic,
+    borderColor: theme.colors.planBasicBorder,
   },
   basicUpgradePill: {
-    backgroundColor: "#2478ff",
+    backgroundColor: theme.colors.primary,
   },
   basicUpgradePillText: {
-    color: colors.surface,
+    color: theme.colors.primaryText,
   },
   blackCheckIcon: {
-    color: "#a9afba",
+    color: theme.colors.muted,
   },
   blackPlanBox: {
-    backgroundColor: "#07080b",
-    borderColor: "#3a3f49",
+    backgroundColor: theme.colors.planBlack,
+    borderColor: theme.colors.border,
     borderWidth: 1.5,
   },
   blackPlanText: {
-    color: "#f8f1dc",
+    color: theme.colors.primaryText,
   },
   blackUpgradePill: {
-    backgroundColor: "#20242c",
-    borderColor: "#505664",
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.border,
     borderWidth: 1,
   },
   blackUpgradePillText: {
-    color: colors.surface,
+    color: theme.colors.text,
   },
   compareColumn: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 13,
     fontWeight: "900",
     textAlign: "center",
     width: 44,
   },
   compareFeature: {
-    color: colors.text,
+    color: theme.colors.text,
     flex: 1,
     fontSize: 15,
     fontWeight: "800",
@@ -135,10 +136,10 @@ const styles = StyleSheet.create({
   compareHeader: {
     alignItems: "center",
     flexDirection: "row",
-    gap: spacing.sm,
+    gap: theme.spacing.sm,
   },
   compareIcon: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 17,
     fontWeight: "900",
     textAlign: "center",
@@ -147,67 +148,69 @@ const styles = StyleSheet.create({
   compareRow: {
     alignItems: "center",
     flexDirection: "row",
-    gap: spacing.sm,
+    gap: theme.spacing.sm,
   },
   compareTable: {
-    gap: spacing.md,
+    gap: theme.spacing.md,
   },
   compareTitle: {
-    color: colors.text,
+    color: theme.colors.text,
     flex: 1,
     fontSize: 16,
     fontWeight: "900",
   },
   goldPlanBox: {
-    backgroundColor: "#fff4cc",
-    borderColor: "#e7bc45",
+    backgroundColor: theme.colors.planGold,
+    borderColor: theme.colors.planGoldBorder,
   },
   goldUpgradePill: {
-    backgroundColor: "#f5c84c",
+    backgroundColor: theme.colors.accent,
   },
   moreFeatures: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 17,
     fontWeight: "900",
     textAlign: "center",
   },
   planBox: {
-    backgroundColor: "#fff7d8",
-    borderColor: "#f2cf6d",
-    borderRadius: 22,
+    backgroundColor: theme.colors.planGold,
+    borderColor: theme.colors.planGoldBorder,
+    borderRadius: theme.radii.card,
     borderWidth: 1,
-    gap: spacing.md,
+    gap: theme.spacing.md,
     minHeight: 276,
-    padding: spacing.lg,
-    paddingBottom: spacing.md,
+    padding: theme.spacing.lg,
+    paddingBottom: theme.spacing.md,
     width: "100%",
   },
   planBrand: {
     alignItems: "center",
     flex: 1,
     flexDirection: "row",
-    gap: spacing.xs,
+    gap: theme.spacing.xs,
   },
   planHeader: {
     alignItems: "center",
     flexDirection: "row",
-    gap: spacing.md,
+    gap: theme.spacing.md,
     justifyContent: "space-between",
   },
   planName: {
-    color: colors.text,
+    color: theme.colors.text,
     fontSize: 24,
     fontWeight: "900",
   },
   upgradePill: {
-    backgroundColor: "#ffe07a",
-    borderRadius: 999,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    alignItems: "center",
+    backgroundColor: theme.colors.accent,
+    borderRadius: theme.radii.pill,
+    justifyContent: "center",
+    minHeight: 44,
+    paddingHorizontal: theme.spacing.md,
   },
   upgradePillText: {
-    color: colors.text,
+    color: theme.colors.accentText,
     fontSize: 14,
     fontWeight: "900",
   },
-});
+}));
