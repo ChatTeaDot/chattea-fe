@@ -12,6 +12,13 @@ export type AppTheme = {
 export const theme: AppTheme = { colors, radii, spacing, typography };
 export const darkTheme: AppTheme = { ...theme, colors: darkColors };
 
+declare module "react-native-unistyles" {
+  interface UnistylesThemes {
+    light: AppTheme;
+    dark: AppTheme;
+  }
+}
+
 StyleSheet.configure({
   themes: { light: theme, dark: darkTheme },
   settings: { adaptiveThemes: true },

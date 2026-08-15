@@ -6,6 +6,12 @@ const plugins = [
   "expo-splash-screen",
   "expo-image",
   [
+    "expo-image-picker",
+    {
+      photosPermission: "프로필 사진을 올리기 위해 사진 보관함에 접근합니다.",
+    },
+  ],
+  [
     "@react-native-kakao/core",
     {
       nativeAppKey: kakaoNativeAppKey,

@@ -15,22 +15,29 @@ const TabsLayout = () => {
       iconColor={{ default: theme.colors.muted, selected: theme.colors.primary }}
       minimizeBehavior="automatic"
       shadowColor={theme.colors.transparent}
+      tabBarRespectsIMEInsets
       tintColor={theme.colors.primary}
     >
       <NativeTabs.Trigger name="matches">
-        <NativeTabs.Trigger.Label>추천</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon md="home" sf={{ default: "house", selected: "house" }} />
+        <NativeTabs.Trigger.Label>인연</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          md={{ default: "favorite_border", selected: "favorite" }}
+          sf={{ default: "heart", selected: "heart.fill" }}
+        />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="community">
         <NativeTabs.Trigger.Label>커뮤니티</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          md="groups"
+          md={{ default: "groups", selected: "groups" }}
           sf={{ default: "person.2", selected: "person.2.fill" }}
         />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="likes">
         <NativeTabs.Trigger.Label>좋아요</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon md="favorite" sf={{ default: "heart", selected: "heart.fill" }} />
+        <NativeTabs.Trigger.Icon
+          md={{ default: "favorite_border", selected: "favorite" }}
+          sf={{ default: "heart", selected: "heart.fill" }}
+        />
         {likeCount > 0 ? (
           <NativeTabs.Trigger.Badge>{String(likeCount)}</NativeTabs.Trigger.Badge>
         ) : null}
@@ -42,13 +49,13 @@ const TabsLayout = () => {
             default: "message",
             selected: "message.fill",
           }}
-          md="chat"
+          md={{ default: "chat_bubble_outline", selected: "chat_bubble" }}
         />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="profile">
         <NativeTabs.Trigger.Label>프로필</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          md="account_circle"
+          md={{ default: "account_circle", selected: "account_circle" }}
           sf={{ default: "person.crop.circle", selected: "person.crop.circle.fill" }}
         />
       </NativeTabs.Trigger>
