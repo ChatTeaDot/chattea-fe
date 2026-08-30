@@ -241,66 +241,11 @@ export const REPORT_MESSAGE_MUTATION = gql`
   }
 `;
 
-export const NOTIFICATIONS_QUERY = gql`
-  query NativeNotifications {
-    notifications {
-      id
-      type
-      title
-      body
-      route
-      readAt
-      createdAt
-    }
-  }
-`;
-
-export const MARK_NOTIFICATION_READ_MUTATION = gql`
-  mutation NativeMarkNotificationRead($notificationId: String!) {
-    markNotificationRead(notificationId: $notificationId)
-  }
-`;
-
-export const REGISTER_PUSH_TOKEN_MUTATION = gql`
-  mutation NativeRegisterPushToken($input: RegisterPushTokenInput!) {
-    registerPushToken(input: $input)
-  }
-`;
-
-export const BILLING_PRODUCTS_QUERY = gql`
-  query NativeBillingProducts {
-    billingProducts {
-      id
-      kind
-      name
-    }
-  }
-`;
-
-export const CONSUMABLE_BALANCE_QUERY = gql`
-  query NativeConsumableBalance {
-    consumableBalance {
-      superLikeCredits
-      boostCredits
-    }
-  }
-`;
-
 export const REQUEST_ACCOUNT_DELETION_MUTATION = gql`
   mutation NativeRequestAccountDeletion {
     requestAccountDeletion {
       hidden
       scheduledFor
-    }
-  }
-`;
-
-export const CREATE_UPLOAD_MUTATION = gql`
-  mutation NativeCreateUpload($input: CreateUploadInput!) {
-    createUpload(input: $input) {
-      id
-      putUrl
-      publicUrl
     }
   }
 `;

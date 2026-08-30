@@ -12,10 +12,15 @@ import {
   NativeScreen,
   NativeScroll,
   SectionHeading,
-} from "../components";
-import { ME_QUERY, UPDATE_PROFILE_MUTATION } from "../operations";
-import { selectAndUploadProfilePhoto } from "../profile-photo-upload";
-import type { CurrentUser } from "../types";
+} from "@/features/native/components";
+import { ME_QUERY, UPDATE_PROFILE_MUTATION } from "@/features/native/operations";
+import {
+  buildProfileUpdateInput,
+  selectAndUploadProfilePhoto,
+  type VerifiedProfilePhoto,
+} from "@/features/native/profile-upload";
+import type { CurrentUser } from "@/features/native/types";
+
 import {
   ErrorState,
   KOREAN_REGIONS,
@@ -46,20 +51,22 @@ const ProfileFormFields = ({ user, completion }: { user: CurrentUser; completion
   const [region, setRegion] = useState(user.region ?? "");
   const [interestedGender, setInterestedGender] = useState(user.interestedGender ?? "everyone");
   const [intro, setIntro] = useState(user.intro);
-  const [photoUrls, setPhotoUrls] = useState(() =>
-    [...user.photos].sort((a, b) => a.position - b.position).map((photo) => photo.url),
+  const [photos, setPhotos] = useState<VerifiedProfilePhoto[]>(() =>
+    [...user.photos]
+      .sort((a, b) => a.position - b.position)
+      .map((photo) => ({ uploadId: photo.id, url: photo.url })),
   );
   const [uploading, setUploading] = useState(false);
 
   const addPhoto = async () => {
-    if (photoUrls.length >= 3) {
+    if (photos.length >= 3) {
       Alert.alert("사진은 최대 3장까지 추가할 수 있어요");
       return;
     }
     setUploading(true);
     try {
-      const publicUrl = await selectAndUploadProfilePhoto();
-      if (publicUrl) setPhotoUrls((current) => [...current, publicUrl]);
+      const photo = await selectAndUploadProfilePhoto();
+      if (photo) setPhotos((current) => [...current, photo]);
     } catch (error) {
       showActionError(error);
     } finally {
@@ -68,13 +75,7 @@ const ProfileFormFields = ({ user, completion }: { user: CurrentUser; completion
   };
 
   const save = async () => {
-    if (
-      !userName.trim() ||
-      !birthDate.trim() ||
-      !region ||
-      !intro.trim() ||
-      photoUrls.length === 0
-    ) {
+    if (!userName.trim() || !birthDate.trim() || !region || !intro.trim() || photos.length === 0) {
       Alert.alert(
         "프로필을 모두 채워 주세요",
         "사진, 이름, 생년월일, 지역, 소개와 관심 대상을 확인해 주세요.",
@@ -83,7 +84,16 @@ const ProfileFormFields = ({ user, completion }: { user: CurrentUser; completion
     }
     try {
       await updateProfile({
-        variables: { input: { userName, birthDate, region, interestedGender, intro, photoUrls } },
+        variables: {
+          input: buildProfileUpdateInput({
+            birthDate,
+            interestedGender,
+            intro,
+            photos,
+            region,
+            userName,
+          }),
+        },
         refetchQueries: [ME_QUERY],
       });
       if (completion) {
@@ -102,20 +112,22 @@ const ProfileFormFields = ({ user, completion }: { user: CurrentUser; completion
         <Text style={styles.guide}>
           사진 1장은 꼭 올려 주세요. 추가 사진은 최대 2장까지 더 올릴 수 있어요.
         </Text>
-        <SectionHeading title={`사진 ${photoUrls.length}/3`} />
-        {photoUrls.map((url, index) => (
-          <NativeCard key={url}>
-            <ContentPhoto height={144} label={`프로필 사진 ${index + 1}`} uri={url} />
+        <SectionHeading title={`사진 ${photos.length}/3`} />
+        {photos.map((photo, index) => (
+          <NativeCard key={photo.uploadId}>
+            <ContentPhoto height={144} label={`프로필 사진 ${index + 1}`} uri={photo.url} />
             <NativeButton
               label={index === 0 ? "대표 사진 삭제" : "사진 삭제"}
-              onPress={() => setPhotoUrls((current) => current.filter((item) => item !== url))}
+              onPress={() =>
+                setPhotos((current) => current.filter((item) => item.uploadId !== photo.uploadId))
+              }
               tone="quiet"
               fullWidth
             />
           </NativeCard>
         ))}
         <NativeButton
-          disabled={uploading || photoUrls.length >= 3}
+          disabled={uploading || photos.length >= 3}
           label={uploading ? "사진을 올리는 중" : "사진 추가"}
           onPress={() => void addPhoto()}
           tone="secondary"
@@ -123,6 +135,7 @@ const ProfileFormFields = ({ user, completion }: { user: CurrentUser; completion
         />
         <FormLabel label="이름" />
         <NativeTextInput
+          accessibilityLabel="이름"
           maxLength={40}
           onChangeText={setUserName}
           placeholder="이름"
@@ -131,6 +144,7 @@ const ProfileFormFields = ({ user, completion }: { user: CurrentUser; completion
         />
         <FormLabel label="생년월일" hint="YYYY-MM-DD" />
         <NativeTextInput
+          accessibilityLabel="생년월일"
           keyboardType="numbers-and-punctuation"
           onChangeText={setBirthDate}
           placeholder="1998-01-01"
@@ -168,6 +182,7 @@ const ProfileFormFields = ({ user, completion }: { user: CurrentUser; completion
         </View>
         <FormLabel label="소개" hint="60자 이내" />
         <NativeTextInput
+          accessibilityLabel="소개"
           maxLength={60}
           multiline
           onChangeText={setIntro}
@@ -196,7 +211,12 @@ const ChoiceButton = ({
   selected: boolean;
   onPress: () => void;
 }) => (
-  <Pressable onPress={onPress} style={[styles.choice, selected && styles.choiceSelected]}>
+  <Pressable
+    accessibilityRole="radio"
+    accessibilityState={{ checked: selected }}
+    onPress={onPress}
+    style={[styles.choice, selected && styles.choiceSelected]}
+  >
     <Text style={[styles.choiceText, selected && styles.choiceTextSelected]}>{label}</Text>
   </Pressable>
 );

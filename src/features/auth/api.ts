@@ -11,6 +11,8 @@ import type {
   VerifyPhoneResult,
 } from "./types";
 
+export type PhoneVerificationPurpose = "Signup" | "Login" | "PasswordReset";
+
 export type RequestPhoneCodeMutation = {
   readonly requestPhoneCode: {
     readonly ok: boolean;
@@ -20,7 +22,7 @@ export type RequestPhoneCodeMutation = {
 export type RequestPhoneCodeVariables = {
   readonly input: {
     readonly phone: string;
-    readonly purpose: "signup";
+    readonly purpose: PhoneVerificationPurpose;
   };
 };
 
@@ -30,6 +32,7 @@ export type VerifyPhoneCodeMutation = {
     readonly phoneVerificationToken?: string | null;
     readonly tokenPayload?: {
       readonly accessToken: string;
+      readonly refreshToken: string;
     } | null;
   };
 };
@@ -44,6 +47,7 @@ export type VerifyPhoneCodeVariables = {
 export type CompletePhoneSignupMutation = {
   readonly completePhoneSignup: {
     readonly accessToken: string;
+    readonly refreshToken: string;
   };
 };
 
@@ -54,6 +58,7 @@ export type CompletePhoneSignupVariables = {
     readonly gender: Gender;
     readonly email: string;
     readonly password: string;
+    readonly termsAccepted: boolean;
   };
 };
 
@@ -64,6 +69,7 @@ export type LoginWithKakaoMutation = {
         readonly requiresPhone: false;
         readonly session: {
           readonly accessToken: string;
+          readonly refreshToken: string;
         };
       }
     | {
@@ -81,6 +87,7 @@ export type LoginWithKakaoVariables = {
 export type CompleteKakaoPhoneSignupMutation = {
   readonly completeKakaoPhoneSignup: {
     readonly accessToken: string;
+    readonly refreshToken: string;
   };
 };
 
@@ -90,17 +97,7 @@ export type CompleteKakaoPhoneSignupVariables = {
     readonly phoneVerificationToken: string;
     readonly userName: string;
     readonly gender: Gender;
-  };
-};
-
-export type AttachPhoneToMeMutation = {
-  readonly attachPhoneToMe: boolean;
-};
-
-export type AttachPhoneToMeVariables = {
-  readonly input: {
-    readonly phone: string;
-    readonly code: string;
+    readonly termsAccepted: boolean;
   };
 };
 
@@ -125,6 +122,7 @@ export const VERIFY_PHONE_CODE_MUTATION: TypedDocumentNode<
       phoneVerificationToken
       tokenPayload {
         accessToken
+        refreshToken
       }
     }
   }
@@ -137,6 +135,7 @@ export const COMPLETE_PHONE_SIGNUP_MUTATION: TypedDocumentNode<
   mutation CompletePhoneSignup($input: CompletePhoneSignupInput!) {
     completePhoneSignup(input: $input) {
       accessToken
+      refreshToken
     }
   }
 `;
@@ -152,6 +151,7 @@ export const LOGIN_WITH_KAKAO_MUTATION: TypedDocumentNode<
         requiresPhone
         session {
           accessToken
+          refreshToken
         }
       }
       ... on KakaoRequiresPhonePayload {
@@ -170,16 +170,8 @@ export const COMPLETE_KAKAO_PHONE_SIGNUP_MUTATION: TypedDocumentNode<
   mutation CompleteKakaoPhoneSignup($input: CompleteKakaoPhoneSignupInput!) {
     completeKakaoPhoneSignup(input: $input) {
       accessToken
+      refreshToken
     }
-  }
-`;
-
-export const ATTACH_PHONE_TO_ME_MUTATION: TypedDocumentNode<
-  AttachPhoneToMeMutation,
-  AttachPhoneToMeVariables
-> = gql`
-  mutation AttachPhoneToMe($input: AttachPhoneToMeInput!) {
-    attachPhoneToMe(input: $input)
   }
 `;
 
@@ -205,9 +197,11 @@ export const mapVerifyPhoneCodeResult = (
 ): VerifyPhoneResult => {
   const result = requireMutationData(data).verifyPhoneCode;
 
-  return result.existingUser
-    ? { status: "LOGIN", session: tokenPayloadToSession(result.tokenPayload) }
-    : { status: "SIGNUP_REQUIRED", signupToken: result.phoneVerificationToken ?? "" };
+  if (result.existingUser) {
+    return { status: "LOGIN", session: tokenPayloadToSession(result.tokenPayload) };
+  }
+  if (!result.phoneVerificationToken) throw new Error("MISSING_PHONE_VERIFICATION_TOKEN");
+  return { status: "SIGNUP_REQUIRED", signupToken: result.phoneVerificationToken };
 };
 
 export const mapCompletePhoneSignupResult = (
@@ -236,14 +230,10 @@ export const mapCompleteKakaoPhoneSignupResult = (
   return { session: tokenPayloadToSession(requireMutationData(data).completeKakaoPhoneSignup) };
 };
 
-export const mapAttachPhoneToMeResult = (
-  data: AttachPhoneToMeMutation | null | undefined,
-): boolean => requireMutationData(data).attachPhoneToMe;
-
 export const requestPhoneCode = async (phoneE164: string) => {
   const { data } = await apolloClient.mutate({
     mutation: REQUEST_PHONE_CODE_MUTATION,
-    variables: { input: { phone: phoneE164, purpose: "signup" } },
+    variables: { input: { phone: phoneE164, purpose: "Signup" } },
   });
 
   return mapRequestPhoneCodeResult(data);
@@ -267,11 +257,19 @@ export const completePhoneSignup = async (
   gender: Gender,
   email: string,
   password: string,
+  termsAccepted: boolean,
 ): Promise<CompletePhoneSignupResult> => {
   const { data } = await apolloClient.mutate({
     mutation: COMPLETE_PHONE_SIGNUP_MUTATION,
     variables: {
-      input: { phoneVerificationToken: signupToken, userName, gender, email, password },
+      input: {
+        phoneVerificationToken: signupToken,
+        userName,
+        gender,
+        email,
+        password,
+        termsAccepted,
+      },
     },
   });
 
@@ -292,28 +290,22 @@ export const completeKakaoPhoneSignup = async (
   signupToken: string,
   userName: string,
   gender: Gender,
+  termsAccepted: boolean,
 ): Promise<CompletePhoneSignupResult> => {
   const { data } = await apolloClient.mutate({
     mutation: COMPLETE_KAKAO_PHONE_SIGNUP_MUTATION,
     variables: {
-      input: { kakaoPhoneVerificationToken, phoneVerificationToken: signupToken, userName, gender },
+      input: {
+        kakaoPhoneVerificationToken,
+        phoneVerificationToken: signupToken,
+        userName,
+        gender,
+        termsAccepted,
+      },
     },
   });
 
   return mapCompleteKakaoPhoneSignupResult(data);
-};
-
-export const attachPhoneToMe = async (
-  _kakaoToken: string,
-  phoneE164: string,
-  code: string,
-): Promise<boolean> => {
-  const { data } = await apolloClient.mutate({
-    mutation: ATTACH_PHONE_TO_ME_MUTATION,
-    variables: { input: { phone: phoneE164, code } },
-  });
-
-  return mapAttachPhoneToMeResult(data);
 };
 
 const requireMutationData = <T>(data: T | null | undefined): T => {
@@ -325,7 +317,13 @@ const requireMutationData = <T>(data: T | null | undefined): T => {
 };
 
 const tokenPayloadToSession = (
-  tokenPayload?: { readonly accessToken: string } | null,
-): Session => ({
-  token: tokenPayload?.accessToken ?? "",
-});
+  tokenPayload?: { readonly accessToken: string; readonly refreshToken: string } | null,
+): Session => {
+  if (!tokenPayload?.accessToken || !tokenPayload.refreshToken) {
+    throw new Error("MISSING_AUTH_TOKEN_PAYLOAD");
+  }
+  return {
+    accessToken: tokenPayload.accessToken,
+    refreshToken: tokenPayload.refreshToken,
+  };
+};

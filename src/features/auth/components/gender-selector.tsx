@@ -1,9 +1,8 @@
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
+import { Gender } from "@/features/auth/types";
 import type { AppTheme } from "@/theme/unistyles";
-
-import { Gender } from "../types";
 
 type GenderSelectorProps = {
   onChange: (value: Gender) => void;

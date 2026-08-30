@@ -1,12 +1,17 @@
 import { useQuery } from "@apollo/client/react";
+import * as Notifications from "expo-notifications";
 import { router, useSegments } from "expo-router";
 import type { PropsWithChildren } from "react";
-import { useEffect } from "react";
-import { Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 import { useSession } from "@/providers/session-provider";
+import { getNativeSessionDestination } from "@/providers/session-routing";
 
+import { AuthenticatedUserProvider } from "./authenticated-user";
+import { NotificationNavigationContext } from "./notifications/hooks";
+import { createNotificationNavigationCoordinator } from "./notifications/notification-route";
 import { ME_QUERY } from "./operations";
 import type { CurrentUser } from "./types";
 
@@ -15,45 +20,81 @@ type MeData = { me: CurrentUser };
 const PUBLIC_ROOTS = new Set(["index", "phone", "code", "signup"]);
 
 export const NativeSessionGate = ({ children }: PropsWithChildren) => {
-  const { hydrated, session, setSession } = useSession();
+  const { hydrated, requestSessionTermination, session } = useSession();
   const segments = useSegments() as string[];
   const user = useQuery<MeData>(ME_QUERY, {
     skip: !hydrated || !session,
     fetchPolicy: "cache-and-network",
   });
+  const [notificationNavigation] = useState(() =>
+    createNotificationNavigationCoordinator({
+      clearLastResponse: Notifications.clearLastNotificationResponse,
+      getLastResponse: Notifications.getLastNotificationResponse,
+    }),
+  );
   const firstSegment = segments[0];
   const onCompletion = segments.includes("profile-completion");
   const inTabs = segments.includes("(tabs)");
   const isPublic =
     segments.length === 0 || (typeof firstSegment === "string" && PUBLIC_ROOTS.has(firstSegment));
+  const authenticationError =
+    user.error &&
+    (user.error.message.includes("UNAUTHENTICATED") || user.error.message.includes("Unauthorized"));
+  const protectedContent = (
+    <NotificationNavigationContext.Provider value={notificationNavigation}>
+      <AuthenticatedUserProvider userId={session ? (user.data?.me.id ?? null) : null}>
+        {children}
+      </AuthenticatedUserProvider>
+    </NotificationNavigationContext.Provider>
+  );
 
   useEffect(() => {
-    if (!hydrated) return;
-    if (!session) {
-      if (!isPublic) router.replace("/");
+    if (session && user.error) {
+      if (authenticationError) requestSessionTermination();
       return;
     }
-    if (user.error) {
-      const message = user.error.message;
-      if (message.includes("UNAUTHENTICATED") || message.includes("Unauthorized")) {
-        setSession(null);
-        router.replace("/");
-      }
-      return;
-    }
-    if (!user.data?.me) return;
-    if (!user.data.me.profileCompleted && !onCompletion) {
-      router.replace("/profile-completion");
-      return;
-    }
-    if (user.data.me.profileCompleted && onCompletion) {
-      router.replace("/matches");
-      return;
-    }
-    if (user.data.me.profileCompleted && isPublic && !inTabs) {
-      router.replace("/matches");
-    }
-  }, [hydrated, inTabs, isPublic, onCompletion, session, setSession, user.data?.me, user.error]);
+    const destination = getNativeSessionDestination(
+      {
+        hasSession: Boolean(session),
+        hydrated,
+        inTabs,
+        isPublic,
+        onCompletion,
+        profileCompleted: user.data?.me.profileCompleted ?? null,
+      },
+      notificationNavigation.consumeInitial,
+    );
+    if (destination) router.replace(destination);
+  }, [
+    hydrated,
+    authenticationError,
+    inTabs,
+    isPublic,
+    notificationNavigation,
+    onCompletion,
+    requestSessionTermination,
+    session,
+    user.data?.me,
+    user.error,
+  ]);
+
+  if (session && authenticationError) {
+    return (
+      <View style={styles.terminationRoot}>
+        <View
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+          pointerEvents="none"
+          style={styles.terminationContent}
+        >
+          {protectedContent}
+        </View>
+        <View accessibilityLiveRegion="polite" style={styles.terminationOverlay}>
+          <Text style={styles.loadingText}>ChatTea를 준비하고 있어요.</Text>
+        </View>
+      </View>
+    );
+  }
 
   if (!hydrated || (session && user.loading && !user.data)) {
     return (
@@ -63,7 +104,22 @@ export const NativeSessionGate = ({ children }: PropsWithChildren) => {
     );
   }
 
-  return <>{children}</>;
+  if (session && user.error && !user.data) {
+    return (
+      <View style={styles.loading}>
+        <Text style={styles.loadingText}>연결을 확인하지 못했어요. 네트워크를 확인해 주세요.</Text>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => void user.refetch()}
+          style={({ pressed }) => [styles.retryButton, pressed && styles.retryButtonPressed]}
+        >
+          <Text style={styles.retryButtonText}>다시 시도</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  return protectedContent;
 };
 
 const styles = StyleSheet.create((theme) => ({
@@ -71,10 +127,46 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: "center",
     backgroundColor: theme.colors.background,
     flex: 1,
+    gap: theme.spacing.md,
     justifyContent: "center",
+    padding: theme.spacing.md,
   },
   loadingText: {
     color: theme.colors.muted,
     fontSize: 15,
+    textAlign: "center",
+  },
+  retryButton: {
+    backgroundColor: theme.colors.primary,
+    borderRadius: 16,
+    minHeight: 48,
+    justifyContent: "center",
+    paddingHorizontal: theme.spacing.md,
+  },
+  retryButtonPressed: {
+    opacity: 0.62,
+  },
+  retryButtonText: {
+    color: theme.colors.primaryText,
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  terminationContent: {
+    flex: 1,
+    opacity: 0,
+  },
+  terminationOverlay: {
+    alignItems: "center",
+    backgroundColor: theme.colors.background,
+    bottom: 0,
+    justifyContent: "center",
+    left: 0,
+    padding: theme.spacing.md,
+    position: "absolute",
+    right: 0,
+    top: 0,
+  },
+  terminationRoot: {
+    flex: 1,
   },
 }));

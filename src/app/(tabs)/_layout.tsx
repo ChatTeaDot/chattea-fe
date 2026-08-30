@@ -1,13 +1,10 @@
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { useUnistyles } from "react-native-unistyles";
 
-import { useLikedMeCandidates } from "@/features/likes/hooks";
 import type { AppTheme } from "@/theme/unistyles";
 
 const TabsLayout = () => {
   const { theme } = useUnistyles() as { theme: AppTheme };
-  const likedMeCandidates = useLikedMeCandidates(true);
-  const likeCount = likedMeCandidates.data?.length ?? 0;
 
   return (
     <NativeTabs
@@ -38,9 +35,6 @@ const TabsLayout = () => {
           md={{ default: "favorite_border", selected: "favorite" }}
           sf={{ default: "heart", selected: "heart.fill" }}
         />
-        {likeCount > 0 ? (
-          <NativeTabs.Trigger.Badge>{String(likeCount)}</NativeTabs.Trigger.Badge>
-        ) : null}
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="rooms">
         <NativeTabs.Trigger.Label>채팅</NativeTabs.Trigger.Label>

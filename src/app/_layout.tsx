@@ -4,7 +4,7 @@ import { useReducedMotion } from "react-native-reanimated";
 import { useUnistyles } from "react-native-unistyles";
 
 import { NativeSessionGate } from "@/features/native/session-gate";
-import { RootProvider, withSentry } from "@/providers";
+import { NativeIntegrationsProvider, RootProvider, withSentry } from "@/providers";
 import type { AppTheme } from "@/theme/unistyles";
 
 const ThemedStack = () => {
@@ -54,7 +54,9 @@ const ThemedStack = () => {
 const RootLayout = () => (
   <RootProvider>
     <NativeSessionGate>
-      <ThemedStack />
+      <NativeIntegrationsProvider>
+        <ThemedStack />
+      </NativeIntegrationsProvider>
     </NativeSessionGate>
   </RootProvider>
 );

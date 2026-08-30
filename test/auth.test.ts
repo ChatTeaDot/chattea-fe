@@ -3,20 +3,17 @@ import { GraphQLError, print } from "graphql";
 import { describe, expect, it } from "vitest";
 
 import {
-  attachPhoneToMe,
   completeKakaoPhoneSignup,
   completePhoneSignup,
   loginWithKakao,
+  mapVerifyPhoneCodeResult,
   normalizeKoreanPhone,
   requestPhoneCode,
   verifyPhoneCode,
 } from "../src/features/auth/api";
 import { getNextResendSeconds, getResendTitle } from "../src/features/auth/resend-timer";
 import { apolloClient } from "../src/shared/graphql";
-import {
-  getGraphQLAuthorizationHeaders,
-  setGraphQLSessionToken,
-} from "../src/shared/graphql/client";
+import { getGraphQLAuthorizationHeaders, setGraphQLSession } from "../src/shared/graphql/client";
 
 type GraphQLCall = {
   readonly operationName: string;
@@ -37,7 +34,9 @@ const authMutationData = (operationName: string): Record<string, unknown> => {
         },
       };
     case "CompletePhoneSignup":
-      return { completePhoneSignup: { accessToken: "session-token" } };
+      return {
+        completePhoneSignup: { accessToken: "session-token", refreshToken: "refresh-token" },
+      };
     case "LoginWithKakao":
       return {
         loginWithKakao: {
@@ -48,9 +47,12 @@ const authMutationData = (operationName: string): Record<string, unknown> => {
         },
       };
     case "CompleteKakaoPhoneSignup":
-      return { completeKakaoPhoneSignup: { accessToken: "session-token" } };
-    case "AttachPhoneToMe":
-      return { attachPhoneToMe: true };
+      return {
+        completeKakaoPhoneSignup: {
+          accessToken: "session-token",
+          refreshToken: "refresh-token",
+        },
+      };
     default:
       throw new Error(`UNEXPECTED_AUTH_MUTATION:${operationName}`);
   }
@@ -100,20 +102,19 @@ describe("normalizeKoreanPhone", () => {
         signupToken: "signup-token",
       });
       await expect(
-        completePhoneSignup("signup-token", "tea", "female", "tea@example.com", "password"),
+        completePhoneSignup("signup-token", "tea", "female", "tea@example.com", "password", true),
       ).resolves.toMatchObject({
-        session: { token: "session-token" },
+        session: { accessToken: "session-token", refreshToken: "refresh-token" },
       });
       await expect(loginWithKakao("access-token")).resolves.toMatchObject({
         kakaoPhoneVerificationToken: "kakao-token",
         requiresPhone: true,
       });
       await expect(
-        completeKakaoPhoneSignup("kakao-token", "signup-token", "tea", "female"),
+        completeKakaoPhoneSignup("kakao-token", "signup-token", "tea", "female", true),
       ).resolves.toMatchObject({
-        session: { token: "session-token" },
+        session: { accessToken: "session-token", refreshToken: "refresh-token" },
       });
-      await expect(attachPhoneToMe("kakao-token", "+821012345678", "123456")).resolves.toBe(true);
     });
 
     expect(calls.map((call) => call.operationName)).toEqual([
@@ -122,10 +123,9 @@ describe("normalizeKoreanPhone", () => {
       "CompletePhoneSignup",
       "LoginWithKakao",
       "CompleteKakaoPhoneSignup",
-      "AttachPhoneToMe",
     ]);
     expect(calls.map((call) => call.variables)).toEqual([
-      { input: { phone: "+821012345678", purpose: "signup" } },
+      { input: { phone: "+821012345678", purpose: "Signup" } },
       { input: { phone: "+821012345678", code: "123456" } },
       {
         input: {
@@ -134,6 +134,7 @@ describe("normalizeKoreanPhone", () => {
           gender: "female",
           email: "tea@example.com",
           password: "password",
+          termsAccepted: true,
         },
       },
       { accessToken: "access-token" },
@@ -143,11 +144,13 @@ describe("normalizeKoreanPhone", () => {
           phoneVerificationToken: "signup-token",
           userName: "tea",
           gender: "female",
+          termsAccepted: true,
         },
       },
-      { input: { phone: "+821012345678", code: "123456" } },
     ]);
     expect(calls.every((call) => call.query.includes("mutation"))).toBe(true);
+    expect(calls[2]?.query).toContain("refreshToken");
+    expect(calls[4]?.query).toContain("refreshToken");
   });
 
   it("surfaces Apollo GraphQL mutation errors", async () => {
@@ -164,13 +167,37 @@ describe("normalizeKoreanPhone", () => {
     });
   });
 
+  it("fails closed when an existing-user verification omits either session token", () => {
+    expect(() =>
+      mapVerifyPhoneCodeResult({
+        verifyPhoneCode: {
+          existingUser: true,
+          phoneVerificationToken: null,
+          tokenPayload: null,
+        },
+      }),
+    ).toThrow("MISSING_AUTH_TOKEN_PAYLOAD");
+  });
+
+  it("fails closed when a new-user verification omits its signup token", () => {
+    expect(() =>
+      mapVerifyPhoneCodeResult({
+        verifyPhoneCode: {
+          existingUser: false,
+          phoneVerificationToken: null,
+          tokenPayload: null,
+        },
+      }),
+    ).toThrow("MISSING_PHONE_VERIFICATION_TOKEN");
+  });
+
   it("shares session token headers with HTTP and WebSocket GraphQL clients", () => {
-    setGraphQLSessionToken("session-token");
+    setGraphQLSession({ accessToken: "session-token", refreshToken: "refresh-token" });
     expect(getGraphQLAuthorizationHeaders()).toEqual({
       authorization: "Bearer session-token",
     });
 
-    setGraphQLSessionToken(null);
+    setGraphQLSession(null);
     expect(getGraphQLAuthorizationHeaders()).toEqual({});
   });
 

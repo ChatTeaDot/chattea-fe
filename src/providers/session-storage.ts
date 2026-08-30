@@ -1,16 +1,21 @@
 import * as SecureStore from "expo-secure-store";
 
 export type StoredSession = {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 };
 
 const SESSION_KEY = "chattea.session";
 const devSessionToken = process.env.EXPO_PUBLIC_DEV_SESSION_TOKEN;
+const devRefreshToken = process.env.EXPO_PUBLIC_DEV_REFRESH_TOKEN;
+let saveQueue: Promise<unknown> = Promise.resolve();
 
 const isJwt = (token: string) => token.split(".").length === 3;
 
 const fallbackSession = (): StoredSession | null => {
-  return devSessionToken && isJwt(devSessionToken) ? { token: devSessionToken } : null;
+  return devSessionToken && devRefreshToken && isJwt(devSessionToken) && isJwt(devRefreshToken)
+    ? { accessToken: devSessionToken, refreshToken: devRefreshToken }
+    : null;
 };
 
 export const loadStoredSession = async (): Promise<StoredSession | null> => {
@@ -20,24 +25,40 @@ export const loadStoredSession = async (): Promise<StoredSession | null> => {
   }
 
   try {
-    const session = JSON.parse(value) as Partial<StoredSession>;
-    if (typeof session.token !== "string" || !isJwt(session.token)) {
+    const session: unknown = JSON.parse(value);
+    if (!session || typeof session !== "object") {
+      await SecureStore.deleteItemAsync(SESSION_KEY);
+      return fallbackSession();
+    }
+    const accessToken = Reflect.get(session, "accessToken");
+    const refreshToken = Reflect.get(session, "refreshToken");
+    if (
+      typeof accessToken !== "string" ||
+      typeof refreshToken !== "string" ||
+      !isJwt(accessToken) ||
+      !isJwt(refreshToken)
+    ) {
       await SecureStore.deleteItemAsync(SESSION_KEY);
       return fallbackSession();
     }
 
-    return { token: session.token };
+    return { accessToken, refreshToken };
   } catch {
     await SecureStore.deleteItemAsync(SESSION_KEY);
     return fallbackSession();
   }
 };
 
-export const saveStoredSession = async (session: StoredSession | null) => {
-  if (!session) {
-    await SecureStore.deleteItemAsync(SESSION_KEY);
-    return;
-  }
-
-  await SecureStore.setItemAsync(SESSION_KEY, JSON.stringify(session));
+export const saveStoredSession = (session: StoredSession | null): Promise<void> => {
+  const result = saveQueue
+    .catch(() => undefined)
+    .then(async () => {
+      if (!session) {
+        await SecureStore.deleteItemAsync(SESSION_KEY);
+        return;
+      }
+      await SecureStore.setItemAsync(SESSION_KEY, JSON.stringify(session));
+    });
+  saveQueue = result;
+  return result;
 };

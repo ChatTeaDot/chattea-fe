@@ -1,13 +1,11 @@
 import { Redirect, router } from "expo-router";
 import { useState } from "react";
-import { Alert, Text } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
+import { Alert } from "react-native";
 
 import { useSession } from "@/providers/session-provider";
 import { AppInput, ContentState, Screen } from "@/shared/components";
-import type { AppTheme } from "@/theme/unistyles";
 
-import { AuthActionButton, GenderSelector, SignupHeader } from "./components";
+import { AuthActionButton, GenderSelector, SignupHeader, TermsAcceptance } from "./components";
 import { clearAuthContinuation, loadAuthContinuation, useAuthContinuation } from "./continuation";
 import { useCompleteKakaoPhoneSignup, useCompletePhoneSignup } from "./hooks";
 import { Gender } from "./types";
@@ -20,6 +18,7 @@ export const SignupScreen = () => {
   const [gender, setGender] = useState<Gender | undefined>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const { setSession } = useSession();
   const completeKakao = useCompleteKakaoPhoneSignup();
   const complete = useCompletePhoneSignup();
@@ -43,6 +42,7 @@ export const SignupScreen = () => {
             signupToken: current.signupToken,
             userName,
             gender,
+            termsAccepted,
           })
         : await complete.mutateAsync({
             signupToken: current.signupToken,
@@ -50,9 +50,10 @@ export const SignupScreen = () => {
             gender,
             email,
             password,
+            termsAccepted,
           });
       await clearAuthContinuation();
-      setSession(result.session);
+      await setSession(result.session);
       router.replace("/matches");
     } catch {
       Alert.alert("가입을 완료하지 못했어요", "입력한 내용을 확인한 뒤 다시 시도해주세요.");
@@ -86,11 +87,12 @@ export const SignupScreen = () => {
       {!kakaoToken ? (
         <AppInput label="비밀번호" onChangeText={setPassword} secureTextEntry value={password} />
       ) : null}
-      <Text style={styles.terms}>가입하면 필수 약관에 동의합니다.</Text>
+      <TermsAcceptance accepted={termsAccepted} onChange={setTermsAccepted} />
       <AuthActionButton
         disabled={
           !userName.trim() ||
           !gender ||
+          !termsAccepted ||
           (!kakaoToken && (!email.trim() || !password.trim())) ||
           complete.isPending ||
           completeKakao.isPending
@@ -101,9 +103,3 @@ export const SignupScreen = () => {
     </Screen>
   );
 };
-
-const styles = StyleSheet.create((theme: AppTheme) => ({
-  terms: {
-    color: theme.colors.muted,
-  },
-}));

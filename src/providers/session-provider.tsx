@@ -1,25 +1,96 @@
-import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
-import { setGraphQLSessionToken } from "@/shared/graphql";
+import { setGraphQLSession, setGraphQLSessionHandlers } from "@/shared/graphql";
 
-import { loadStoredSession, saveStoredSession } from "./session-storage";
+import { loadStoredSession, saveStoredSession, type StoredSession } from "./session-storage";
 
-type Session = {
-  token: string;
-};
+type Session = StoredSession;
 
 type SessionContextValue = {
+  completeSessionTermination: () => void;
   hydrated: boolean;
+  requestSessionTermination: () => void;
   session: Session | null;
-  setSession: (session: Session | null) => void;
+  setSession: (session: Session | null) => Promise<void>;
+  terminationRequested: boolean;
 };
 
 const SessionContext = createContext<SessionContextValue | null>(null);
 
+export const publishSession = (
+  session: Session | null,
+  updateReactSession: (session: Session | null) => void,
+) => {
+  setGraphQLSession(session);
+  updateReactSession(session);
+};
+
+export const completeSessionHydration = (
+  session: Session | null,
+  updateReactSession: (session: Session | null) => void,
+  updateHydrated: (hydrated: boolean) => void,
+) => {
+  publishSession(session, updateReactSession);
+  updateHydrated(true);
+};
+
 export const SessionProvider = ({ children }: PropsWithChildren) => {
-  const [session, setSession] = useState<Session | null>(null);
+  const [session, updateSession] = useState<Session | null>(null);
   const [hydrated, setHydrated] = useState(false);
-  const value = useMemo(() => ({ hydrated, session, setSession }), [hydrated, session]);
+  const [terminationRequested, setTerminationRequested] = useState(false);
+  const setSession = useCallback(async (nextSession: Session | null) => {
+    if (nextSession) {
+      await saveStoredSession(nextSession);
+      publishSession(nextSession, updateSession);
+      return;
+    }
+
+    let persistenceError: unknown;
+    try {
+      await saveStoredSession(null);
+    } catch (error) {
+      persistenceError = error;
+    }
+    publishSession(null, updateSession);
+    if (persistenceError) throw persistenceError;
+  }, []);
+  const requestSessionTermination = useCallback(() => setTerminationRequested(true), []);
+  const completeSessionTermination = useCallback(() => setTerminationRequested(false), []);
+  setGraphQLSessionHandlers({
+    onSessionPublished: (refreshedSession) => {
+      updateSession(refreshedSession);
+    },
+    onSessionRefreshed: async (refreshedSession) => {
+      await saveStoredSession(refreshedSession);
+    },
+    onTerminationRequired: requestSessionTermination,
+  });
+  const value = useMemo(
+    () => ({
+      completeSessionTermination,
+      hydrated,
+      requestSessionTermination,
+      session,
+      setSession,
+      terminationRequested,
+    }),
+    [
+      completeSessionTermination,
+      hydrated,
+      requestSessionTermination,
+      session,
+      setSession,
+      terminationRequested,
+    ],
+  );
 
   useEffect(() => {
     let active = true;
@@ -27,12 +98,12 @@ export const SessionProvider = ({ children }: PropsWithChildren) => {
     loadStoredSession()
       .then((storedSession) => {
         if (active) {
-          setSession(storedSession);
+          completeSessionHydration(storedSession, updateSession, setHydrated);
         }
       })
-      .finally(() => {
+      .catch(() => {
         if (active) {
-          setHydrated(true);
+          completeSessionHydration(null, updateSession, setHydrated);
         }
       });
 
@@ -40,16 +111,6 @@ export const SessionProvider = ({ children }: PropsWithChildren) => {
       active = false;
     };
   }, []);
-
-  useEffect(() => {
-    setGraphQLSessionToken(session?.token ?? null);
-  }, [session?.token]);
-
-  useEffect(() => {
-    if (hydrated) {
-      void saveStoredSession(session);
-    }
-  }, [hydrated, session]);
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 };
