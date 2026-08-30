@@ -24,14 +24,15 @@ const getTokenExpiresAt = (token: string): number => {
   }
 
   const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
-  const decoded = JSON.parse(
+  const decoded: unknown = JSON.parse(
     new TextDecoder().decode(toByteArray(base64.padEnd(Math.ceil(base64.length / 4) * 4, "="))),
-  ) as { exp?: unknown };
-  if (typeof decoded.exp !== "number" || !Number.isSafeInteger(decoded.exp)) {
+  );
+  const exp = decoded && typeof decoded === "object" ? Reflect.get(decoded, "exp") : undefined;
+  if (typeof exp !== "number" || !Number.isSafeInteger(exp)) {
     throw new Error("AUTH_CONTINUATION_TOKEN_INVALID");
   }
 
-  return decoded.exp * 1000;
+  return exp * 1000;
 };
 
 export const getAuthContinuationExpiresAt = (ttlMs: number, tokens: readonly string[] = []) => {
@@ -50,28 +51,30 @@ export const loadAuthContinuation = async (): Promise<AuthContinuation | null> =
   }
 
   try {
-    const stored = JSON.parse(value) as Partial<StoredAuthContinuation>;
+    const stored: unknown = JSON.parse(value);
+    if (!stored || typeof stored !== "object") {
+      await clearAuthContinuation();
+      return null;
+    }
+    const expiresAt = Reflect.get(stored, "expiresAt");
+    const kakaoToken = Reflect.get(stored, "kakaoToken");
+    const phone = Reflect.get(stored, "phone");
+    const signupToken = Reflect.get(stored, "signupToken");
     if (
-      (stored.phone !== undefined && (typeof stored.phone !== "string" || !stored.phone)) ||
-      typeof stored.expiresAt !== "number" ||
-      !Number.isSafeInteger(stored.expiresAt) ||
-      stored.expiresAt <= Date.now() ||
-      (stored.kakaoToken !== undefined &&
-        (typeof stored.kakaoToken !== "string" || !stored.kakaoToken)) ||
-      (stored.signupToken !== undefined &&
-        (typeof stored.signupToken !== "string" || !stored.signupToken)) ||
-      (!stored.phone && !stored.kakaoToken) ||
-      (stored.signupToken !== undefined && !stored.phone)
+      (phone !== undefined && (typeof phone !== "string" || !phone)) ||
+      typeof expiresAt !== "number" ||
+      !Number.isSafeInteger(expiresAt) ||
+      expiresAt <= Date.now() ||
+      (kakaoToken !== undefined && (typeof kakaoToken !== "string" || !kakaoToken)) ||
+      (signupToken !== undefined && (typeof signupToken !== "string" || !signupToken)) ||
+      (!phone && !kakaoToken) ||
+      (signupToken !== undefined && !phone)
     ) {
       await clearAuthContinuation();
       return null;
     }
 
-    return {
-      kakaoToken: stored.kakaoToken,
-      phone: stored.phone,
-      signupToken: stored.signupToken,
-    };
+    return { kakaoToken, phone, signupToken };
   } catch {
     await clearAuthContinuation();
     return null;

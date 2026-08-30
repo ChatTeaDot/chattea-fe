@@ -75,24 +75,3 @@ export type ChatMessage = {
   idempotencyKey: string | null;
   createdAt: string;
 };
-
-export type AppNotification = {
-  id: string;
-  type: string;
-  title: string;
-  body: string;
-  route: string | null;
-  readAt: string | null;
-  createdAt: string;
-};
-
-export type BillingProduct = {
-  id: string;
-  kind: string;
-  name: string;
-};
-
-export type ConsumableBalance = {
-  superLikeCredits: number;
-  boostCredits: number;
-};

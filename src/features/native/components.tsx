@@ -1,6 +1,8 @@
+import { LegendList, type LegendListProps } from "@legendapp/list/react-native";
 import { Image } from "expo-image";
 import type { PropsWithChildren, ReactNode } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 
 type ButtonProps = {
@@ -11,7 +13,19 @@ type ButtonProps = {
   fullWidth?: boolean;
 };
 
-export const NativeScreen = ({ children }: PropsWithChildren) => <>{children}</>;
+export const NativeScreen = ({ children }: PropsWithChildren) => (
+  <View style={styles.screen}>{children}</View>
+);
+
+export const NativeKeyboardScreen = ({ children }: PropsWithChildren) => (
+  <KeyboardAvoidingView
+    behavior={Platform.OS === "ios" ? "padding" : undefined}
+    enabled={Platform.OS === "ios"}
+    style={styles.screen}
+  >
+    {children}
+  </KeyboardAvoidingView>
+);
 
 export const NativeScroll = ({ children }: PropsWithChildren) => (
   <ScrollView
@@ -25,6 +39,35 @@ export const NativeScroll = ({ children }: PropsWithChildren) => (
   </ScrollView>
 );
 
+export const NativeList = <ItemT,>({
+  contentContainerStyle,
+  ListHeaderComponentStyle,
+  style,
+  ...props
+}: LegendListProps<ItemT>) => (
+  <LegendList
+    {...props}
+    automaticallyAdjustKeyboardInsets
+    automaticallyAdjustsScrollIndicatorInsets
+    contentContainerStyle={[styles.listContent, contentContainerStyle]}
+    contentInsetAdjustmentBehavior="automatic"
+    keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
+    keyboardShouldPersistTaps="handled"
+    ListHeaderComponentStyle={[styles.listHeader, ListHeaderComponentStyle]}
+    recycleItems
+    showsVerticalScrollIndicator={false}
+    style={[styles.listFrame, style]}
+  />
+);
+
+export const NativeComposer = ({ children }: PropsWithChildren) => (
+  <SafeAreaView edges={bottomEdge} style={styles.composer}>
+    {children}
+  </SafeAreaView>
+);
+
+const bottomEdge = ["bottom"] as const;
+
 export const NativeButton = ({
   label,
   onPress,
@@ -34,6 +77,7 @@ export const NativeButton = ({
 }: ButtonProps) => (
   <Pressable
     accessibilityRole="button"
+    accessibilityState={{ disabled }}
     disabled={disabled}
     onPress={onPress}
     style={({ pressed }) => [
@@ -75,10 +119,12 @@ export const ContentPhoto = ({
   uri,
   label,
   height = 360,
+  recyclingKey,
 }: {
   uri?: string | null;
   label: string;
   height?: number;
+  recyclingKey?: string;
 }) => {
   const photoStyle = height > 200 ? styles.photoLarge : styles.photoSmall;
   const fallbackStyle = height > 200 ? styles.photoFallbackLarge : styles.photoFallbackSmall;
@@ -91,7 +137,13 @@ export const ContentPhoto = ({
   }
 
   return (
-    <Image accessibilityLabel={label} contentFit="cover" source={{ uri }} style={photoStyle} />
+    <Image
+      accessibilityLabel={label}
+      contentFit="cover"
+      recyclingKey={recyclingKey}
+      source={{ uri }}
+      style={photoStyle}
+    />
   );
 };
 
@@ -125,6 +177,10 @@ const buttonTextToneStyle = (tone: NonNullable<ButtonProps["tone"]>) => {
 };
 
 const styles = StyleSheet.create((theme) => ({
+  screen: {
+    backgroundColor: theme.colors.background,
+    flex: 1,
+  },
   scrollFrame: {
     flex: 1,
     backgroundColor: theme.colors.background,
@@ -133,6 +189,24 @@ const styles = StyleSheet.create((theme) => ({
     gap: theme.spacing.lg,
     paddingHorizontal: theme.spacing.md,
     paddingBottom: 40,
+  },
+  listFrame: {
+    flex: 1,
+  },
+  listContent: {
+    gap: theme.spacing.lg,
+    paddingBottom: 40,
+    paddingHorizontal: theme.spacing.md,
+  },
+  listHeader: {
+    paddingBottom: theme.spacing.lg,
+  },
+  composer: {
+    backgroundColor: theme.colors.background,
+    gap: theme.spacing.sm,
+    paddingBottom: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
+    paddingTop: theme.spacing.sm,
   },
   button: {
     alignItems: "center",

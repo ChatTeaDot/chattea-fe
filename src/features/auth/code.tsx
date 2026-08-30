@@ -71,7 +71,7 @@ export const CodeScreen = () => {
       const result = await verify.mutateAsync({ phone: current.phone, code });
       if (result.status === "LOGIN") {
         await clearAuthContinuation();
-        setSession(result.session);
+        await setSession(result.session);
         router.replace("/matches");
         return;
       }

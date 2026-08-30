@@ -2,16 +2,16 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Alert, TextInput, type TextInputProps } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 
-import { EmptyState } from "../components";
+import { EmptyState } from "@/features/native/components";
+import type { AppNotification } from "@/features/native/notifications";
 import type {
-  AppNotification,
   ChatMessage,
   ChatRoom,
   CommunityComment,
   CommunityPost,
   CurrentUser,
   MatchCandidate,
-} from "../types";
+} from "@/features/native/types";
 
 export const KOREAN_REGIONS = [
   "서울",
@@ -50,6 +50,24 @@ export const NativeTextInput = ({ placeholderTextColor, ...props }: TextInputPro
 export const ErrorState = () => (
   <EmptyState title="내용을 불러오지 못했어요" body="잠시 후 다시 시도해 주세요." />
 );
+
+export const runExclusiveAction = async (
+  guard: { current: boolean },
+  action: () => Promise<void>,
+) => {
+  if (guard.current) return;
+  guard.current = true;
+  try {
+    await action();
+  } finally {
+    guard.current = false;
+  }
+};
+
+export const getLikesErrorKind = (error: unknown): "entitlement" | "retryable" => {
+  const message = error instanceof Error ? error.message : String(error ?? "");
+  return message.includes("LIKED_ME_NOT_AVAILABLE") ? "entitlement" : "retryable";
+};
 
 export const useRouteParam = (name: string): string | undefined => {
   const params = useLocalSearchParams<Record<string, string | string[]>>();

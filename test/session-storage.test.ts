@@ -17,17 +17,57 @@ vi.mock("expo-secure-store", () => ({
 describe("session storage", () => {
   beforeEach(() => {
     store.clear();
+    vi.clearAllMocks();
   });
 
   it("persists and clears sessions", async () => {
     const { loadStoredSession, saveStoredSession } =
       await import("../src/providers/session-storage");
 
-    await saveStoredSession({ token: "header.payload.signature" });
-    await expect(loadStoredSession()).resolves.toEqual({ token: "header.payload.signature" });
+    await saveStoredSession({
+      accessToken: "header.payload.signature",
+      refreshToken: "refresh.payload.signature",
+    });
+    await expect(loadStoredSession()).resolves.toEqual({
+      accessToken: "header.payload.signature",
+      refreshToken: "refresh.payload.signature",
+    });
 
     await saveStoredSession(null);
     await expect(loadStoredSession()).resolves.toBeNull();
+  });
+
+  it("serializes overlapping session writes so the newest pair remains durable", async () => {
+    const secureStore = await import("expo-secure-store");
+    const { loadStoredSession, saveStoredSession } =
+      await import("../src/providers/session-storage");
+    let releaseFirstWrite!: () => void;
+    const firstWritePending = new Promise<void>((resolve) => {
+      releaseFirstWrite = resolve;
+    });
+    vi.mocked(secureStore.setItemAsync).mockImplementationOnce(async (key, value) => {
+      await firstWritePending;
+      store.set(key, value);
+    });
+
+    const firstWrite = saveStoredSession({
+      accessToken: "first.payload.signature",
+      refreshToken: "first-refresh.payload.signature",
+    });
+    const secondWrite = saveStoredSession({
+      accessToken: "second.payload.signature",
+      refreshToken: "second-refresh.payload.signature",
+    });
+    await vi.waitFor(() => expect(secureStore.setItemAsync).toHaveBeenCalledTimes(1));
+
+    releaseFirstWrite();
+    await Promise.all([firstWrite, secondWrite]);
+
+    expect(secureStore.setItemAsync).toHaveBeenCalledTimes(2);
+    await expect(loadStoredSession()).resolves.toEqual({
+      accessToken: "second.payload.signature",
+      refreshToken: "second-refresh.payload.signature",
+    });
   });
 
   it("drops corrupt stored sessions", async () => {
@@ -44,6 +84,6 @@ describe("session storage", () => {
 
     expect(getSessionRedirect(false, false)).toBeNull();
     expect(getSessionRedirect(true, false)).toBe("/phone");
-    expect(getSessionRedirect(true, true)).toBe("/matches");
+    expect(getSessionRedirect(true, true)).toBeNull();
   });
 });

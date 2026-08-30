@@ -1,4 +1,3 @@
-/** ChatTea's platform-neutral design primitives. Keep raw values in this file only. */
 export const palette = {
   primary: "#5c46ff",
   magenta: "#f323ff",
@@ -14,7 +13,6 @@ export const palette = {
   success: "#23845b",
 } as const;
 
-// Semantic aliases keep existing feature code on one system while it is migrated.
 export const colors = {
   background: palette.canvas,
   surface: palette.surface,

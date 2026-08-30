@@ -2,6 +2,7 @@ import { useQuery } from "@apollo/client/react";
 import { router } from "expo-router";
 import { Text, View } from "react-native";
 
+import { CONSUMABLE_BALANCE_QUERY, type ConsumableBalance } from "@/features/native/billing";
 import {
   ContentPhoto,
   LoadingState,
@@ -11,9 +12,9 @@ import {
   NativeScreen,
   NativeScroll,
   SectionHeading,
-} from "../components";
-import { CONSUMABLE_BALANCE_QUERY, ME_QUERY } from "../operations";
-import type { ConsumableBalance } from "../types";
+} from "@/features/native/components";
+import { ME_QUERY } from "@/features/native/operations";
+
 import { ErrorState, type MeData, styles } from "./screen-shared";
 
 export const ProfileScreen = () => {

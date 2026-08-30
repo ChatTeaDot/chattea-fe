@@ -1,55 +1,72 @@
-# chattea-fe
+# ChatTea mobile
 
-ChatTea frontend. Expo React Native + Expo Router.
+Expo 56 and React Native 0.85 client for ChatTea.
 
-## Run
+## Requirements
 
-```sh
-pnpm install
-pnpm run dev
+- Node.js 24
+- pnpm 11.0.4
+- Xcode or Android Studio for native builds
+
+## Local development
+
+```bash
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
-## Checks
+Kakao login, Sentry, Datadog, and native configuration plugins require a development build rather than Expo Go.
 
-```sh
-pnpm run typecheck
-pnpm run lint
-pnpm run format:check
+## Verification
+
+```bash
+pnpm audit:all
+pnpm deps:check
 pnpm test
+pnpm typecheck
+pnpm lint
+pnpm format:check
 ```
 
-## Current scope
+`deps:check` validates Expo SDK compatibility and peer dependencies. The TypeScript configuration uses both `strict` and `noUncheckedIndexedAccess`.
 
-- Phone auth screens.
-- Signup profile screen.
-- Signup profile intro input with 60-char product limit.
-- Kakao native SDK login entry using `EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY`.
-- Code screen 60-second resend timer with GraphQL resend.
-- Room list and chat room list rendering with `@legendapp/list`.
-- Optimistic message temp-id replacement through `sendMessage`.
-- Streaming message updates fade in newly appended text.
-- Chat input product limits: first message 30 chars, general messages 90 chars.
-- GraphQL phone auth mutations via `EXPO_PUBLIC_GRAPHQL_URL`.
-- GraphQL Kakao login and Kakao-phone completion mutations via `EXPO_PUBLIC_GRAPHQL_URL`.
-- GraphQL Kakao existing-phone attach via `attachPhoneToMe`.
-- GraphQL rooms/messages/sendMessage queries via `EXPO_PUBLIC_GRAPHQL_URL`, including `messages(first, after)` cursor args.
-- GraphQL editMessage/deleteMessage/markRoomRead/setTyping mutations via `EXPO_PUBLIC_GRAPHQL_URL`.
-- GraphQL `reportMessage`/`blockUser` mutations via `EXPO_PUBLIC_GRAPHQL_URL`.
-- GraphQL WebSocket `messageCreated`/`messageUpdated`/`messageDeleted`/`typingChanged`/`readReceiptUpdated` subscriptions via `EXPO_PUBLIC_GRAPHQL_WS_URL`.
-- Chat message report action.
-- Chat room read marking, typing status, and read receipt UI updates.
-- GraphQL WebSocket auth headers and retry/backoff.
-- Sentry React Native init via `EXPO_PUBLIC_SENTRY_DSN`.
-- Datadog RUM/log init via `EXPO_PUBLIC_DATADOG_CLIENT_TOKEN` and `EXPO_PUBLIC_DATADOG_RUM_APPLICATION_ID`.
-- Sentry and Datadog Metro/config-plugin hooks for sourcemaps/debug IDs when build secrets are present.
-- Native `@expo/ui` universal buttons on the phone/code/signup auth flow.
-- Match candidate screen after login, with GraphQL `matchCandidates` and `likeUser`.
-- Plan screen with GraphQL Free/Basic/Gold/Black catalog.
-- GraphQL unread message summary preview client for Gold/Black 30+ char rule.
-- Community screen with anonymous post list, post creation, comment action, and report action.
-- Profile rating action on match candidates without public score display.
-- React Query and session providers with GraphQL authorization header sync.
-- SecureStore-backed app session persistence with hydration-gated initial routing.
-- `eas.json` release profile skeleton for development, preview, and production.
+The pnpm audit policy temporarily ignores the two unpatched `image-size` advisories inherited by Expo Metro (`GHSA-w3rx-r6r6-pgpr` and `GHSA-5p2g-fcmc-qvqq`). CI processes trusted repository assets only; remove the exceptions when Expo ships a patched dependency.
 
-Native `@expo/ui` changes require a rebuilt native app before device validation.
+## Configuration
+
+```text
+EXPO_PUBLIC_GRAPHQL_URL
+EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY
+EXPO_PUBLIC_EAS_PROJECT_ID
+EXPO_PUBLIC_REVENUECAT_IOS_API_KEY
+EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY
+EXPO_PUBLIC_SENTRY_DSN
+EXPO_PUBLIC_DATADOG_CLIENT_TOKEN
+EXPO_PUBLIC_DATADOG_RUM_APPLICATION_ID
+EXPO_PUBLIC_SERVICE_ENV
+EXPO_PUBLIC_SERVICE_VERSION
+```
+
+Observability settings are optional. `EXPO_PUBLIC_DEV_SESSION_TOKEN` and `EXPO_PUBLIC_DEV_REFRESH_TOKEN` are development-only, must be configured together, and must never be configured in a production build.
+
+`EXPO_PUBLIC_EAS_PROJECT_ID` must be the UUID of the EAS project owned by the release account. It is passed to `expo-notifications` when requesting an Expo push token. `EXPO_PUBLIC_REVENUECAT_IOS_API_KEY` and `EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY` must be the platform-specific public SDK keys; they are not RevenueCat secret API keys. Missing values explicitly disable remote push registration or the corresponding store purchase UI. Configure release values in the EAS environment rather than committing them.
+
+Sentry build integration additionally uses `SENTRY_ORG`, `SENTRY_PROJECT`, and optionally `SENTRY_URL`. Datadog build integration uses `DATADOG_API_KEY`.
+
+## Architecture
+
+- Expo Router owns navigation under `src/app`.
+- Apollo Client owns GraphQL transport and normalized cache state.
+- SecureStore persists the session and installation identifier.
+- Active collection screens use `@legendapp/list` with recycled, memoized rows.
+- Unistyles owns component styling; safe-area and keyboard behavior use native React Native primitives.
+
+## Builds and releases
+
+CI exports production iOS and Android bundles with Metro. The main-only manual release workflow exposes a blocking production EAS build target, which fails closed until the release account supplies the real EAS project ID, owner access, and Apple/Google signing credentials; no placeholder identity is used. Store submission remains an external manual prerequisite until an approved workflow can bind it to that run's exact build ID. OTA updates remain disabled until the project adds `expo-updates` and a fingerprint runtime policy.
+
+Passing tests, Expo config validation, and Metro exports certifies the code paths but not the external services. Live mobile certification requires all of the following:
+
+- Real RevenueCat iOS and Android public SDK keys, active App Store Connect and Play Console products mapped to the five backend product IDs, a current RevenueCat offering, and the backend webhook endpoint and secret. Use signed sandbox builds to exercise purchase, cancellation, delayed webhook reconciliation, restore, and account switching on both platforms.
+- A real EAS project ID associated with the release account and signed physical-device builds. On both platforms verify permission denial and grant, token registration and rotation, foreground delivery, authenticated cold-start and runtime response routing, and logout unregistration. Android testing must include API 33 or newer.
+- Valid Apple provisioning/App Store credentials and Android keystore/Play credentials for production binaries. Until these inputs and device checks exist, purchases, push registration, and release submission remain fail-closed rather than production-certified.

@@ -1,10 +1,10 @@
 import { Text } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
+import { getResendTitle } from "@/features/auth/resend-timer";
 import { AppInput } from "@/shared/components";
 import type { AppTheme } from "@/theme/unistyles";
 
-import { getResendTitle } from "../resend-timer";
 import { AuthActionButton } from "./auth-action-button";
 
 type CodeVerificationFormProps = {

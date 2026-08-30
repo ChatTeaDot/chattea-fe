@@ -1,5 +1,6 @@
 export type Session = {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 };
 
 export type Gender = "male" | "female";

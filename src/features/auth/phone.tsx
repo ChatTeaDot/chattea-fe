@@ -55,7 +55,7 @@ export const PhoneScreen = () => {
       const result = await kakaoLogin.mutateAsync(accessToken);
 
       if (!result.requiresPhone) {
-        setSession(result.session);
+        await setSession(result.session);
         router.replace("/matches");
         return;
       }
