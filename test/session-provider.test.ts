@@ -4,10 +4,9 @@ import * as SecureStore from "expo-secure-store";
 import { createElement, type ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import {
+import SessionProvider, {
   completeSessionHydration,
   publishSession,
-  SessionProvider,
   useSession,
 } from "../src/providers/session-provider";
 import { getGraphQLAuthorizationHeaders, setGraphQLSession } from "../src/shared/graphql/client";

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { colors, darkColors, radii, spacing } from "../src/theme/tokens";
+import { colors, darkColors, radii, spacing } from "../src/theme/constants";
 
 describe("adaptive themes", () => {
   it("provides distinct semantic surfaces with identical token boundaries", () => {

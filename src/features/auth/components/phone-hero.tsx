@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native-unistyles";
 
 import type { AppTheme } from "@/theme/unistyles";
 
-export const PhoneHero = () => {
+const PhoneHero = () => {
   return (
     <View style={styles.hero}>
       <Text style={styles.kicker}>소개팅은 가볍게, 대화는 진하게</Text>
@@ -39,3 +39,5 @@ const styles = StyleSheet.create((theme: AppTheme) => ({
     lineHeight: 38,
   },
 }));
+
+export default PhoneHero;

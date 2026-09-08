@@ -1,0 +1,3 @@
+export const COMMUNITY_TITLE_MAX_LENGTH = 80;
+
+export const COMMUNITY_BODY_MAX_LENGTH = 1000;

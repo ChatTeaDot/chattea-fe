@@ -1,15 +1,10 @@
 import { print } from "graphql";
 import { describe, expect, it, vi } from "vitest";
 
-import {
-  CREATE_UPLOAD_MUTATION,
-  FINALIZE_UPLOAD_MUTATION,
-} from "../src/features/native/profile-upload/api";
-import { buildProfileUpdateInput } from "../src/features/native/profile-upload/profile-input";
-import {
-  type ProfilePhotoUploadDependencies,
-  selectAndUploadProfilePhoto,
-} from "../src/features/native/profile-upload/upload-profile-photo";
+import { CREATE_UPLOAD_MUTATION, FINALIZE_UPLOAD_MUTATION } from "../src/features/profile/api";
+import { type ProfilePhotoUploadDependencies } from "../src/features/profile/types";
+import { buildProfileUpdateInput } from "../src/features/profile/utils/profile-input";
+import { uploadProfilePhoto } from "../src/features/profile/utils/upload-profile-photo";
 
 const jpeg = new Uint8Array([0xff, 0xd8, 0xff, 0xdb, 0x00, 0x43]).buffer;
 
@@ -58,9 +53,7 @@ describe("verified profile photo upload", () => {
       new Uint8Array([0x00, 0x01, 0x02]).buffer,
     );
 
-    await expect(selectAndUploadProfilePhoto(dependencies)).rejects.toThrow(
-      "PHOTO_CONTENT_INVALID",
-    );
+    await expect(uploadProfilePhoto(dependencies)).rejects.toThrow("PHOTO_CONTENT_INVALID");
 
     expect(dependencies.createUpload).not.toHaveBeenCalled();
   });
@@ -92,7 +85,7 @@ describe("verified profile photo upload", () => {
       return { id: "upload-1", publicUrl: "https://cdn.example.com/verified.jpg" };
     });
 
-    const result = await selectAndUploadProfilePhoto(dependencies);
+    const result = await uploadProfilePhoto(dependencies);
 
     expect(order).toEqual(["create", "put", "finalize"]);
     expect(result).toEqual({
@@ -106,9 +99,7 @@ describe("verified profile photo upload", () => {
     const dependencies = createDependencies();
     vi.mocked(dependencies.putObject).mockResolvedValue({ ok: false });
 
-    await expect(selectAndUploadProfilePhoto(dependencies)).rejects.toThrow(
-      "PROFILE_PHOTO_UPLOAD_FAILED",
-    );
+    await expect(uploadProfilePhoto(dependencies)).rejects.toThrow("PROFILE_PHOTO_UPLOAD_FAILED");
 
     expect(dependencies.finalizeUpload).not.toHaveBeenCalled();
   });
@@ -117,7 +108,7 @@ describe("verified profile photo upload", () => {
     const dependencies = createDependencies();
     vi.mocked(dependencies.finalizeUpload).mockResolvedValue({ id: "upload-1", publicUrl: "" });
 
-    await expect(selectAndUploadProfilePhoto(dependencies)).rejects.toThrow(
+    await expect(uploadProfilePhoto(dependencies)).rejects.toThrow(
       "FINALIZE_UPLOAD_EMPTY_RESPONSE",
     );
   });
@@ -126,9 +117,7 @@ describe("verified profile photo upload", () => {
     const dependencies = createDependencies();
     vi.mocked(dependencies.requestPermission).mockResolvedValue(false);
 
-    await expect(selectAndUploadProfilePhoto(dependencies)).rejects.toThrow(
-      "PHOTO_PERMISSION_REQUIRED",
-    );
+    await expect(uploadProfilePhoto(dependencies)).rejects.toThrow("PHOTO_PERMISSION_REQUIRED");
 
     expect(dependencies.launchPicker).not.toHaveBeenCalled();
   });

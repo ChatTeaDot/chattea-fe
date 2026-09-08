@@ -22,7 +22,7 @@ describe("session storage", () => {
 
   it("persists and clears sessions", async () => {
     const { loadStoredSession, saveStoredSession } =
-      await import("../src/providers/session-storage");
+      await import("../src/providers/utils/session-storage");
 
     await saveStoredSession({
       accessToken: "header.payload.signature",
@@ -40,7 +40,7 @@ describe("session storage", () => {
   it("serializes overlapping session writes so the newest pair remains durable", async () => {
     const secureStore = await import("expo-secure-store");
     const { loadStoredSession, saveStoredSession } =
-      await import("../src/providers/session-storage");
+      await import("../src/providers/utils/session-storage");
     let releaseFirstWrite!: () => void;
     const firstWritePending = new Promise<void>((resolve) => {
       releaseFirstWrite = resolve;
@@ -71,7 +71,7 @@ describe("session storage", () => {
   });
 
   it("drops corrupt stored sessions", async () => {
-    const { loadStoredSession } = await import("../src/providers/session-storage");
+    const { loadStoredSession } = await import("../src/providers/utils/session-storage");
 
     store.set("chattea.session", "{");
 
@@ -80,7 +80,7 @@ describe("session storage", () => {
   });
 
   it("holds redirect until session hydration finishes", async () => {
-    const { getSessionRedirect } = await import("../src/providers/session-routing");
+    const { getSessionRedirect } = await import("../src/providers/utils/session-routing");
 
     expect(getSessionRedirect(false, false)).toBeNull();
     expect(getSessionRedirect(true, false)).toBe("/phone");

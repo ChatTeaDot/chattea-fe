@@ -1,7 +1,7 @@
 import { gql, type TypedDocumentNode } from "@apollo/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { ApolloProvider } from "../src/providers/apollo-provider";
+import ApolloProvider from "../src/providers/apollo-provider";
 import {
   apolloClient,
   getGraphQLAuthorizationHeaders,

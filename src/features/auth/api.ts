@@ -4,102 +4,22 @@ import { gql } from "@apollo/client";
 import { apolloClient } from "@/shared/graphql";
 
 import type {
+  CompleteKakaoPhoneSignupMutation,
+  CompleteKakaoPhoneSignupVariables,
+  CompletePhoneSignupMutation,
   CompletePhoneSignupResult,
+  CompletePhoneSignupVariables,
   Gender,
   KakaoLoginResult,
+  LoginWithKakaoMutation,
+  LoginWithKakaoVariables,
+  RequestPhoneCodeMutation,
+  RequestPhoneCodeVariables,
   Session,
+  VerifyPhoneCodeMutation,
+  VerifyPhoneCodeVariables,
   VerifyPhoneResult,
 } from "./types";
-
-export type PhoneVerificationPurpose = "Signup" | "Login" | "PasswordReset";
-
-export type RequestPhoneCodeMutation = {
-  readonly requestPhoneCode: {
-    readonly ok: boolean;
-  };
-};
-
-export type RequestPhoneCodeVariables = {
-  readonly input: {
-    readonly phone: string;
-    readonly purpose: PhoneVerificationPurpose;
-  };
-};
-
-export type VerifyPhoneCodeMutation = {
-  readonly verifyPhoneCode: {
-    readonly existingUser: boolean;
-    readonly phoneVerificationToken?: string | null;
-    readonly tokenPayload?: {
-      readonly accessToken: string;
-      readonly refreshToken: string;
-    } | null;
-  };
-};
-
-export type VerifyPhoneCodeVariables = {
-  readonly input: {
-    readonly phone: string;
-    readonly code: string;
-  };
-};
-
-export type CompletePhoneSignupMutation = {
-  readonly completePhoneSignup: {
-    readonly accessToken: string;
-    readonly refreshToken: string;
-  };
-};
-
-export type CompletePhoneSignupVariables = {
-  readonly input: {
-    readonly phoneVerificationToken: string;
-    readonly userName: string;
-    readonly gender: Gender;
-    readonly email: string;
-    readonly password: string;
-    readonly termsAccepted: boolean;
-  };
-};
-
-export type LoginWithKakaoMutation = {
-  readonly loginWithKakao:
-    | {
-        readonly __typename: "KakaoLoginSuccessPayload";
-        readonly requiresPhone: false;
-        readonly session: {
-          readonly accessToken: string;
-          readonly refreshToken: string;
-        };
-      }
-    | {
-        readonly __typename: "KakaoRequiresPhonePayload";
-        readonly requiresPhone: true;
-        readonly kakaoPhoneVerificationToken: string;
-        readonly userName: string | null;
-      };
-};
-
-export type LoginWithKakaoVariables = {
-  readonly accessToken: string;
-};
-
-export type CompleteKakaoPhoneSignupMutation = {
-  readonly completeKakaoPhoneSignup: {
-    readonly accessToken: string;
-    readonly refreshToken: string;
-  };
-};
-
-export type CompleteKakaoPhoneSignupVariables = {
-  readonly input: {
-    readonly kakaoPhoneVerificationToken: string;
-    readonly phoneVerificationToken: string;
-    readonly userName: string;
-    readonly gender: Gender;
-    readonly termsAccepted: boolean;
-  };
-};
 
 export const REQUEST_PHONE_CODE_MUTATION: TypedDocumentNode<
   RequestPhoneCodeMutation,

@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native-unistyles";
 
 import type { AppTheme } from "@/theme/unistyles";
 
-export const SignupHeader = () => {
+const SignupHeader = () => {
   return (
     <View style={styles.header}>
       <Text style={styles.kicker}>프로필</Text>
@@ -33,3 +33,5 @@ const styles = StyleSheet.create((theme: AppTheme) => ({
     fontWeight: "900",
   },
 }));
+
+export default SignupHeader;

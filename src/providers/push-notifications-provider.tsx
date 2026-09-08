@@ -4,17 +4,18 @@ import { router } from "expo-router";
 import { type PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { AppState, Platform } from "react-native";
 
-import { useAuthenticatedUserId } from "@/features/native/authenticated-user";
-import { registerPushToken, unregisterPushToken } from "@/features/native/notifications/api";
-import {
-  PushNotificationsContext,
-  useNotificationNavigation,
-} from "@/features/native/notifications/hooks";
 import {
   createPushRegistrationLifecycle,
-  type PushRegistrationState,
-} from "@/features/native/notifications/push-registration";
-import { pushRegistrationStorage } from "@/features/native/notifications/push-token-storage";
+  PushNotificationsContext,
+  pushRegistrationStorage,
+  registerPushToken,
+  unregisterPushToken,
+  useNotificationNavigation,
+} from "@/features/notifications";
+import { type PushRegistrationState } from "@/features/notifications";
+
+import { useAuthenticatedUserId } from "./authenticated-user";
+import { INITIAL_PUSH_STATE } from "./constants";
 
 const getProjectId = (): string | null => {
   const extra = Constants.expoConfig?.extra;
@@ -30,15 +31,10 @@ const getProjectId = (): string | null => {
   return typeof projectId === "string" && projectId.trim() ? projectId.trim() : null;
 };
 
-const initialState: PushRegistrationState = {
-  message: "로그인 후 원격 알림을 설정할 수 있어요.",
-  status: "disabled",
-};
-
-export const PushNotificationsProvider = ({ children }: PropsWithChildren) => {
+const PushNotificationsProvider = ({ children }: PropsWithChildren) => {
   const userId = useAuthenticatedUserId();
   const notificationNavigation = useNotificationNavigation();
-  const [state, setState] = useState<PushRegistrationState>(initialState);
+  const [state, setState] = useState<PushRegistrationState>(INITIAL_PUSH_STATE);
   const [lifecycle] = useState(() =>
     createPushRegistrationLifecycle({
       backend: { register: registerPushToken, unregister: unregisterPushToken },
@@ -115,3 +111,5 @@ export const PushNotificationsProvider = ({ children }: PropsWithChildren) => {
     <PushNotificationsContext.Provider value={value}>{children}</PushNotificationsContext.Provider>
   );
 };
+
+export default PushNotificationsProvider;

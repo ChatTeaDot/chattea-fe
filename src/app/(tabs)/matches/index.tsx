@@ -1,1 +1,7 @@
-export { TodayMatchesScreen as default } from "@/features/native/screens";
+import { TodayMatchesScreen } from "@/screens";
+
+const TodayMatchesRoute = () => {
+  return <TodayMatchesScreen />;
+};
+
+export default TodayMatchesRoute;

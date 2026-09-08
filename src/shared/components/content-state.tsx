@@ -3,7 +3,8 @@ import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 import type { AppTheme } from "@/theme/unistyles";
 
-import { AppButton } from "./app-button";
+import AppButton from "./app-button";
+import { defaultCopy } from "./constants";
 
 type ContentStateProps = {
   kind: "loading" | "empty" | "error";
@@ -12,7 +13,7 @@ type ContentStateProps = {
   onRetry?: () => void;
 };
 
-export const ContentState = ({ kind, title, message, onRetry }: ContentStateProps) => {
+const ContentState = ({ kind, title, message, onRetry }: ContentStateProps) => {
   const { theme } = useUnistyles() as { theme: AppTheme };
   return (
     <View
@@ -35,15 +36,6 @@ export const ContentState = ({ kind, title, message, onRetry }: ContentStateProp
   );
 };
 
-const defaultCopy = {
-  loading: { title: "불러오고 있어요", message: "잠시만 기다려 주세요." },
-  empty: {
-    title: "아직 보여드릴 내용이 없어요",
-    message: "새 소식이 생기면 이곳에서 알려드릴게요.",
-  },
-  error: { title: "내용을 불러오지 못했어요", message: "연결을 확인한 뒤 다시 시도해 주세요." },
-};
-
 const styles = StyleSheet.create((theme: AppTheme) => ({
   container: {
     alignItems: "center",
@@ -57,3 +49,5 @@ const styles = StyleSheet.create((theme: AppTheme) => ({
   title: { ...theme.typography.heading, color: theme.colors.text, textAlign: "center" },
   message: { ...theme.typography.body, color: theme.colors.muted, textAlign: "center" },
 }));
+
+export default ContentState;

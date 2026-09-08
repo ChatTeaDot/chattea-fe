@@ -7,7 +7,7 @@ import {
   toCreateCommunityPostVariables,
   updateCommunityCommentDraft,
   updateCommunityPostDraft,
-} from "../src/features/native/community-idempotency";
+} from "../src/features/community/utils/idempotency";
 
 vi.mock("expo-crypto", () => ({ randomUUID: vi.fn() }));
 

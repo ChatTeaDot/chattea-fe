@@ -10,7 +10,7 @@ import {
 
 import { setGraphQLSession, setGraphQLSessionHandlers } from "@/shared/graphql";
 
-import { loadStoredSession, saveStoredSession, type StoredSession } from "./session-storage";
+import { loadStoredSession, saveStoredSession, type StoredSession } from "./utils/session-storage";
 
 type Session = StoredSession;
 
@@ -42,7 +42,7 @@ export const completeSessionHydration = (
   updateHydrated(true);
 };
 
-export const SessionProvider = ({ children }: PropsWithChildren) => {
+const SessionProvider = ({ children }: PropsWithChildren) => {
   const [session, updateSession] = useState<Session | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const [terminationRequested, setTerminationRequested] = useState(false);
@@ -122,3 +122,5 @@ export const useSession = () => {
   }
   return value;
 };
+
+export default SessionProvider;

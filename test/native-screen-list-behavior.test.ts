@@ -3,18 +3,16 @@ import { createRequire } from "node:module";
 import { type ComponentType, createElement, isValidElement, type ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { CommunityPostScreen } from "../src/features/native/screens/community-post-screen";
-import { CommunityScreen } from "../src/features/native/screens/community-screen";
-import { LikesScreen } from "../src/features/native/screens/likes-screen";
-import { NotificationsScreen } from "../src/features/native/screens/notifications-screen";
-import { ProfileFormScreen } from "../src/features/native/screens/profile-form-screen";
-import { RoomScreen } from "../src/features/native/screens/room-screen";
-import { RoomsScreen } from "../src/features/native/screens/rooms-screen";
-import {
-  getLikesErrorKind,
-  runExclusiveAction,
-} from "../src/features/native/screens/screen-shared";
-import { TodayMatchesScreen } from "../src/features/native/screens/today-matches-screen";
+import { getLikesErrorKind } from "../src/features/matches/utils/likes-error";
+import CommunityPostScreen from "../src/screens/community-post-screen";
+import CommunityScreen from "../src/screens/community-screen";
+import LikesScreen from "../src/screens/likes-screen";
+import NotificationsScreen from "../src/screens/notifications-screen";
+import ProfileFormScreen from "../src/screens/profile-form-screen";
+import RoomScreen from "../src/screens/room-screen";
+import RoomsScreen from "../src/screens/rooms-screen";
+import TodayMatchesScreen from "../src/screens/today-matches-screen";
+import { runExclusiveAction } from "../src/shared/lib";
 
 const { renderToStaticMarkup } = createRequire(import.meta.url)("react-dom/server") as {
   renderToStaticMarkup: (node: ReactNode) => string;
@@ -189,8 +187,9 @@ vi.mock("@apollo/client/react", () => ({
     };
   },
 }));
-vi.mock("@/features/native/profile-upload", () => ({
-  buildProfileUpdateInput: vi.fn((fields: unknown) => fields),
+vi.mock("@/features/profile/api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../src/features/profile/api")>()),
+
   selectAndUploadProfilePhoto: vi.fn(),
 }));
 vi.mock("expo-crypto", () => ({
@@ -304,16 +303,16 @@ vi.mock("react-native-safe-area-context", async () => {
     },
   };
 });
-vi.mock("react-native-unistyles", () => ({
-  StyleSheet: {
-    create: (factory: (theme: Record<string, unknown>) => unknown) =>
-      factory({
-        colors: new Proxy({}, { get: () => "#000" }),
-        spacing: { xs: 4, sm: 8, md: 16, lg: 24 },
-      }),
-  },
-  useUnistyles: () => ({ theme: { colors: { muted: "#000" } } }),
-}));
+vi.mock("react-native-unistyles", async () => {
+  const { colors, radii, spacing, typography } = await import("../src/theme/constants");
+  return {
+    StyleSheet: {
+      create: (factory: (theme: Record<string, unknown>) => unknown) =>
+        factory({ colors, radii, spacing, typography }),
+    },
+    useUnistyles: () => ({ theme: { colors, radii, spacing, typography } }),
+  };
+});
 
 const deferred = <T>(): Deferred<T> => {
   let resolve: (value: T) => void = () => undefined;
@@ -595,3 +594,7 @@ describe("native action helpers", () => {
     ).toBe("retryable");
   });
 });
+
+vi.mock("react-native-purchases", () => ({ default: {} }));
+
+vi.mock("expo-secure-store", () => ({}));

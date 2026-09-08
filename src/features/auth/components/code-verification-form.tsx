@@ -1,24 +1,15 @@
 import { Text } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { getResendTitle } from "@/features/auth/resend-timer";
 import { AppInput } from "@/shared/components";
 import type { AppTheme } from "@/theme/unistyles";
 
-import { AuthActionButton } from "./auth-action-button";
+import { PHONE_CODE_LENGTH } from "../constants";
+import type { CodeVerificationFormProps } from "../types";
+import { getResendTitle } from "../utils/resend-timer";
+import AuthActionButton from "./auth-action-button";
 
-type CodeVerificationFormProps = {
-  attachPending: boolean;
-  code: string;
-  requestPending: boolean;
-  resendSeconds: number;
-  verifyPending: boolean;
-  onChangeCode: (value: string) => void;
-  onResend: () => void;
-  onSubmit: () => void;
-};
-
-export const CodeVerificationForm = ({
+const CodeVerificationForm = ({
   attachPending,
   code,
   requestPending,
@@ -34,7 +25,7 @@ export const CodeVerificationForm = ({
       <AppInput
         keyboardType="number-pad"
         label="6자리 코드"
-        maxLength={6}
+        maxLength={PHONE_CODE_LENGTH}
         onChangeText={onChangeCode}
         value={code}
       />
@@ -64,3 +55,5 @@ const styles = StyleSheet.create((theme: AppTheme) => ({
     color: theme.colors.muted,
   },
 }));
+
+export default CodeVerificationForm;

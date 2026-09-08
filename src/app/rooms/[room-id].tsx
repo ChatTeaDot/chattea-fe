@@ -1,1 +1,7 @@
-export { RoomScreen as default } from "@/features/native/screens";
+import { RoomScreen } from "@/screens";
+
+const RoomRoute = () => {
+  return <RoomScreen />;
+};
+
+export default RoomRoute;

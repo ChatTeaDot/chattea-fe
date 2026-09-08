@@ -1,14 +1,14 @@
 import { router } from "expo-router";
 import { type PropsWithChildren, useEffect, useRef } from "react";
 
-import { useRevenueCat } from "@/features/native/billing";
-import { usePushNotifications } from "@/features/native/notifications";
-import { performForcedSessionTermination } from "@/features/native/session-actions";
+import { useRevenueCat } from "@/features/billing";
+import { usePushNotifications } from "@/features/notifications";
 import { apolloClient } from "@/shared/graphql";
 
-import { PushNotificationsProvider } from "./push-notifications-provider";
-import { RevenueCatProvider } from "./revenuecat-provider";
+import PushNotificationsProvider from "./push-notifications-provider";
+import RevenueCatProvider from "./revenuecat-provider";
 import { useSession } from "./session-provider";
+import { performForcedSessionTermination } from "./utils/session-actions";
 
 const SessionTerminationCoordinator = () => {
   const revenueCat = useRevenueCat();
@@ -42,11 +42,15 @@ const SessionTerminationCoordinator = () => {
   return null;
 };
 
-export const NativeIntegrationsProvider = ({ children }: PropsWithChildren) => (
-  <RevenueCatProvider>
-    <PushNotificationsProvider>
-      <SessionTerminationCoordinator />
-      {children}
-    </PushNotificationsProvider>
-  </RevenueCatProvider>
-);
+const NativeIntegrationsProvider = ({ children }: PropsWithChildren) => {
+  return (
+    <RevenueCatProvider>
+      <PushNotificationsProvider>
+        <SessionTerminationCoordinator />
+        {children}
+      </PushNotificationsProvider>
+    </RevenueCatProvider>
+  );
+};
+
+export default NativeIntegrationsProvider;

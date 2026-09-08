@@ -2,9 +2,8 @@ import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, Observable } from "@
 import { SetContextLink } from "@apollo/client/link/context";
 import { toByteArray } from "base64-js";
 
-import { getInstallId } from "./install-id";
-
-const endpoint = process.env.EXPO_PUBLIC_GRAPHQL_URL ?? "http://localhost:4000/graphql";
+import { endpoint } from "./constants";
+import { getInstallId } from "./utils";
 
 export type GraphQLSession = {
   accessToken: string;

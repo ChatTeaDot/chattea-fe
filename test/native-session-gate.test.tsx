@@ -3,7 +3,7 @@ import { createRequire } from "node:module";
 import { createElement, type ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { NativeSessionGate } from "../src/features/native/session-gate";
+import NativeSessionGate from "../src/providers/session-gate";
 
 const { renderToStaticMarkup } = createRequire(import.meta.url)("react-dom/server") as {
   renderToStaticMarkup: (node: ReactNode) => string;
@@ -16,6 +16,11 @@ const mocks = vi.hoisted(() => ({
   retryPress: undefined as (() => void) | undefined,
 }));
 
+vi.mock("@/features/profile", () => import("../src/features/profile/api"));
+vi.mock("@/features/notifications", async () => ({
+  ...(await import("../src/features/notifications/hooks")),
+  ...(await import("../src/features/notifications/utils/notification-route")),
+}));
 vi.mock("@apollo/client/react", () => ({
   useQuery: () => ({
     data: undefined,

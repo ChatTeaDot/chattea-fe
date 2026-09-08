@@ -1,7 +1,7 @@
 import { Redirect } from "expo-router";
 
 import { useSession } from "@/providers/session-provider";
-import { getSessionRedirect } from "@/providers/session-routing";
+import { getSessionRedirect } from "@/providers/utils/session-routing";
 
 const IndexRoute = () => {
   const { hydrated, session } = useSession();

@@ -3,8 +3,9 @@ import { createRequire } from "node:module";
 import { createElement, type ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { RevenueCatContextValue } from "../src/features/native/billing/types";
-import { PremiumScreen } from "../src/features/native/screens/premium-screen";
+import { RevenueCatContext } from "../src/features/billing/hooks";
+import type { RevenueCatContextValue } from "../src/features/billing/types";
+import PremiumScreen from "../src/screens/premium-screen";
 
 const { renderToStaticMarkup } = createRequire(import.meta.url)("react-dom/server") as {
   renderToStaticMarkup: (node: ReactNode) => string;
@@ -22,9 +23,6 @@ const billing = vi.hoisted(() => ({
   } as RevenueCatContextValue,
 }));
 
-vi.mock("@/features/native/billing/hooks", () => ({
-  useRevenueCat: () => billing.value,
-}));
 vi.mock("@apollo/client/react", () => ({
   useQuery: (query: { loc?: { source?: { body?: string } } }) => {
     const source = query.loc?.source?.body ?? "";
@@ -51,7 +49,7 @@ vi.mock("@apollo/client/react", () => ({
     };
   },
 }));
-vi.mock("../src/features/native/components", async () => {
+vi.mock("../src/shared/components", async () => {
   const React = await vi.importActual<typeof import("react")>("react");
   return {
     MetaText: ({ children }: { children?: ReactNode }) =>
@@ -73,9 +71,8 @@ vi.mock("../src/features/native/components", async () => {
     SectionHeading: ({ title }: { title: string }) => React.createElement("h2", null, title),
   };
 });
-vi.mock("../src/features/native/screens/screen-shared", () => ({
+vi.mock("../src/shared/lib", () => ({
   showActionError: vi.fn(),
-  styles: {},
 }));
 vi.mock("react-native", async () => {
   const React = await vi.importActual<typeof import("react")>("react");
@@ -85,6 +82,17 @@ vi.mock("react-native", async () => {
     View: ({ children }: { children?: ReactNode }) => React.createElement("div", null, children),
   };
 });
+
+vi.mock("react-native-unistyles", () => ({ StyleSheet: { create: () => ({}) } }));
+
+const renderPremium = () =>
+  renderToStaticMarkup(
+    createElement(
+      RevenueCatContext.Provider,
+      { value: billing.value },
+      createElement(PremiumScreen),
+    ),
+  );
 
 describe("premium screen", () => {
   beforeEach(() => {
@@ -100,7 +108,7 @@ describe("premium screen", () => {
   });
 
   it("shows the configuration reason and disables purchase and restore controls", () => {
-    const markup = renderToStaticMarkup(createElement(PremiumScreen));
+    const markup = renderPremium();
 
     expect(markup).toContain("이 빌드에는 App Store 결제가 설정되지 않았어요.");
     expect(markup).toContain('<button disabled="">구매하기</button>');
@@ -129,7 +137,7 @@ describe("premium screen", () => {
       },
     };
 
-    const markup = renderToStaticMarkup(createElement(PremiumScreen));
+    const markup = renderPremium();
 
     expect(markup).toContain("₩9,900");
     expect(markup).toContain("<button>구매하기</button>");
@@ -157,10 +165,12 @@ describe("premium screen", () => {
       },
     };
 
-    const markup = renderToStaticMarkup(createElement(PremiumScreen));
+    const markup = renderPremium();
 
     expect(markup).toContain("스토어 구매를 서버 계정에 반영하고 있어요.");
     expect(markup).toContain('<button disabled="">구매하기</button>');
     expect(markup).toContain('<button disabled="">구매 복원</button>');
   });
 });
+
+vi.mock("react-native-purchases", () => ({ default: {} }));

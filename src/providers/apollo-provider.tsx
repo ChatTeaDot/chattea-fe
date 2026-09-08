@@ -3,6 +3,8 @@ import type { PropsWithChildren } from "react";
 
 import { apolloClient } from "@/shared/graphql";
 
-export const ApolloProvider = ({ children }: PropsWithChildren) => (
-  <Provider client={apolloClient}>{children}</Provider>
-);
+const ApolloProvider = ({ children }: PropsWithChildren) => {
+  return <Provider client={apolloClient}>{children}</Provider>;
+};
+
+export default ApolloProvider;

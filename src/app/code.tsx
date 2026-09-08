@@ -1,1 +1,7 @@
-export { CodeScreen as default } from "@/features/auth";
+import { CodeScreen } from "@/screens";
+
+const CodeRoute = () => {
+  return <CodeScreen />;
+};
+
+export default CodeRoute;

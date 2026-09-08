@@ -6,12 +6,14 @@ import {
 import * as Sentry from "@sentry/react-native";
 import { PropsWithChildren, useMemo } from "react";
 
-const serviceName = "chattea-fe";
-const serviceEnv = process.env.EXPO_PUBLIC_SERVICE_ENV ?? "development";
-const serviceVersion = process.env.EXPO_PUBLIC_SERVICE_VERSION ?? "dev";
-const sentryDsn = process.env.EXPO_PUBLIC_SENTRY_DSN;
-const datadogClientToken = process.env.EXPO_PUBLIC_DATADOG_CLIENT_TOKEN;
-const datadogRumApplicationId = process.env.EXPO_PUBLIC_DATADOG_RUM_APPLICATION_ID;
+import {
+  datadogClientToken,
+  datadogRumApplicationId,
+  sentryDsn,
+  serviceEnv,
+  serviceName,
+  serviceVersion,
+} from "./constants";
 
 if (sentryDsn) {
   Sentry.init({
@@ -22,7 +24,7 @@ if (sentryDsn) {
   });
 }
 
-export const ObservabilityProvider = ({ children }: PropsWithChildren) => {
+const ObservabilityProvider = ({ children }: PropsWithChildren) => {
   const datadogConfig = useMemo(() => {
     if (!datadogClientToken || !datadogRumApplicationId) {
       return null;
@@ -57,3 +59,5 @@ export const ObservabilityProvider = ({ children }: PropsWithChildren) => {
 };
 
 export const withSentry = sentryDsn ? Sentry.wrap : <T,>(component: T) => component;
+
+export default ObservabilityProvider;

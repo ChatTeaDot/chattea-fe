@@ -1,14 +1,16 @@
 import { describe, expect, it, vi } from "vitest";
 
 import {
-  canonicalizeRevenueCatProductId,
-  createRevenueCatLifecycle,
-  mapRevenueCatPackages,
   type RevenueCatPackage,
   type RevenueCatSdk,
   type RevenueCatState,
+} from "../src/features/billing/types";
+import {
+  canonicalizeRevenueCatProductId,
+  createRevenueCatLifecycle,
+  mapRevenueCatPackages,
   selectRevenueCatKey,
-} from "../src/features/native/billing/revenuecat-lifecycle";
+} from "../src/features/billing/utils/revenuecat-lifecycle";
 
 const productIds = [
   "chattea_basic_monthly",

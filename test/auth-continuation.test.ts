@@ -20,7 +20,7 @@ describe("auth continuation", () => {
   });
 
   it("survives a module reload and clears expired data", async () => {
-    const continuation = await import("../src/features/auth/continuation");
+    const continuation = await import("../src/features/auth/utils/continuation");
     const value = {
       kakaoToken: "kakao-token",
       phone: "+821012345678",
@@ -30,7 +30,7 @@ describe("auth continuation", () => {
     await continuation.saveAuthContinuation(value, Date.now() + 60_000);
     vi.resetModules();
 
-    const reloaded = await import("../src/features/auth/continuation");
+    const reloaded = await import("../src/features/auth/utils/continuation");
     await expect(reloaded.loadAuthContinuation()).resolves.toEqual(value);
 
     await reloaded.saveAuthContinuation(value, Date.now() - 1);
@@ -39,7 +39,8 @@ describe("auth continuation", () => {
   });
 
   it("never extends past a token expiry", async () => {
-    const { getAuthContinuationExpiresAt } = await import("../src/features/auth/continuation");
+    const { getAuthContinuationExpiresAt } =
+      await import("../src/features/auth/utils/continuation");
     const now = 1_800_000_000_000;
     const tokenExpiresAt = now + 60_000;
     const payload = btoa(JSON.stringify({ exp: tokenExpiresAt / 1000 }))

@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   performForcedSessionTermination,
   performInstallationLogout,
-} from "../src/features/native/session-actions";
+} from "../src/providers/utils/session-actions";
 
 describe("native installation logout", () => {
   it("unregisters the installation before clearing the session and Apollo cache", async () => {

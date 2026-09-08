@@ -3,24 +3,23 @@ import { StyleSheet } from "react-native-unistyles";
 
 import type { AppTheme } from "@/theme/unistyles";
 
-type TermsAcceptanceProps = {
-  accepted: boolean;
-  onChange: (accepted: boolean) => void;
-};
+import type { TermsAcceptanceProps } from "../types";
 
-export const TermsAcceptance = ({ accepted, onChange }: TermsAcceptanceProps) => (
-  <Pressable
-    accessibilityRole="checkbox"
-    accessibilityState={{ checked: accepted }}
-    onPress={() => onChange(!accepted)}
-    style={styles.control}
-  >
-    <Text style={[styles.indicator, accepted && styles.indicatorChecked]}>
-      {accepted ? "✓" : ""}
-    </Text>
-    <Text style={styles.label}>필수 약관에 동의합니다.</Text>
-  </Pressable>
-);
+const TermsAcceptance = ({ accepted, onChange }: TermsAcceptanceProps) => {
+  return (
+    <Pressable
+      accessibilityRole="checkbox"
+      accessibilityState={{ checked: accepted }}
+      onPress={() => onChange(!accepted)}
+      style={styles.control}
+    >
+      <Text style={[styles.indicator, accepted && styles.indicatorChecked]}>
+        {accepted ? "✓" : ""}
+      </Text>
+      <Text style={styles.label}>필수 약관에 동의합니다.</Text>
+    </Pressable>
+  );
+};
 
 const styles = StyleSheet.create((theme: AppTheme) => ({
   control: {
@@ -47,3 +46,5 @@ const styles = StyleSheet.create((theme: AppTheme) => ({
     color: theme.colors.muted,
   },
 }));
+
+export default TermsAcceptance;

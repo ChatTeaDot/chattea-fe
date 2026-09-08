@@ -1,1 +1,7 @@
-export { LikesScreen as default } from "@/features/native/screens";
+import { LikesScreen } from "@/screens";
+
+const LikesRoute = () => {
+  return <LikesScreen />;
+};
+
+export default LikesRoute;
