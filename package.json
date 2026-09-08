@@ -14,7 +14,7 @@
     "deps:check": "expo install --check && pnpm peers check",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
-    "format:check": "prettier --check .",
+    "format": "eslint . --fix && prettier --write .",
     "test": "vitest run"
   },
   "dependencies": {

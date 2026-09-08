@@ -7,7 +7,7 @@
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 1000,
   "js/ts.tsdk.promptToUseWorkspaceVersion": true,
-  "js/ts.tsdk.path": "/Users/cyjoon/Documents/GitHub/chattea-workspace/chattea-fe/node_modules/typescript/lib",
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
   "eslint.validate": ["javascript", "typescript", "typescriptreact"],
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
