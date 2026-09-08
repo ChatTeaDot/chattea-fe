@@ -1,1 +1,7 @@
-export { NotificationsScreen as default } from "@/features/native/screens";
+import { NotificationsScreen } from "@/screens";
+
+const NotificationsRoute = () => {
+  return <NotificationsScreen />;
+};
+
+export default NotificationsRoute;

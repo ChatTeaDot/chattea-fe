@@ -1,1 +1,7 @@
-export { SettingsScreen as default } from "@/features/native/screens";
+import { SettingsScreen } from "@/screens";
+
+const SettingsRoute = () => {
+  return <SettingsScreen />;
+};
+
+export default SettingsRoute;

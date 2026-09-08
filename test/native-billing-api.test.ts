@@ -6,7 +6,7 @@ import {
   CONSUMABLE_BALANCE_QUERY,
   CURRENT_SUBSCRIPTION_QUERY,
   refreshBackendBillingState,
-} from "../src/features/native/billing/api";
+} from "../src/features/billing/api";
 import { createApolloClient } from "../src/shared/graphql/client";
 
 describe("native billing API", () => {

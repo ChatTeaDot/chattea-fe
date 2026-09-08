@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   createNotificationResponseHandler,
   parseNotificationRoute,
-} from "../src/features/native/notifications/notification-route";
+} from "../src/features/notifications/utils/notification-route";
 
 const roomId = "37e62526-6f75-4fbc-9df8-10fabd98929b";
 

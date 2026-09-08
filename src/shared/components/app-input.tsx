@@ -7,7 +7,7 @@ type AppInputProps = TextInputProps & {
   label: string;
 };
 
-export const AppInput = ({ label, ...props }: AppInputProps) => {
+const AppInput = ({ label, ...props }: AppInputProps) => {
   const { theme } = useUnistyles() as { theme: AppTheme };
   return (
     <View style={styles.wrap}>
@@ -40,3 +40,5 @@ const styles = StyleSheet.create((theme: AppTheme) => ({
     paddingHorizontal: theme.spacing.md,
   },
 }));
+
+export default AppInput;

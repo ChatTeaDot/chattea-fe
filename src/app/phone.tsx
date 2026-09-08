@@ -1,1 +1,7 @@
-export { PhoneScreen as default } from "@/features/auth";
+import { PhoneScreen } from "@/screens";
+
+const PhoneRoute = () => {
+  return <PhoneScreen />;
+};
+
+export default PhoneRoute;

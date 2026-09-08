@@ -1,1 +1,7 @@
-export { ProfileFormScreen as default } from "@/features/native/screens";
+import { ProfileFormScreen } from "@/screens";
+
+const ProfileFormRoute = () => {
+  return <ProfileFormScreen />;
+};
+
+export default ProfileFormRoute;

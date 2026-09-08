@@ -1,22 +1,21 @@
 import { type PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { AppState, Platform } from "react-native";
 
-import { useAuthenticatedUserId } from "@/features/native/authenticated-user";
-import { readBackendBillingState, refreshBackendBillingState } from "@/features/native/billing/api";
-import { RevenueCatContext } from "@/features/native/billing/hooks";
-import { revenueCatSdk } from "@/features/native/billing/revenuecat";
-import type { RevenueCatState } from "@/features/native/billing/revenuecat-lifecycle";
-import { createRevenueCatLifecycle } from "@/features/native/billing/revenuecat-lifecycle";
-import type { RevenueCatContextValue } from "@/features/native/billing/types";
+import type { RevenueCatState } from "@/features/billing";
+import {
+  createRevenueCatLifecycle,
+  readBackendBillingState,
+  refreshBackendBillingState,
+  RevenueCatContext,
+  revenueCatSdk,
+} from "@/features/billing";
 
-const initialState: RevenueCatContextValue["state"] = {
-  message: "로그인 후 결제 정보를 확인할 수 있어요.",
-  status: "disabled",
-};
+import { useAuthenticatedUserId } from "./authenticated-user";
+import { INITIAL_BILLING_STATE } from "./constants";
 
-export const RevenueCatProvider = ({ children }: PropsWithChildren) => {
+const RevenueCatProvider = ({ children }: PropsWithChildren) => {
   const userId = useAuthenticatedUserId();
-  const [state, setState] = useState<RevenueCatState>(initialState);
+  const [state, setState] = useState<RevenueCatState>(INITIAL_BILLING_STATE);
   const [lifecycle] = useState(() =>
     createRevenueCatLifecycle({
       keys: {
@@ -52,3 +51,5 @@ export const RevenueCatProvider = ({ children }: PropsWithChildren) => {
 
   return <RevenueCatContext.Provider value={value}>{children}</RevenueCatContext.Provider>;
 };
+
+export default RevenueCatProvider;

@@ -11,7 +11,7 @@ type ScreenProps = PropsWithChildren<{
   scroll?: boolean;
 }>;
 
-export const Screen = ({
+const Screen = ({
   avoidKeyboard = false,
   children,
   includeTopInset = true,
@@ -62,3 +62,5 @@ const styles = StyleSheet.create((theme: AppTheme) => ({
     paddingHorizontal: theme.spacing.md,
   },
 }));
+
+export default Screen;

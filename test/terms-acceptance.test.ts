@@ -14,7 +14,8 @@ vi.mock("react-native-unistyles", () => ({
 
 describe("terms acceptance", () => {
   it("exposes and toggles an accessible checkbox", async () => {
-    const { TermsAcceptance } = await import("../src/features/auth/components/terms-acceptance");
+    const { default: TermsAcceptance } =
+      await import("../src/features/auth/components/terms-acceptance");
     const onChange = vi.fn();
     const element = TermsAcceptance({ accepted: false, onChange });
 

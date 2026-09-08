@@ -1,20 +1,12 @@
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { Gender } from "@/features/auth/types";
 import type { AppTheme } from "@/theme/unistyles";
 
-type GenderSelectorProps = {
-  onChange: (value: Gender) => void;
-  value?: Gender;
-};
+import { genderOptions } from "../constants";
+import type { GenderSelectorProps } from "../types";
 
-const genderOptions: { label: string; value: Gender }[] = [
-  { label: "남자", value: "male" },
-  { label: "여자", value: "female" },
-];
-
-export const GenderSelector = ({ onChange, value }: GenderSelectorProps) => {
+const GenderSelector = ({ onChange, value }: GenderSelectorProps) => {
   return (
     <View style={styles.genderRow}>
       {genderOptions.map((item) => (
@@ -60,3 +52,5 @@ const styles = StyleSheet.create((theme: AppTheme) => ({
     color: theme.colors.primaryText,
   },
 }));
+
+export default GenderSelector;

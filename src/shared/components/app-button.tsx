@@ -11,7 +11,7 @@ type AppButtonProps = {
   accessibilityLabel?: string;
 };
 
-export const AppButton = ({
+const AppButton = ({
   title,
   onPress,
   disabled = false,
@@ -75,3 +75,5 @@ const styles = StyleSheet.create((theme: AppTheme) => ({
     color: theme.colors.primary,
   },
 }));
+
+export default AppButton;

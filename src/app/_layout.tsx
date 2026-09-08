@@ -3,8 +3,8 @@ import { Platform } from "react-native";
 import { useReducedMotion } from "react-native-reanimated";
 import { useUnistyles } from "react-native-unistyles";
 
-import { NativeSessionGate } from "@/features/native/session-gate";
 import { NativeIntegrationsProvider, RootProvider, withSentry } from "@/providers";
+import NativeSessionGate from "@/providers/session-gate";
 import type { AppTheme } from "@/theme/unistyles";
 
 const ThemedStack = () => {
@@ -51,13 +51,19 @@ const ThemedStack = () => {
     </Stack>
   );
 };
-const RootLayout = () => (
-  <RootProvider>
-    <NativeSessionGate>
-      <NativeIntegrationsProvider>
-        <ThemedStack />
-      </NativeIntegrationsProvider>
-    </NativeSessionGate>
-  </RootProvider>
-);
-export default withSentry(RootLayout);
+const AppRoot = () => {
+  return (
+    <RootProvider>
+      <NativeSessionGate>
+        <NativeIntegrationsProvider>
+          <ThemedStack />
+        </NativeIntegrationsProvider>
+      </NativeSessionGate>
+    </RootProvider>
+  );
+};
+const ObservedAppRoot = withSentry(AppRoot);
+const RootLayout = () => {
+  return <ObservedAppRoot />;
+};
+export default RootLayout;

@@ -11,7 +11,7 @@ import {
   requestPhoneCode,
   verifyPhoneCode,
 } from "../src/features/auth/api";
-import { getNextResendSeconds, getResendTitle } from "../src/features/auth/resend-timer";
+import { getNextResendSeconds, getResendTitle } from "../src/features/auth/utils/resend-timer";
 import { apolloClient } from "../src/shared/graphql";
 import { getGraphQLAuthorizationHeaders, setGraphQLSession } from "../src/shared/graphql/client";
 

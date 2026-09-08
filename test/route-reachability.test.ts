@@ -103,7 +103,91 @@ const findUnreachableSourceFiles = (): string[] => {
 };
 
 describe("Expo route source reachability", () => {
+  it("exports a named arrow component as the default of every TSX module", () => {
+    const violations: string[] = [];
+    for (const fileName of ts.sys.readDirectory(sourceRoot, [".tsx"])) {
+      const source = ts.createSourceFile(
+        fileName,
+        readFileSync(fileName, "utf8"),
+        ts.ScriptTarget.Latest,
+        true,
+      );
+      if (source.statements.every(ts.isExportDeclaration)) continue;
+      const exported = source.statements.find(ts.isExportAssignment);
+      const declarations = source.statements
+        .filter(ts.isVariableStatement)
+        .flatMap((statement) => [...statement.declarationList.declarations]);
+      const component = declarations.find(
+        (declaration) =>
+          exported &&
+          ts.isIdentifier(exported.expression) &&
+          ts.isIdentifier(declaration.name) &&
+          declaration.name.text === exported.expression.text,
+      );
+      if (
+        !component?.initializer ||
+        !ts.isArrowFunction(component.initializer) ||
+        !ts.isBlock(component.initializer.body)
+      ) {
+        violations.push(relative(sourceRoot, fileName));
+      }
+    }
+    expect(violations).toEqual([]);
+  });
+
   it("has no unreachable runtime TypeScript source", () => {
     expect(findUnreachableSourceFiles()).toEqual([]);
+  });
+
+  it("keeps route entry points, feature data access, and shared code within their boundaries", () => {
+    const violations: string[] = [];
+    const compilerOptions = getCompilerOptions();
+    for (const fileName of ts.sys.readDirectory(sourceRoot, [".ts", ".tsx"])) {
+      const file = relative(sourceRoot, fileName).replaceAll("\\", "/");
+      const source = ts.createSourceFile(
+        fileName,
+        readFileSync(fileName, "utf8"),
+        ts.ScriptTarget.Latest,
+        true,
+      );
+      for (const specifier of getModuleSpecifiers(source)) {
+        const dependency = ts.resolveModuleName(specifier, fileName, compilerOptions, ts.sys)
+          .resolvedModule?.resolvedFileName;
+        const target = dependency && relative(sourceRoot, dependency).replaceAll("\\", "/");
+        const owner = file.match(/^features\/([^/]+)\//)?.[1];
+        const targetFeature = target?.match(/^features\/([^/]+)\//)?.[1];
+        if (targetFeature && owner === targetFeature && !specifier.startsWith(".")) {
+          violations.push(`${file} uses an alias within its feature: ${specifier}`);
+        }
+        if (
+          targetFeature &&
+          owner !== targetFeature &&
+          specifier !== `@/features/${targetFeature}`
+        ) {
+          violations.push(`${file} bypasses the feature entry point: ${specifier}`);
+        }
+        if (file.startsWith("shared/") && target?.match(/^(app|features|providers|screens)\//)) {
+          violations.push(`${file} imports application code: ${target}`);
+        }
+        if (file.startsWith("features/") && target?.startsWith("screens/")) {
+          violations.push(`${file} imports a screen: ${target}`);
+        }
+        if (
+          file.startsWith("app/") &&
+          target?.match(/^(features|screens)\//) &&
+          target !== "screens/index.ts"
+        ) {
+          violations.push(`${file} bypasses a screen entry point: ${target}`);
+        }
+        if (
+          (file.startsWith("features/") || file.startsWith("screens/")) &&
+          specifier === "@apollo/client/react" &&
+          !file.endsWith("/hooks.ts")
+        ) {
+          violations.push(`${file} owns data hooks outside hooks.ts`);
+        }
+      }
+    }
+    expect(violations).toEqual([]);
   });
 });

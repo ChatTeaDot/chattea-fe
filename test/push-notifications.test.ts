@@ -1,13 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
 
 import {
-  createPushRegistrationLifecycle,
   type PushBackend,
   type PushRegistrationSdk,
   type PushRegistrationState,
   type PushRegistrationStorage,
   type StoredPushRegistration,
-} from "../src/features/native/notifications/push-registration";
+} from "../src/features/notifications/types";
+import { createPushRegistrationLifecycle } from "../src/features/notifications/utils/push-registration";
 
 const emptyStoredState = (): StoredPushRegistration => ({
   currentToken: null,

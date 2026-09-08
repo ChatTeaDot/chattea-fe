@@ -1,1 +1,7 @@
-export { CommunityWriteScreen as default } from "@/features/native/screens";
+import { CommunityWriteScreen } from "@/screens";
+
+const CommunityWriteRoute = () => {
+  return <CommunityWriteScreen />;
+};
+
+export default CommunityWriteRoute;

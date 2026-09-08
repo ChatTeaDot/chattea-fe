@@ -1,10 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 
+import { type NotificationResponseLike } from "../src/features/notifications/types";
+import { createNotificationNavigationCoordinator } from "../src/features/notifications/utils/notification-route";
 import {
-  createNotificationNavigationCoordinator,
-  type NotificationResponseLike,
-} from "../src/features/native/notifications/notification-route";
-import { getNativeSessionDestination, getSessionRedirect } from "../src/providers/session-routing";
+  getNativeSessionDestination,
+  getSessionRedirect,
+} from "../src/providers/utils/session-routing";
 
 const roomId = "37e62526-6f75-4fbc-9df8-10fabd98929b";
 

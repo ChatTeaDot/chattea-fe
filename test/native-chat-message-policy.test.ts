@@ -1,15 +1,14 @@
 import { describe, expect, it } from "vitest";
 
+import { FIRST_MESSAGE_MAX_LENGTH, MESSAGE_MAX_LENGTH } from "../src/features/chat/constants";
 import {
   createChatMessageDraft,
-  FIRST_MESSAGE_MAX_LENGTH,
   getMessageTextLimit,
   hasConversationStarted,
-  MESSAGE_MAX_LENGTH,
   normalizeMessageDraft,
   toSendChatMessageVariables,
   updateChatMessageDraft,
-} from "../src/features/native/chat/message-policy";
+} from "../src/features/chat/utils/message-policy";
 
 describe("native chat message policy", () => {
   it("limits the first message to 30 characters and later messages to 90", () => {

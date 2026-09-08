@@ -1,1 +1,7 @@
-export { PremiumScreen as default } from "@/features/native/screens";
+import { PremiumScreen } from "@/screens";
+
+const PremiumRoute = () => {
+  return <PremiumScreen />;
+};
+
+export default PremiumRoute;

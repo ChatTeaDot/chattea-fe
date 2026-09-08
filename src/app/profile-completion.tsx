@@ -1,5 +1,7 @@
-import { ProfileFormScreen } from "@/features/native/screens";
+import { ProfileFormScreen } from "@/screens";
 
-const ProfileCompletionRoute = () => <ProfileFormScreen completion />;
+const ProfileCompletionRoute = () => {
+  return <ProfileFormScreen completion />;
+};
 
 export default ProfileCompletionRoute;

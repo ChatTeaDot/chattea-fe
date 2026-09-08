@@ -1,1 +1,7 @@
-export { SignupScreen as default } from "@/features/auth";
+import { SignupScreen } from "@/screens";
+
+const SignupRoute = () => {
+  return <SignupScreen />;
+};
+
+export default SignupRoute;
