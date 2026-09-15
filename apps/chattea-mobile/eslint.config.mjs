@@ -4,7 +4,7 @@ import simpleImportSort from "eslint-plugin-simple-import-sort";
 export default [
   ...expo,
   {
-    ignores: [".expo/**", "dist/**"],
+    ignores: [".expo/**", "dist/**", "ios/**", "android/**"],
   },
   {
     plugins: {

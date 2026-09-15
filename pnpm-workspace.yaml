@@ -1,3 +1,6 @@
+packages:
+  - "apps/*"
+
 allowBuilds:
   "@datadog/mobile-react-native": true
   "@sentry/cli": true
