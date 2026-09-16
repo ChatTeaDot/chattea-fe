@@ -1,10 +1,15 @@
 import { randomUUID } from "expo-crypto";
+import { Stack } from "expo-router";
 import { memo, useCallback } from "react";
+import { KeyboardStickyView } from "react-native-keyboard-controller";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 
 import type { ChatMessage } from "@/features/chat";
 import {
+  MessageComposer,
   MessageRow as MessageRowComponent,
+  RoomMenuButton,
   updateChatMessageDraft,
   useChatRoom,
 } from "@/features/chat";
@@ -12,11 +17,8 @@ import {
   EmptyState,
   ErrorState,
   LoadingState,
-  NativeButton,
-  NativeComposer,
-  NativeKeyboardScreen,
   NativeList,
-  NativeTextInput,
+  NativeScreen,
 } from "@/shared/components";
 
 const MessageRow = memo(MessageRowComponent);
@@ -25,8 +27,10 @@ MessageRow.displayName = "MessageRow";
 const keyExtractor = (item: ChatMessage) => item.id;
 
 const RoomScreen = () => {
+  const insets = useSafeAreaInsets();
   const {
     messages,
+    roomName,
     draft,
     setDraft,
     messageTextLimit,
@@ -36,17 +40,33 @@ const RoomScreen = () => {
     reportMessage,
     currentUserId,
   } = useChatRoom();
+  const messageList = messages.data?.chatMessages ?? [];
+  const lastMineId = [...messageList].reverse().find((m) => m.senderUserId === currentUserId)?.id;
+  const lastOtherId = [...messageList]
+    .reverse()
+    .find((m) => m.senderUserId && m.senderUserId !== currentUserId)?.id;
+  const openRoomMenu = useCallback(() => {
+    if (lastOtherId) reportMessage(lastOtherId);
+  }, [lastOtherId, reportMessage]);
+  const headerRight = useCallback(
+    () => <RoomMenuButton onPress={openRoomMenu} />,
+    [openRoomMenu],
+  );
   const renderMessage = useCallback(
-    ({ item }: { item: ChatMessage }) => (
-      <MessageRow
-        createdAt={item.createdAt}
-        id={item.id}
-        mine={item.senderUserId === currentUserId}
-        onReport={reportMessage}
-        text={item.text}
-      />
-    ),
-    [currentUserId, reportMessage],
+    ({ item }: { item: ChatMessage }) => {
+      const mine = item.senderUserId === currentUserId;
+      return (
+        <MessageRow
+          createdAt={item.createdAt}
+          id={item.id}
+          mine={mine}
+          onReport={reportMessage}
+          showReadStatus={mine && item.id === lastMineId}
+          text={item.text}
+        />
+      );
+    },
+    [currentUserId, lastMineId, reportMessage],
   );
   const getItemType = useCallback(
     (item: ChatMessage) => (item.senderUserId === currentUserId ? "mine" : "other"),
@@ -61,50 +81,52 @@ const RoomScreen = () => {
   );
 
   return (
-    <NativeKeyboardScreen>
+    <NativeScreen>
+      <Stack.Screen
+        options={{
+          headerRight,
+          title: roomName ?? "대화",
+        }}
+      />
       <NativeList
         alignItemsAtEnd
-        data={messages.data?.chatMessages ?? []}
+        contentContainerStyle={styles.listContent}
+        data={messageList}
         getItemType={getItemType}
         keyExtractor={keyExtractor}
         ListEmptyComponent={empty}
         maintainScrollAtEnd
         renderItem={renderMessage}
       />
-      <NativeComposer>
-        <NativeTextInput
-          maxLength={messageTextLimit}
-          multiline
-          onChangeText={(text) =>
-            setDraft((current) =>
-              updateChatMessageDraft(current, text, messageTextLimit, randomUUID),
-            )
-          }
-          placeholder="메시지 입력"
-          style={styles.input}
-          value={draft.text}
-        />
-        <NativeButton
-          disabled={!messageDraft || sendState.loading}
-          label="보내기"
-          onPress={() => void sendMessage()}
-        />
-      </NativeComposer>
-    </NativeKeyboardScreen>
+      <KeyboardStickyView offset={{ opened: insets.bottom }}>
+        <SafeAreaView edges={["bottom"]} style={styles.composerDock}>
+          <MessageComposer
+            disabled={!messageDraft || sendState.loading}
+            maxLength={messageTextLimit}
+            onChangeText={(text) =>
+              setDraft((current) =>
+                updateChatMessageDraft(current, text, messageTextLimit, randomUUID),
+              )
+            }
+            onSend={() => void sendMessage()}
+            value={draft.text}
+          />
+        </SafeAreaView>
+      </KeyboardStickyView>
+    </NativeScreen>
   );
 };
 
 const styles = StyleSheet.create((theme) => ({
-  input: {
-    backgroundColor: theme.colors.surface,
-    borderColor: theme.colors.border,
-    borderRadius: 14,
-    borderWidth: 1,
-    color: theme.colors.text,
-    fontSize: 16,
-    minHeight: 52,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: 13,
+  listContent: {
+    gap: theme.spacing.sm,
+    paddingBottom: theme.spacing.control,
+    paddingTop: theme.spacing.control,
+  },
+  composerDock: {
+    paddingBottom: 20,
+    paddingHorizontal: theme.spacing.control,
+    paddingTop: theme.spacing.sm,
   },
 }));
 

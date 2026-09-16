@@ -36,6 +36,7 @@ export const useChatRooms = () => {
 export const useChatRoom = () => {
   const roomId = useRouteParam("room-id");
   const me = useQuery<MeData>(ME_QUERY);
+  const roomsQuery = useQuery<RoomsData>(CHAT_ROOMS_QUERY);
   const messages = useQuery<MessagesData>(CHAT_MESSAGES_QUERY, {
     skip: !roomId,
     variables: { input: { roomId, first: CHAT_PAGE_SIZE } },
@@ -92,9 +93,11 @@ export const useChatRoom = () => {
     [report],
   );
   const currentUserId = me.data?.me.id;
+  const roomName = roomsQuery.data?.chatRooms.find((room) => room.id === roomId)?.name;
 
   return {
     messages,
+    roomName,
     draft,
     setDraft,
     messageTextLimit,

@@ -30,7 +30,20 @@ export type MessageRowProps = {
   id: string;
   mine: boolean;
   onReport: (id: string) => void;
+  showReadStatus: boolean;
   text: string;
+};
+
+export type MessageComposerProps = {
+  disabled: boolean;
+  maxLength: number;
+  onChangeText: (text: string) => void;
+  onSend: () => void;
+  value: string;
+};
+
+export type RoomMenuButtonProps = {
+  onPress: () => void;
 };
 
 export type RoomRowProps = {
