@@ -1,3 +1,15 @@
+const { withProjectBuildGradle } = require("expo/config-plugins");
+
+const withKakaoAndroidRepository = (config) =>
+  withProjectBuildGradle(config, (cfg) => {
+    if (cfg.modResults.contents.includes("devrepo.kakao.com")) return cfg;
+    cfg.modResults.contents = cfg.modResults.contents.replace(
+      /(allprojects\s*\{\s*repositories\s*\{)/,
+      "$1\n    maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/' }",
+    );
+    return cfg;
+  });
+
 const isSecureUrl = (value) => {
   try {
     const url = new URL(value);
@@ -46,6 +58,7 @@ const plugins = [
       },
     },
   ],
+  withKakaoAndroidRepository,
 ];
 
 if (process.env.SENTRY_ORG && process.env.SENTRY_PROJECT) {
