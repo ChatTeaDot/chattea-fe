@@ -1,6 +1,11 @@
-# ChatTea mobile
+# ChatTea frontend
 
-Expo 56 and React Native 0.85 client for ChatTea.
+pnpm workspace with two apps.
+
+```text
+apps/chattea-mobile   Expo 56 / React Native
+apps/chattea-web      Vite React, served at :3000 for the community WebView
+```
 
 ## Requirements
 
@@ -12,10 +17,13 @@ Expo 56 and React Native 0.85 client for ChatTea.
 
 ```bash
 pnpm install --frozen-lockfile
-pnpm dev
+pnpm dev:mobile
+pnpm dev:web
 ```
 
-Kakao login, Sentry, Datadog, and native configuration plugins require a development build rather than Expo Go.
+`pnpm dev` starts mobile. Kakao login, Sentry, Datadog, and native configuration plugins require a development build rather than Expo Go.
+
+WebView in mobile opens `http://localhost:3000/community` against `chattea-web`. On a device use the machine LAN address.
 
 ## Verification
 
@@ -28,11 +36,13 @@ pnpm lint
 pnpm format:check
 ```
 
-`deps:check` validates Expo SDK compatibility and peer dependencies. The TypeScript configuration uses both `strict` and `noUncheckedIndexedAccess`.
+`deps:check` validates Expo SDK compatibility in `chattea-mobile`. The TypeScript configuration uses both `strict` and `noUncheckedIndexedAccess`.
 
 The pnpm audit policy temporarily ignores the two unpatched `image-size` advisories inherited by Expo Metro (`GHSA-w3rx-r6r6-pgpr` and `GHSA-5p2g-fcmc-qvqq`). CI processes trusted repository assets only; remove the exceptions when Expo ships a patched dependency.
 
 ## Configuration
+
+Mobile environment variables stay the same.
 
 ```text
 EXPO_PUBLIC_GRAPHQL_URL
@@ -55,15 +65,12 @@ Sentry build integration additionally uses `SENTRY_ORG`, `SENTRY_PROJECT`, and o
 
 ## Architecture
 
-- Expo Router owns navigation under `src/app`.
-- Apollo Client owns GraphQL transport and normalized cache state.
-- SecureStore persists the session and installation identifier.
-- Active collection screens use `@legendapp/list` with recycled, memoized rows.
-- Unistyles owns component styling; safe-area and keyboard behavior use native React Native primitives.
+- `chattea-mobile`: Expo Router under `src/app`, Apollo Client, SecureStore, LegendList, Unistyles.
+- `chattea-web`: Vite React app. Community pages live here so the native community tab can load them in a WebView.
 
 ## Builds and releases
 
-CI exports production iOS and Android bundles with Metro. The main-only manual release workflow exposes a blocking production EAS build target, which fails closed until the release account supplies the real EAS project ID, owner access, and Apple/Google signing credentials; no placeholder identity is used. Store submission remains an external manual prerequisite until an approved workflow can bind it to that run's exact build ID. OTA updates remain disabled until the project adds `expo-updates` and a fingerprint runtime policy.
+CI installs at the workspace root, then runs Expo prebuild and export inside `apps/chattea-mobile`. The main-only manual release workflow exposes a blocking production EAS build target, which fails closed until the release account supplies the real EAS project ID, owner access, and Apple/Google signing credentials; no placeholder identity is used. Store submission remains an external manual prerequisite until an approved workflow can bind it to that run's exact build ID. OTA updates remain disabled until the project adds `expo-updates` and a fingerprint runtime policy.
 
 Passing tests, Expo config validation, and Metro exports certifies the code paths but not the external services. Live mobile certification requires all of the following:
 
