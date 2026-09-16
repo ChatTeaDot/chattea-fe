@@ -7,6 +7,8 @@ import { useSession } from "@/providers/session-provider";
 
 import {
   COMPLETE_KAKAO_PHONE_SIGNUP_MUTATION,
+  COMPLETE_KAKAO_PROFILE_SIGNUP_MUTATION,
+  COMPLETE_PHONE_PROFILE_SIGNUP_MUTATION,
   COMPLETE_PHONE_SIGNUP_MUTATION,
   LOGIN_WITH_KAKAO_MUTATION,
   mapCompleteKakaoPhoneSignupResult,
@@ -23,7 +25,7 @@ import {
   PHONE_CONTINUATION_TTL_MS,
   SIGNUP_CONTINUATION_TTL_MS,
 } from "./constants";
-import { type AuthContinuation, Gender } from "./types";
+import type { AuthContinuation, Gender, SignupProfileInput } from "./types";
 import {
   clearAuthContinuation,
   getAuthContinuationExpiresAt,
@@ -152,6 +154,54 @@ export const useCompleteKakaoPhoneSignup = () => {
   };
 };
 
+export const useCompletePhoneProfileSignup = () => {
+  const [mutate, result] = useMutation(COMPLETE_PHONE_PROFILE_SIGNUP_MUTATION);
+
+  return {
+    ...result,
+    isPending: result.loading,
+    mutateAsync: async ({
+      signupToken,
+      ...profile
+    }: SignupProfileInput & { readonly signupToken: string }) => {
+      const { data } = await mutate({
+        variables: { input: { ...profile, phoneVerificationToken: signupToken } },
+      });
+
+      return mapCompletePhoneSignupResult(data);
+    },
+  };
+};
+
+export const useCompleteKakaoProfileSignup = () => {
+  const [mutate, result] = useMutation(COMPLETE_KAKAO_PROFILE_SIGNUP_MUTATION);
+
+  return {
+    ...result,
+    isPending: result.loading,
+    mutateAsync: async ({
+      kakaoPhoneVerificationToken,
+      signupToken,
+      ...profile
+    }: SignupProfileInput & {
+      readonly kakaoPhoneVerificationToken: string;
+      readonly signupToken: string;
+    }) => {
+      const { data } = await mutate({
+        variables: {
+          input: {
+            ...profile,
+            kakaoPhoneVerificationToken,
+            phoneVerificationToken: signupToken,
+          },
+        },
+      });
+
+      return mapCompleteKakaoPhoneSignupResult(data);
+    },
+  };
+};
+
 export const useAuthContinuation = () => {
   const [continuation, setContinuation] = useState<AuthContinuation | null>();
 
@@ -172,16 +222,43 @@ export const useAuthContinuation = () => {
   return continuation;
 };
 
+export const useKakaoLogin = () => {
+  const { setSession } = useSession();
+  const kakaoLogin = useLoginWithKakao();
+
+  const submit = async () => {
+    try {
+      await clearAuthContinuation();
+      const accessToken = await loginWithKakaoNative();
+      const result = await kakaoLogin.mutateAsync(accessToken);
+
+      if (!result.requiresPhone) {
+        await setSession(result.session);
+        router.replace("/matches");
+        return;
+      }
+
+      await saveAuthContinuation(
+        { kakaoToken: result.kakaoPhoneVerificationToken },
+        getAuthContinuationExpiresAt(SIGNUP_CONTINUATION_TTL_MS, [
+          result.kakaoPhoneVerificationToken,
+        ]),
+      );
+      router.push("/phone");
+    } catch {
+      Alert.alert("카카오 로그인을 완료하지 못했어요");
+    }
+  };
+
+  return { pending: kakaoLogin.isPending, submit };
+};
+
 export const usePhoneLogin = () => {
   const continuation = useAuthContinuation();
   const [phone, setPhone] = useState<string>();
-  const [kakaoTokenOverride, setKakaoTokenOverride] = useState<string | null>();
-  const { setSession } = useSession();
-  const kakaoLogin = useLoginWithKakao();
   const requestCode = useRequestPhoneCode();
   const phoneValue = phone ?? continuation?.phone ?? "";
-  const kakaoToken =
-    kakaoTokenOverride === undefined ? continuation?.kakaoToken : (kakaoTokenOverride ?? undefined);
+  const kakaoToken = continuation?.kakaoToken;
 
   const submit = async () => {
     try {
@@ -200,34 +277,7 @@ export const usePhoneLogin = () => {
     }
   };
 
-  const submitKakao = async () => {
-    setPhone("");
-    setKakaoTokenOverride(null);
-    try {
-      await clearAuthContinuation();
-      const accessToken = await loginWithKakaoNative();
-      const result = await kakaoLogin.mutateAsync(accessToken);
-
-      if (!result.requiresPhone) {
-        await setSession(result.session);
-        router.replace("/matches");
-        return;
-      }
-
-      await saveAuthContinuation(
-        { kakaoToken: result.kakaoPhoneVerificationToken },
-        getAuthContinuationExpiresAt(SIGNUP_CONTINUATION_TTL_MS, [
-          result.kakaoPhoneVerificationToken,
-        ]),
-      );
-      setKakaoTokenOverride(result.kakaoPhoneVerificationToken);
-    } catch {
-      setKakaoTokenOverride(null);
-      Alert.alert("카카오 로그인을 완료하지 못했어요");
-    }
-  };
-
-  return { continuation, phoneValue, setPhone, requestCode, kakaoLogin, submit, submitKakao };
+  return { continuation, phoneValue, setPhone, requestCode, submit };
 };
 
 export const usePhoneVerification = () => {
@@ -310,23 +360,29 @@ export const usePhoneVerification = () => {
 
 export const useSignup = () => {
   const continuation = useAuthContinuation();
-  const kakaoToken = continuation?.kakaoToken;
   const signupToken = continuation?.signupToken;
   const [userName, setUserName] = useState("");
-  const [gender, setGender] = useState<Gender | undefined>();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [heightCm, setHeightCm] = useState("");
+  const [job, setJob] = useState("");
+  const [mbti, setMbti] = useState("");
+  const [photoUri, setPhotoUri] = useState<string>();
   const [termsAccepted, setTermsAccepted] = useState(false);
   const { setSession } = useSession();
-  const completeKakao = useCompleteKakaoPhoneSignup();
-  const complete = useCompletePhoneSignup();
+  const completeKakao = useCompleteKakaoProfileSignup();
+  const complete = useCompletePhoneProfileSignup();
+
+  const pickPhoto = async () => {
+    const ImagePicker = await import("expo-image-picker");
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      quality: 0.9,
+      selectionLimit: 1,
+    });
+    const uri = result.canceled ? undefined : result.assets[0]?.uri;
+    if (uri) setPhotoUri(uri);
+  };
 
   const submit = async () => {
-    if (!gender) {
-      Alert.alert("성별을 선택해주세요");
-      return;
-    }
-
     try {
       const current = await loadAuthContinuation();
       if (!current?.signupToken) {
@@ -334,22 +390,21 @@ export const useSignup = () => {
         return;
       }
 
+      const parsedHeight = Number(heightCm);
+      const profile: SignupProfileInput = {
+        heightCm: heightCm.trim() && Number.isFinite(parsedHeight) ? parsedHeight : undefined,
+        job: job.trim() || undefined,
+        mbti: mbti.trim() || undefined,
+        termsAccepted,
+        userName: userName.trim(),
+      };
       const result = current.kakaoToken
         ? await completeKakao.mutateAsync({
             kakaoPhoneVerificationToken: current.kakaoToken,
             signupToken: current.signupToken,
-            userName,
-            gender,
-            termsAccepted,
+            ...profile,
           })
-        : await complete.mutateAsync({
-            signupToken: current.signupToken,
-            userName,
-            gender,
-            email,
-            password,
-            termsAccepted,
-          });
+        : await complete.mutateAsync({ signupToken: current.signupToken, ...profile });
       await clearAuthContinuation();
       await setSession(result.session);
       router.replace("/matches");
@@ -363,17 +418,17 @@ export const useSignup = () => {
     signupToken,
     userName,
     setUserName,
-    gender,
-    setGender,
-    email,
-    setEmail,
-    password,
-    setPassword,
+    heightCm,
+    setHeightCm,
+    job,
+    setJob,
+    mbti,
+    setMbti,
+    photoUri,
+    pickPhoto,
     termsAccepted,
     setTermsAccepted,
-    kakaoToken,
-    complete,
-    completeKakao,
+    pending: complete.isPending || completeKakao.isPending,
     submit,
   };
 };

@@ -1,17 +1,7 @@
-import { Redirect } from "expo-router";
-
-import { useSession } from "@/providers/session-provider";
-import { getSessionRedirect } from "@/providers/utils/session-routing";
+import { LoginScreen } from "@/screens";
 
 const IndexRoute = () => {
-  const { hydrated, session } = useSession();
-  const redirect = getSessionRedirect(hydrated, Boolean(session));
-
-  if (!redirect) {
-    return null;
-  }
-
-  return <Redirect href={redirect} />;
+  return <LoginScreen />;
 };
 
 export default IndexRoute;

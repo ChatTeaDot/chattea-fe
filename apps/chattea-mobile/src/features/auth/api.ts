@@ -6,6 +6,8 @@ import { apolloClient } from "@/shared/graphql";
 import type {
   CompleteKakaoPhoneSignupMutation,
   CompleteKakaoPhoneSignupVariables,
+  CompleteKakaoProfileSignupVariables,
+  CompletePhoneProfileSignupVariables,
   CompletePhoneSignupMutation,
   CompletePhoneSignupResult,
   CompletePhoneSignupVariables,
@@ -16,6 +18,7 @@ import type {
   RequestPhoneCodeMutation,
   RequestPhoneCodeVariables,
   Session,
+  SignupProfileInput,
   VerifyPhoneCodeMutation,
   VerifyPhoneCodeVariables,
   VerifyPhoneResult,
@@ -88,6 +91,30 @@ export const COMPLETE_KAKAO_PHONE_SIGNUP_MUTATION: TypedDocumentNode<
   CompleteKakaoPhoneSignupVariables
 > = gql`
   mutation CompleteKakaoPhoneSignup($input: CompleteKakaoPhoneSignupInput!) {
+    completeKakaoPhoneSignup(input: $input) {
+      accessToken
+      refreshToken
+    }
+  }
+`;
+
+export const COMPLETE_PHONE_PROFILE_SIGNUP_MUTATION: TypedDocumentNode<
+  CompletePhoneSignupMutation,
+  CompletePhoneProfileSignupVariables
+> = gql`
+  mutation CompletePhoneProfileSignup($input: CompletePhoneSignupInput!) {
+    completePhoneSignup(input: $input) {
+      accessToken
+      refreshToken
+    }
+  }
+`;
+
+export const COMPLETE_KAKAO_PROFILE_SIGNUP_MUTATION: TypedDocumentNode<
+  CompleteKakaoPhoneSignupMutation,
+  CompleteKakaoProfileSignupVariables
+> = gql`
+  mutation CompleteKakaoProfileSignup($input: CompleteKakaoPhoneSignupInput!) {
     completeKakaoPhoneSignup(input: $input) {
       accessToken
       refreshToken
@@ -221,6 +248,39 @@ export const completeKakaoPhoneSignup = async (
         userName,
         gender,
         termsAccepted,
+      },
+    },
+  });
+
+  return mapCompleteKakaoPhoneSignupResult(data);
+};
+
+export const completePhoneProfileSignup = async (
+  signupToken: string,
+  profile: SignupProfileInput,
+): Promise<CompletePhoneSignupResult> => {
+  const { data } = await apolloClient.mutate({
+    mutation: COMPLETE_PHONE_PROFILE_SIGNUP_MUTATION,
+    variables: {
+      input: { ...profile, phoneVerificationToken: signupToken },
+    },
+  });
+
+  return mapCompletePhoneSignupResult(data);
+};
+
+export const completeKakaoProfileSignup = async (
+  kakaoPhoneVerificationToken: string,
+  signupToken: string,
+  profile: SignupProfileInput,
+): Promise<CompletePhoneSignupResult> => {
+  const { data } = await apolloClient.mutate({
+    mutation: COMPLETE_KAKAO_PROFILE_SIGNUP_MUTATION,
+    variables: {
+      input: {
+        ...profile,
+        kakaoPhoneVerificationToken,
+        phoneVerificationToken: signupToken,
       },
     },
   });

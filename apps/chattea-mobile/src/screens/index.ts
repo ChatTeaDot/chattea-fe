@@ -3,6 +3,7 @@ export { default as CommunityPostScreen } from "./community-post-screen";
 export { default as CommunityScreen } from "./community-screen";
 export { default as CommunityWriteScreen } from "./community-write-screen";
 export { default as LikesScreen } from "./likes-screen";
+export { default as LoginScreen } from "./login-screen";
 export { default as NotificationsScreen } from "./notifications-screen";
 export { default as PhoneScreen } from "./phone-screen";
 export { default as PremiumScreen } from "./premium-screen";

@@ -1,9 +1,12 @@
-import { AuthActionButton, PhoneHero, usePhoneLogin } from "@/features/auth";
-import { AppInput, ContentState, Screen } from "@/shared/components";
+import { Text, View } from "react-native";
+import { StyleSheet } from "react-native-unistyles";
+
+import { AuthActionButton, AuthField, BottomCta, usePhoneLogin } from "@/features/auth";
+import { ContentState, Screen } from "@/shared/components";
+import type { AppTheme } from "@/theme/unistyles";
 
 const PhoneScreen = () => {
-  const { continuation, phoneValue, setPhone, requestCode, kakaoLogin, submit, submitKakao } =
-    usePhoneLogin();
+  const { continuation, phoneValue, setPhone, requestCode, submit } = usePhoneLogin();
   if (continuation === undefined) {
     return (
       <Screen includeTopInset={false}>
@@ -13,28 +16,46 @@ const PhoneScreen = () => {
   }
 
   return (
-    <Screen includeTopInset={false} scroll>
-      <PhoneHero />
-      <AppInput
-        keyboardType="phone-pad"
-        label="전화번호"
-        onChangeText={setPhone}
-        placeholder="01012345678"
-        value={phoneValue}
-      />
-      <AuthActionButton
-        disabled={requestCode.isPending}
-        onPress={submit}
-        title="인증번호 받고 계속하기"
-      />
-      <AuthActionButton
-        disabled={kakaoLogin.isPending}
-        onPress={submitKakao}
-        title="카카오로 계속"
-        variant="outlined"
-      />
-    </Screen>
+    <View style={styles.root}>
+      <View style={styles.body}>
+        <AuthField
+          autoFocus
+          keyboardType="phone-pad"
+          label="휴대폰 번호"
+          onChangeText={setPhone}
+          placeholder="010-1234-5678"
+          value={phoneValue}
+        />
+        <Text style={styles.hint}>[채티] 인증번호가 문자로 가요</Text>
+      </View>
+      <BottomCta>
+        <AuthActionButton
+          disabled={!phoneValue.trim() || requestCode.isPending}
+          loading={requestCode.isPending}
+          onPress={() => void submit()}
+          title="인증번호 받기"
+        />
+      </BottomCta>
+    </View>
   );
 };
+
+const styles = StyleSheet.create((theme: AppTheme) => ({
+  root: {
+    backgroundColor: theme.colors.background,
+    flex: 1,
+  },
+  body: {
+    flex: 1,
+    gap: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+    paddingTop: theme.spacing.md,
+  },
+  hint: {
+    color: theme.colors.muted,
+    fontSize: 13,
+    textAlign: "center",
+  },
+}));
 
 export default PhoneScreen;

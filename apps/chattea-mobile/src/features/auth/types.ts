@@ -1,3 +1,5 @@
+import type { TextInputProps } from "react-native";
+
 export type Session = {
   accessToken: string;
   refreshToken: string;
@@ -84,6 +86,27 @@ export type CompletePhoneSignupVariables = {
   };
 };
 
+export type SignupProfileInput = {
+  readonly heightCm?: number;
+  readonly job?: string;
+  readonly mbti?: string;
+  readonly termsAccepted: boolean;
+  readonly userName: string;
+};
+
+export type CompletePhoneProfileSignupVariables = {
+  readonly input: SignupProfileInput & {
+    readonly phoneVerificationToken: string;
+  };
+};
+
+export type CompleteKakaoProfileSignupVariables = {
+  readonly input: SignupProfileInput & {
+    readonly kakaoPhoneVerificationToken: string;
+    readonly phoneVerificationToken: string;
+  };
+};
+
 export type LoginWithKakaoMutation = {
   readonly loginWithKakao:
     | {
@@ -127,23 +150,23 @@ export type AuthActionButtonProps = {
   title: string;
   onPress: () => void;
   disabled?: boolean;
-  variant?: "filled" | "outlined" | "text";
+  loading?: boolean;
+  variant?: "primary" | "secondary" | "kakao";
 };
 
-export type CodeVerificationFormProps = {
-  attachPending: boolean;
-  code: string;
-  requestPending: boolean;
-  resendSeconds: number;
-  verifyPending: boolean;
-  onChangeCode: (value: string) => void;
-  onResend: () => void;
-  onSubmit: () => void;
+export type AuthFieldProps = TextInputProps & {
+  label: string;
 };
 
-export type GenderSelectorProps = {
-  onChange: (value: Gender) => void;
-  value?: Gender;
+export type CodeFieldProps = {
+  autoFocus?: boolean;
+  onChange: (value: string) => void;
+  value: string;
+};
+
+export type PhotoPickerProps = {
+  onPress: () => void;
+  uri?: string;
 };
 
 export type TermsAcceptanceProps = {

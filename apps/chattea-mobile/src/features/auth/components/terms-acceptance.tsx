@@ -11,39 +11,39 @@ const TermsAcceptance = ({ accepted, onChange }: TermsAcceptanceProps) => {
       accessibilityRole="checkbox"
       accessibilityState={{ checked: accepted }}
       onPress={() => onChange(!accepted)}
-      style={styles.control}
+      style={({ pressed }) => [styles.row, pressed && styles.pressed]}
     >
-      <Text style={[styles.indicator, accepted && styles.indicatorChecked]}>
-        {accepted ? "✓" : ""}
-      </Text>
-      <Text style={styles.label}>필수 약관에 동의합니다.</Text>
+      <Text style={[styles.box, accepted && styles.boxChecked]} />
+      <Text style={styles.label}>이용약관·개인정보 동의 (필수)</Text>
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create((theme: AppTheme) => ({
-  control: {
+  row: {
     alignItems: "center",
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.radii.xl,
     flexDirection: "row",
     gap: theme.spacing.sm,
-    minHeight: 44,
+    minHeight: theme.sizes.tapMin,
+    paddingHorizontal: theme.spacing.md,
   },
-  indicator: {
-    borderColor: theme.colors.border,
-    borderRadius: theme.radii.utility,
-    borderWidth: 1,
-    color: theme.colors.primaryText,
-    height: 24,
-    lineHeight: 22,
-    textAlign: "center",
-    width: 24,
+  pressed: {
+    opacity: 0.88,
   },
-  indicatorChecked: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
+  box: {
+    backgroundColor: theme.colors.surfaceSoft,
+    borderRadius: theme.radii.sm,
+    height: 20,
+    width: 20,
+  },
+  boxChecked: {
+    backgroundColor: theme.colors.accent,
   },
   label: {
-    color: theme.colors.muted,
+    color: theme.colors.text,
+    fontSize: 14,
   },
 }));
 

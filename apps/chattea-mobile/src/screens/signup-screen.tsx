@@ -1,14 +1,20 @@
 import { Redirect } from "expo-router";
+import { Text, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { StyleSheet } from "react-native-unistyles";
 
 import {
   AuthActionButton,
-  GenderSelector,
+  AuthField,
+  BottomCta,
+  PhotoPicker,
+  SIGNUP_MBTI_MAX_LENGTH,
   SIGNUP_NAME_MAX_LENGTH,
-  SignupHeader,
   TermsAcceptance,
   useSignup,
 } from "@/features/auth";
-import { AppInput, ContentState, Screen } from "@/shared/components";
+import { ContentState, Screen } from "@/shared/components";
+import type { AppTheme } from "@/theme/unistyles";
 
 const SignupScreen = () => {
   const {
@@ -16,17 +22,17 @@ const SignupScreen = () => {
     signupToken,
     userName,
     setUserName,
-    gender,
-    setGender,
-    email,
-    setEmail,
-    password,
-    setPassword,
+    heightCm,
+    setHeightCm,
+    job,
+    setJob,
+    mbti,
+    setMbti,
+    photoUri,
+    pickPhoto,
     termsAccepted,
     setTermsAccepted,
-    kakaoToken,
-    complete,
-    completeKakao,
+    pending,
     submit,
   } = useSignup();
   if (continuation === undefined) {
@@ -42,40 +48,87 @@ const SignupScreen = () => {
   }
 
   return (
-    <Screen includeTopInset={false} scroll>
-      <SignupHeader />
-      <AppInput
-        label="사용자 이름"
-        maxLength={SIGNUP_NAME_MAX_LENGTH}
-        onChangeText={setUserName}
-        value={userName}
-      />
-      <GenderSelector onChange={setGender} value={gender} />
-      <AppInput
-        autoCapitalize="none"
-        keyboardType="email-address"
-        label="이메일"
-        onChangeText={setEmail}
-        value={email}
-      />
-      {!kakaoToken ? (
-        <AppInput label="비밀번호" onChangeText={setPassword} secureTextEntry value={password} />
-      ) : null}
-      <TermsAcceptance accepted={termsAccepted} onChange={setTermsAccepted} />
-      <AuthActionButton
-        disabled={
-          !userName.trim() ||
-          !gender ||
-          !termsAccepted ||
-          (!kakaoToken && (!email.trim() || !password.trim())) ||
-          complete.isPending ||
-          completeKakao.isPending
-        }
-        onPress={submit}
-        title="프로필 만들고 추천 보기"
-      />
-    </Screen>
+    <View style={styles.root}>
+      <KeyboardAwareScrollView
+        bottomOffset={24}
+        contentContainerStyle={styles.content}
+        keyboardDismissMode="interactive"
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.photoRow}>
+          <PhotoPicker onPress={() => void pickPhoto()} uri={photoUri} />
+        </View>
+        <Text style={styles.hint}>프로필 사진</Text>
+        <View style={styles.fields}>
+          <AuthField
+            label="닉네임"
+            maxLength={SIGNUP_NAME_MAX_LENGTH}
+            onChangeText={setUserName}
+            placeholder="채티에서 쓸 이름"
+            value={userName}
+          />
+          <AuthField
+            keyboardType="number-pad"
+            label="키"
+            onChangeText={setHeightCm}
+            placeholder="키 (cm)"
+            value={heightCm}
+          />
+          <AuthField label="직업" onChangeText={setJob} placeholder="직업" value={job} />
+          <AuthField
+            autoCapitalize="characters"
+            label="MBTI"
+            maxLength={SIGNUP_MBTI_MAX_LENGTH}
+            onChangeText={setMbti}
+            placeholder="MBTI"
+            value={mbti}
+          />
+        </View>
+        <View style={styles.terms}>
+          <TermsAcceptance accepted={termsAccepted} onChange={setTermsAccepted} />
+        </View>
+      </KeyboardAwareScrollView>
+      <BottomCta>
+        <AuthActionButton
+          disabled={!userName.trim() || !termsAccepted || pending}
+          loading={pending}
+          onPress={() => void submit()}
+          title="가입 완료"
+        />
+      </BottomCta>
+    </View>
   );
 };
+
+const styles = StyleSheet.create((theme: AppTheme) => ({
+  root: {
+    backgroundColor: theme.colors.background,
+    flex: 1,
+  },
+  content: {
+    flexGrow: 1,
+    paddingTop: theme.spacing.sm,
+  },
+  photoRow: {
+    flexDirection: "row",
+    gap: theme.spacing.control,
+    paddingHorizontal: theme.spacing.md,
+  },
+  hint: {
+    color: theme.colors.muted,
+    fontSize: 13,
+    marginTop: theme.spacing.sm,
+    textAlign: "center",
+  },
+  fields: {
+    gap: theme.spacing.control,
+    marginTop: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
+  },
+  terms: {
+    marginTop: theme.spacing.control,
+    paddingHorizontal: theme.spacing.md,
+  },
+}));
 
 export default SignupScreen;
