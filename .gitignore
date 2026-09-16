@@ -6,3 +6,8 @@ android
 dist
 coverage
 npm-debug.log*
+.env
+.env.local
+
+# e2e maestro
+apps/chattea-mobile/maestro/output/
