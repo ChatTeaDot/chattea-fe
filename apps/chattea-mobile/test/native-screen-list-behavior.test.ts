@@ -253,6 +253,7 @@ vi.mock("expo-router", async () => {
   return {
     router: { push: vi.fn(), replace: vi.fn(), back: vi.fn() },
     Stack: { Screen: () => null, Toolbar },
+    useNavigation: () => ({ setOptions: () => undefined }),
     useLocalSearchParams: () => ({
       "candidate-id": "candidate-1",
       name: "후보",
@@ -260,6 +261,13 @@ vi.mock("expo-router", async () => {
       "post-id": "post-1",
       "room-id": "room-1",
     }),
+  };
+});
+vi.mock("expo-symbols", async () => {
+  const React = await vi.importActual<typeof import("react")>("react");
+  return {
+    SymbolView: ({ children }: { children?: ReactNode }) =>
+      React.createElement("div", { "data-symbol": true }, children),
   };
 });
 vi.mock("expo-blur", async () => {
@@ -380,10 +388,21 @@ vi.mock("react-native-unistyles", async () => {
   const { colors, radii, sizes, spacing, typography } = await import("../src/theme/constants");
   return {
     StyleSheet: {
-      create: (factory: (theme: Record<string, unknown>) => unknown) =>
-        factory({ colors, radii, sizes, spacing, typography }),
+      create: (
+        factory: (
+          theme: Record<string, unknown>,
+          rt: Record<string, unknown>,
+        ) => unknown,
+      ) =>
+        factory(
+          { colors, radii, sizes, spacing, typography },
+          { insets: { bottom: 0, left: 0, right: 0, top: 0 } },
+        ),
     },
-    useUnistyles: () => ({ theme: { colors, radii, sizes, spacing, typography } }),
+    useUnistyles: () => ({
+      rt: { insets: { bottom: 0, left: 0, right: 0, top: 0 } },
+      theme: { colors, radii, sizes, spacing, typography },
+    }),
   };
 });
 
@@ -713,6 +732,7 @@ vi.mock("lucide-react-native", async () => {
     ImagePlus: icon("ImagePlus"),
     LogOut: icon("LogOut"),
     MessageCircle: icon("MessageCircle"),
+    Send: icon("Send"),
     Settings: icon("Settings"),
   };
 });
