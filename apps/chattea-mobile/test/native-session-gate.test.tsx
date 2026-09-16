@@ -108,7 +108,7 @@ describe("native session gate", () => {
       createElement(NativeSessionGate, null, createElement("main", null, "protected content")),
     );
 
-    expect(markup).toContain("ChatTea를 준비하고 있어요");
+    expect(markup).toContain("채티를 준비하고 있어요");
     expect(markup).toContain('aria-hidden="true"');
     expect(markup).toContain("protected content");
   });
