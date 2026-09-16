@@ -1,26 +1,43 @@
 import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { MetaText, NativeButton, NativeCard } from "@/shared/components";
 import { formatRelativeDate } from "@/shared/lib";
 
 import type { PostDetailCardProps } from "../types";
-const PostDetailCard = ({ post, reportPost }: PostDetailCardProps) => {
+
+const PostDetailCard = ({ post }: PostDetailCardProps) => {
   return (
-    <NativeCard>
-      <View style={styles.postMeta}>
-        <MetaText>{post.authorName}</MetaText>
-        <MetaText>{formatRelativeDate(post.createdAt)}</MetaText>
-      </View>
-      <Text style={styles.postTitle}>{post.title}</Text>
-      <Text style={styles.detailBody}>{post.body}</Text>
-      <NativeButton label="글 신고하기" onPress={reportPost} tone="quiet" />
-    </NativeCard>
+    <View style={styles.body}>
+      <Text style={styles.title}>{post.title}</Text>
+      <Text style={styles.meta}>
+        {`${post.authorName} · ${formatRelativeDate(post.createdAt)}`}
+      </Text>
+      <Text style={styles.text}>{post.body}</Text>
+    </View>
   );
 };
+
 const styles = StyleSheet.create((theme) => ({
-  postMeta: { flexDirection: "row", justifyContent: "space-between" },
-  postTitle: { color: theme.colors.text, fontSize: 18, fontWeight: "800", letterSpacing: -0.3 },
-  detailBody: { color: theme.colors.text, fontSize: 16, lineHeight: 25 },
+  body: {
+    paddingHorizontal: 20,
+    paddingVertical: theme.spacing.md,
+  },
+  title: {
+    color: theme.colors.text,
+    fontSize: 17,
+    fontWeight: "700",
+    marginBottom: theme.spacing.xs,
+  },
+  meta: {
+    color: theme.colors.muted,
+    fontSize: 12,
+    marginBottom: theme.spacing.control,
+  },
+  text: {
+    color: theme.colors.text,
+    fontSize: 15,
+    lineHeight: 24,
+  },
 }));
+
 export default PostDetailCard;

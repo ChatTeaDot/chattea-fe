@@ -1,9 +1,12 @@
-import { memo, useCallback } from "react";
-import { View } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
+import { useNavigation } from "expo-router";
+import { SymbolView } from "expo-symbols";
+import { memo, useCallback, useEffect } from "react";
+import { Pressable, Text, View } from "react-native";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 import type { CommunityComment } from "@/features/community";
 import {
+  CommentInputBar,
   CommentRow as CommentRowComponent,
   PostDetailCard,
   updateCommunityCommentDraft,
@@ -13,12 +16,8 @@ import {
   EmptyState,
   ErrorState,
   LoadingState,
-  NativeButton,
-  NativeComposer,
-  NativeKeyboardScreen,
   NativeList,
-  NativeTextInput,
-  SectionHeading,
+  NativeScreen,
 } from "@/shared/components";
 
 const CommentRow = memo(CommentRowComponent);
@@ -38,6 +37,8 @@ const CommunityPostScreen = () => {
     reportPost,
     reportCommentById,
   } = useCommunityPost();
+  const navigation = useNavigation();
+  const { theme } = useUnistyles();
   const renderComment = useCallback(
     ({ item }: { item: CommunityComment }) => (
       <CommentRow
@@ -58,14 +59,36 @@ const CommunityPostScreen = () => {
     <EmptyState title="아직 댓글이 없어요" body="첫 댓글을 편하게 남겨 보세요." />
   );
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable
+          accessibilityLabel="더 보기"
+          accessibilityRole="button"
+          hitSlop={8}
+          onPress={reportPost}
+          style={styles.headerAction}
+        >
+          <SymbolView
+            name={{ android: "more_vert", ios: "ellipsis" }}
+            size={20}
+            style={styles.moreIcon}
+            tintColor={theme.colors.text}
+          />
+        </Pressable>
+      ),
+    });
+  }, [navigation, reportPost, theme]);
+
   return (
-    <NativeKeyboardScreen>
+    <NativeScreen>
       <NativeList
+        contentContainerStyle={styles.listContent}
         data={comments.data?.communityComments ?? []}
         keyExtractor={keyExtractor}
         ListEmptyComponent={commentEmpty}
         ListHeaderComponent={
-          <View style={styles.stack}>
+          <View>
             {posts.loading ? <LoadingState /> : null}
             {!posts.loading && !post ? (
               <EmptyState
@@ -73,42 +96,49 @@ const CommunityPostScreen = () => {
                 body="목록으로 돌아가 다른 이야기를 확인해 보세요."
               />
             ) : null}
-            {post ? <PostDetailCard post={post} reportPost={reportPost} /> : null}
-            <SectionHeading title="댓글" />
+            {post ? <PostDetailCard post={post} /> : null}
+            {post ? <Text style={styles.commentTitle}>댓글 {post.commentCount}</Text> : null}
           </View>
         }
+        ListHeaderComponentStyle={styles.listHeader}
         renderItem={renderComment}
       />
-      <NativeComposer>
-        <NativeTextInput
-          multiline
-          onChangeText={(body) => setDraft((current) => updateCommunityCommentDraft(current, body))}
-          placeholder="댓글을 남겨 보세요"
-          style={styles.input}
-          value={draft.body}
-        />
-        <NativeButton
-          disabled={!draft.body.trim() || commentState.loading}
-          label="댓글 등록"
-          onPress={() => void submitComment()}
-        />
-      </NativeComposer>
-    </NativeKeyboardScreen>
+      <CommentInputBar
+        disabled={!draft.body.trim() || commentState.loading}
+        onChangeBody={(body) =>
+          setDraft((current) => updateCommunityCommentDraft(current, body))
+        }
+        onSubmit={() => void submitComment()}
+        value={draft.body}
+      />
+    </NativeScreen>
   );
 };
 
 const styles = StyleSheet.create((theme) => ({
-  stack: { gap: theme.spacing.md },
-  input: {
-    backgroundColor: theme.colors.surface,
-    borderColor: theme.colors.border,
-    borderRadius: 14,
-    borderWidth: 1,
-    color: theme.colors.text,
-    fontSize: 16,
-    minHeight: 52,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: 13,
+  headerAction: {
+    alignItems: "center",
+    height: 44,
+    justifyContent: "center",
+    width: 44,
+  },
+  moreIcon: {
+    transform: [{ rotate: "90deg" }],
+  },
+  listContent: {
+    gap: 0,
+    paddingBottom: theme.spacing.xl,
+    paddingHorizontal: 0,
+  },
+  listHeader: {
+    paddingBottom: 0,
+  },
+  commentTitle: {
+    color: theme.colors.muted,
+    fontSize: 13,
+    fontWeight: "600",
+    marginBottom: theme.spacing.sm,
+    paddingHorizontal: 20,
   },
 }));
 

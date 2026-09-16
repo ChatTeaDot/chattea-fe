@@ -1,16 +1,21 @@
 import { router } from "expo-router";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
+import { StyleSheet } from "react-native-unistyles";
 
-import type { CommunityPost } from "@/features/community";
-import { PostRow as PostRowComponent, useCommunityPosts } from "@/features/community";
+import type { CommunityFilter, CommunityPost } from "@/features/community";
+import {
+  ChipRow,
+  COMMUNITY_FILTERS,
+  PostRow as PostRowComponent,
+  useCommunityPosts,
+  WriteFab,
+} from "@/features/community";
 import {
   EmptyState,
   ErrorState,
   LoadingState,
-  NativeButton,
   NativeList,
   NativeScreen,
-  SectionHeading,
 } from "@/shared/components";
 
 const PostRow = memo(PostRowComponent);
@@ -20,6 +25,7 @@ const keyExtractor = (item: CommunityPost) => item.id;
 
 const CommunityScreen = () => {
   const { posts, openPost } = useCommunityPosts();
+  const [filter, setFilter] = useState<CommunityFilter>("전체");
   const renderPost = useCallback(
     ({ item }: { item: CommunityPost }) => (
       <PostRow
@@ -44,26 +50,25 @@ const CommunityScreen = () => {
 
   return (
     <NativeScreen>
+      <ChipRow items={COMMUNITY_FILTERS} onSelect={setFilter} selected={filter} />
       <NativeList
+        contentContainerStyle={styles.listContent}
         data={posts.data?.communityPosts ?? []}
         keyExtractor={keyExtractor}
         ListEmptyComponent={empty}
-        ListHeaderComponent={
-          <SectionHeading
-            title="지금 나누는 이야기"
-            action={
-              <NativeButton
-                label="글 쓰기"
-                onPress={() => router.push("/community/new")}
-                tone="quiet"
-              />
-            }
-          />
-        }
         renderItem={renderPost}
       />
+      <WriteFab onPress={() => router.push("/community/new")} />
     </NativeScreen>
   );
 };
+
+const styles = StyleSheet.create((theme, rt) => ({
+  listContent: {
+    gap: 0,
+    paddingBottom: rt.insets.bottom + theme.sizes.tabBar + 56 + theme.spacing.xl,
+    paddingHorizontal: 0,
+  },
+}));
 
 export default CommunityScreen;

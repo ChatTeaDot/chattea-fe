@@ -1,12 +1,12 @@
 import { CommunityPostForm } from "@/features/community";
-import { NativeScreen, NativeScroll } from "@/shared/components";
+import { NativeScreen } from "@/shared/components";
+
 const CommunityWriteScreen = () => {
   return (
     <NativeScreen>
-      <NativeScroll>
-        <CommunityPostForm />
-      </NativeScroll>
+      <CommunityPostForm />
     </NativeScreen>
   );
 };
+
 export default CommunityWriteScreen;
