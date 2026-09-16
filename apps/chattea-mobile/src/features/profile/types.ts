@@ -83,4 +83,15 @@ export type ChoiceButtonProps = {
 
 export type FormLabelProps = { label: string; hint?: string };
 
-export type ProfileSummaryCardProps = { user: CurrentUser };
+export type MyProfileEditorProps = {
+  planId: "basic" | "black" | "free" | "gold" | undefined;
+  user: CurrentUser;
+};
+
+export type PhotoGridProps = {
+  photos: VerifiedProfilePhoto[];
+  uploading: boolean;
+  onAddPhoto: () => void;
+};
+
+export type PlanBadgeProps = { planId: "basic" | "black" | "free" | "gold" | undefined };

@@ -16,6 +16,7 @@ const mocks = vi.hoisted(() => ({
   retryPress: undefined as (() => void) | undefined,
 }));
 
+vi.mock("expo-secure-store", () => ({}));
 vi.mock("@/features/profile", () => import("../src/features/profile/api"));
 vi.mock("@/features/notifications", async () => ({
   ...(await import("../src/features/notifications/hooks")),

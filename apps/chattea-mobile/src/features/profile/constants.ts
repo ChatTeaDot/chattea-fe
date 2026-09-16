@@ -27,3 +27,11 @@ export const MAX_PROFILE_PHOTOS = 3;
 export const PROFILE_NAME_MAX_LENGTH = 40;
 
 export const PROFILE_INTRO_MAX_LENGTH = 60;
+
+export const PROFILE_ATTRIBUTE_ROWS = ["키", "직업", "MBTI"] as const;
+
+export const PLAN_BADGE_LABELS = {
+  basic: "Basic",
+  black: "Black",
+  gold: "Gold",
+} as const;

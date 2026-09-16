@@ -4,3 +4,10 @@ export const UUID_PATTERN =
 export const EXACT_ROUTES = new Set(["/likes", "/premium", "/profile", "/rooms"]);
 
 export const PUSH_REGISTRATION_KEY = "chattea.pushRegistration.v1";
+
+export const NOTIFICATION_PREFERENCES_KEY = "chattea.notificationPreferences.v1";
+
+export const DEFAULT_NOTIFICATION_PREFERENCES = {
+  match: true,
+  message: true,
+} as const;

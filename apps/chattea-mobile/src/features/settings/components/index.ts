@@ -1,2 +1,1 @@
-export { default as AccountDeletionCard } from "./account-deletion-card";
-export { default as LogoutCard } from "./logout-card";
+export { default as DeleteAccountButton } from "./delete-account-button";

@@ -96,21 +96,18 @@ export type ReconciliationRequest = {
   userId: string;
 };
 
-export type ProductCardProps = {
+export type PlanCardMeta = {
+  description: string;
+  fallbackPrice: string;
+  name: string;
+  planId: CurrentSubscription["planId"];
+  productId: string | null;
+};
+
+export type PlanCardProps = {
+  card: PlanCardMeta;
   disabled: boolean;
   onPress: () => void;
   price?: string;
-  product: BillingProduct;
-};
-
-export type CreditBalanceCardProps = {
-  onViewPlans: () => void;
-  balance: { data?: { consumableBalance: ConsumableBalance } };
-};
-
-export type BillingOverviewCardProps = {
-  balance: { data?: { consumableBalance: ConsumableBalance } };
-  subscription: { data?: { currentSubscription: CurrentSubscription } };
-  revenueCat: { state: RevenueCatState };
-  reconciliationPending: boolean;
+  selected: boolean;
 };
