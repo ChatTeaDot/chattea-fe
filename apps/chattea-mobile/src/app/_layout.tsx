@@ -48,6 +48,17 @@ const ThemedStack = () => {
       />
       <Stack.Screen name="community/[post-id]" options={{ title: "커뮤니티" }} />
       <Stack.Screen name="rooms/[room-id]" options={{ title: "대화" }} />
+      <Stack.Screen name="candidate/[candidate-id]" options={{ title: "" }} />
+      <Stack.Screen
+        name="match-sheet"
+        options={{
+          headerShown: false,
+          presentation: "formSheet",
+          sheetAllowedDetents: [0.42],
+          sheetCornerRadius: 20,
+          sheetGrabberVisible: true,
+        }}
+      />
     </Stack>
   );
 };

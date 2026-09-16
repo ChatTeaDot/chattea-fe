@@ -4,9 +4,12 @@ import { type ComponentType, createElement, isValidElement, type ReactNode } fro
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { getLikesErrorKind } from "../src/features/matches/utils/likes-error";
+import CandidateDetailScreen from "../src/screens/candidate-detail-screen";
 import CommunityPostScreen from "../src/screens/community-post-screen";
 import CommunityScreen from "../src/screens/community-screen";
 import LikesScreen from "../src/screens/likes-screen";
+import MatchListScreen from "../src/screens/match-list-screen";
+import MatchSheetScreen from "../src/screens/match-sheet-screen";
 import NotificationsScreen from "../src/screens/notifications-screen";
 import ProfileFormScreen from "../src/screens/profile-form-screen";
 import RoomScreen from "../src/screens/room-screen";
@@ -19,6 +22,7 @@ const { renderToStaticMarkup } = createRequire(import.meta.url)("react-dom/serve
 };
 
 type CapturedButton = {
+  accessibilityLabel?: string;
   accessibilityRole?: string;
   accessibilityState?: Record<string, unknown>;
   disabled: boolean;
@@ -247,9 +251,54 @@ vi.mock("expo-router", async () => {
     },
   );
   return {
-    router: { push: vi.fn() },
+    router: { push: vi.fn(), replace: vi.fn(), back: vi.fn() },
     Stack: { Toolbar },
-    useLocalSearchParams: () => ({ "post-id": "post-1", "room-id": "room-1" }),
+    useLocalSearchParams: () => ({
+      "candidate-id": "candidate-1",
+      name: "후보",
+      photo: "https://example.com/candidate.jpg",
+      "post-id": "post-1",
+      "room-id": "room-1",
+    }),
+  };
+});
+vi.mock("expo-blur", async () => {
+  const React = await vi.importActual<typeof import("react")>("react");
+  return {
+    BlurView: ({ children }: { children?: ReactNode }) =>
+      React.createElement("div", { "data-blur": true }, children),
+  };
+});
+vi.mock("react-native-gesture-handler", async () => {
+  const React = await vi.importActual<typeof import("react")>("react");
+  const container = ({ children }: { children?: ReactNode }) =>
+    React.createElement("div", null, children);
+  const chainable: Record<string, unknown> = new Proxy({} as Record<string, unknown>, {
+    get: (target, prop) => target[String(prop)] ?? (() => chainable),
+  });
+  return {
+    Gesture: {
+      Exclusive: () => chainable,
+      Pan: () => chainable,
+      Tap: () => chainable,
+    },
+    GestureDetector: container,
+    GestureHandlerRootView: container,
+  };
+});
+vi.mock("react-native-reanimated", async () => {
+  const React = await vi.importActual<typeof import("react")>("react");
+  const View = ({ children }: { children?: ReactNode }) =>
+    React.createElement("div", null, children);
+  return {
+    default: { View },
+    interpolate: (_value: number, _input: number[], output: number[]) => output[0],
+    runOnJS: (fn: (...args: unknown[]) => unknown) => fn,
+    useAnimatedStyle: () => ({}),
+    useReducedMotion: () => false,
+    useSharedValue: (value: unknown) => ({ value }),
+    withSpring: (value: unknown) => value,
+    withTiming: (value: unknown) => value,
   };
 });
 vi.mock("react-native", async () => {
@@ -265,6 +314,7 @@ vi.mock("react-native", async () => {
     KeyboardAvoidingView: container("main"),
     Platform: { OS: "ios" },
     Pressable: ({
+      accessibilityLabel,
       accessibilityRole,
       accessibilityState,
       children,
@@ -273,6 +323,7 @@ vi.mock("react-native", async () => {
     }: Record<string, unknown>) => {
       const label = textContent(children as ReactNode);
       mocks.pressables.push({
+        accessibilityLabel: accessibilityLabel as string | undefined,
         accessibilityRole: accessibilityRole as string | undefined,
         accessibilityState: accessibilityState as Record<string, unknown> | undefined,
         disabled: Boolean(disabled),
@@ -283,6 +334,7 @@ vi.mock("react-native", async () => {
     },
     ScrollView: container("section"),
     Text: container("span"),
+    useWindowDimensions: () => ({ width: 390, height: 844 }),
     TextInput: (props: Record<string, unknown>) => {
       mocks.inputs.push(props);
       return React.createElement("input");
@@ -329,18 +381,17 @@ const flushPromises = async () => {
 
 const renderScreen = (Screen: ComponentType) => renderToStaticMarkup(createElement(Screen));
 
-const paidActionLabels = [
-  "이번엔 넘기기",
-  "관심 보내기",
-  "슈퍼라이크",
-  "되돌리기",
-  "30분 부스트 사용하기",
-];
+const paidActionLabels = ["이번엔 넘기기", "관심 보내기", "되돌리기"];
 
-const paidActions = () => mocks.pressables.filter(({ label }) => paidActionLabels.includes(label));
+const paidActions = () =>
+  mocks.pressables.filter(({ accessibilityLabel }) =>
+    paidActionLabels.includes(accessibilityLabel ?? ""),
+  );
 
 const button = (label: string) => {
-  const match = mocks.pressables.find((pressable) => pressable.label === label);
+  const match = mocks.pressables.find(
+    (pressable) => pressable.label === label || pressable.accessibilityLabel === label,
+  );
   if (!match) throw new Error(`Missing button: ${label}`);
   return match;
 };
@@ -442,7 +493,7 @@ describe("today match action locking", () => {
 
     renderScreen(TodayMatchesScreen);
 
-    expect(paidActions()).toHaveLength(5);
+    expect(paidActions()).toHaveLength(3);
     expect(paidActions().every(({ disabled }) => disabled)).toBe(true);
   });
 
@@ -455,26 +506,13 @@ describe("today match action locking", () => {
     expect(mocks.queryOptions[0]).toMatchObject({ notifyOnNetworkStatusChange: true });
   });
 
-  it("restores an active boost from the network query and prevents another activation", () => {
-    consumableBalance.activeBoostUntil = "2099-08-28T01:00:00.000Z";
-
+  it("observes the consumable balance query for boost state", () => {
     renderScreen(TodayMatchesScreen);
 
-    const activeBoost = mocks.pressables.find(({ label }) => label.includes("부스트 사용 중"));
-    expect(activeBoost).toMatchObject({ disabled: true });
-    expect(activeBoost?.label).toContain("만료");
     expect(mocks.queryOptions[1]).toMatchObject({
       fetchPolicy: "cache-and-network",
       notifyOnNetworkStatusChange: true,
     });
-  });
-
-  it("keeps an expired boost activatable", () => {
-    consumableBalance.activeBoostUntil = "2000-08-28T01:00:00.000Z";
-
-    renderScreen(TodayMatchesScreen);
-
-    expect(button("30분 부스트 사용하기").disabled).toBe(false);
   });
 
   it("writes the authoritative activation result into the observed balance cache", () => {
@@ -543,7 +581,7 @@ describe("likes interest locking", () => {
 
     renderScreen(LikesScreen);
 
-    expect(button("관심 보내기").disabled).toBe(true);
+    expect(button("후보님에게 관심 보내기").disabled).toBe(true);
   });
 
   it("holds one interest action through mutation and refetch", async () => {
@@ -553,21 +591,59 @@ describe("likes interest locking", () => {
     mocks.queryRefetch.mockReturnValue(refetch.promise);
     renderScreen(LikesScreen);
 
-    button("관심 보내기").onPress?.();
-    button("관심 보내기").onPress?.();
+    button("후보님에게 관심 보내기").onPress?.();
+    button("후보님에게 관심 보내기").onPress?.();
     expect(mocks.mutationFunctions[0]).toHaveBeenCalledOnce();
 
     mutation.resolve(mutationResult);
     await flushPromises();
     expect(mocks.queryRefetch).toHaveBeenCalledOnce();
 
-    button("관심 보내기").onPress?.();
+    button("후보님에게 관심 보내기").onPress?.();
     expect(mocks.mutationFunctions[0]).toHaveBeenCalledOnce();
 
     refetch.resolve({ data: queryData });
     await flushPromises();
-    button("관심 보내기").onPress?.();
+    button("후보님에게 관심 보내기").onPress?.();
     expect(mocks.mutationFunctions[0]).toHaveBeenCalledTimes(2);
+  });
+
+  it("veils liked-me thumbnails behind the plan for free members", () => {
+    mocks.queryError = new Error("LIKED_ME_NOT_AVAILABLE");
+
+    const markup = renderScreen(LikesScreen);
+
+    expect(markup).toContain("Basic부터 확인");
+    expect(button("누군지 확인하기").accessibilityRole).toBe("button");
+  });
+});
+
+describe("match list and match sheet", () => {
+  it("shows new matches as avatar bubbles with a chat start action", () => {
+    const markup = renderScreen(MatchListScreen);
+
+    expect(markup).toContain("새로 매치된 사람");
+    expect(button("채팅 시작")).toBeTruthy();
+  });
+
+  it("shows the match celebration with chat and later actions", () => {
+    const markup = renderScreen(MatchSheetScreen);
+
+    expect(markup).toContain("매치됐어요!");
+    expect(markup).toContain("후보님도 회원님을 좋아해요");
+    expect(button("채팅하기")).toBeTruthy();
+    expect(button("나중에")).toBeTruthy();
+  });
+});
+
+describe("candidate profile detail", () => {
+  it("shows the candidate name, region and intro with a like action", () => {
+    const markup = renderScreen(CandidateDetailScreen);
+
+    expect(markup).toContain("후보");
+    expect(markup).toContain("서울");
+    expect(markup).toContain("반가워요");
+    expect(button("좋아요 ♥")).toBeTruthy();
   });
 });
 

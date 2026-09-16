@@ -1,9 +1,10 @@
 import { useMutation, useQuery } from "@apollo/client/react";
 import { router } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Alert } from "react-native";
 
 import { CONSUMABLE_BALANCE_QUERY, type ConsumableBalance } from "@/features/billing";
+import { useRouteParam } from "@/shared/hooks";
 import { formatTime, runExclusiveAction } from "@/shared/lib";
 
 import {
@@ -21,8 +22,9 @@ import {
   type CandidatesData,
   type InteractionResult,
   type LikedCandidatesData,
+  type MatchCandidate,
 } from "./types";
-import { showMatchActionError } from "./utils";
+import { getLikesErrorKind, openMatchSheet, showMatchActionError } from "./utils";
 
 export const useTodayMatches = () => {
   const candidates = useQuery<CandidatesData>(MATCH_CANDIDATES_QUERY, {
@@ -107,10 +109,7 @@ export const useTodayMatches = () => {
               ? (await like({ variables: { userId: candidate.id } })).data?.likeUser
               : (await superLike({ variables: { userId: candidate.id } })).data?.superLikeUser;
           if (result?.matched && result.roomId) {
-            Alert.alert("서로 관심이 닿았어요", "바로 대화를 시작해 볼까요?", [
-              { text: "나중에", style: "cancel" },
-              { text: "대화하기", onPress: () => router.push(`/rooms/${result.roomId}`) },
-            ]);
+            openMatchSheet(candidate, result.roomId);
           }
         }
         await refresh();
@@ -178,21 +177,66 @@ export const useLikes = () => {
   const [like, likeState] = useMutation<{ likeUser: InteractionResult }>(LIKE_USER_MUTATION);
   const actionGuard = useRef(false);
   const refetchLikes = likes.refetch;
+  const likesData = useMemo(() => likes.data?.likedMeCandidates ?? [], [likes.data]);
   const sendInterest = useCallback(
     async (candidateId: string) => {
       await runExclusiveAction(actionGuard, async () => {
         try {
           const response = await like({ variables: { userId: candidateId } });
           const result = response.data?.likeUser;
-          if (result?.matched && result.roomId) router.push(`/rooms/${result.roomId}`);
+          const target = likesData.find((item) => item.id === candidateId);
+          if (result?.matched && result.roomId && target) openMatchSheet(target, result.roomId);
           await refetchLikes();
         } catch (error) {
           showMatchActionError(error);
         }
       });
     },
-    [like, refetchLikes],
+    [like, likesData, refetchLikes],
   );
 
   return { likes, likeState, sendInterest, refetchLikes };
+};
+
+export const useCandidateDetail = () => {
+  const candidateId = useRouteParam("candidate-id");
+  const candidates = useQuery<CandidatesData>(MATCH_CANDIDATES_QUERY, {
+    notifyOnNetworkStatusChange: true,
+  });
+  const liked = useQuery<LikedCandidatesData>(LIKED_ME_CANDIDATES_QUERY, {
+    notifyOnNetworkStatusChange: true,
+  });
+  const [like, likeState] = useMutation<{ likeUser: InteractionResult }>(LIKE_USER_MUTATION);
+  const actionGuard = useRef(false);
+  const likedError =
+    liked.error && getLikesErrorKind(liked.error) !== "entitlement" ? liked.error : undefined;
+  const candidate: MatchCandidate | undefined = [
+    ...(candidates.data?.matchCandidates ?? []),
+    ...(liked.data?.likedMeCandidates ?? []),
+  ].find((item) => item.id === candidateId);
+
+  const sendLike = useCallback(async () => {
+    if (!candidate) return;
+    await runExclusiveAction(actionGuard, async () => {
+      try {
+        const response = await like({ variables: { userId: candidate.id } });
+        const result = response.data?.likeUser;
+        if (result?.matched && result.roomId) {
+          openMatchSheet(candidate, result.roomId);
+        } else {
+          router.back();
+        }
+      } catch (error) {
+        showMatchActionError(error);
+      }
+    });
+  }, [candidate, like]);
+
+  return {
+    candidate,
+    error: candidates.error ?? likedError,
+    likePending: likeState.loading,
+    loading: candidates.loading || (liked.loading && !likedError),
+    sendLike,
+  };
 };
