@@ -1,0 +1,29 @@
+appId: com.cyjoon.chattea
+---
+- launchApp
+- runFlow:
+    when:
+      visible: "Dismiss"
+    commands:
+      - tapOn: "Dismiss"
+- tapOn: "E2E상대 29"
+- assertVisible: "좋아요 ♥"
+- launchApp
+- runFlow:
+    when:
+      visible: "Dismiss"
+    commands:
+      - tapOn: "Dismiss"
+- tapOn: "커뮤니티"
+- tapOn: ".*E2E 커뮤니티 글.*"
+- assertVisible: "커뮤니티 본문 테스트입니다."
+- assertVisible: "아직 댓글이 없어요"
+- launchApp
+- runFlow:
+    when:
+      visible: "Dismiss"
+    commands:
+      - tapOn: "Dismiss"
+- tapOn: "채팅"
+- tapOn: "E2E상대"
+- assertVisible: "안녕하세요 E2E 메시지"
