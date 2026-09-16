@@ -1,0 +1,32 @@
+appId: com.cyjoon.chattea
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Connect"
+    timeout: 30000
+- openLink: "chattea://expo-development-client/?url=http%3A%2F%2F10.0.2.2%3A8082"
+- extendedWaitUntil:
+    visible: "Continue"
+    timeout: 120000
+- tapOn: "Continue"
+- runFlow:
+    when:
+      visible: "Fast refresh"
+    commands:
+      - tapOn: "Close"
+- extendedWaitUntil:
+    visible: "매칭"
+    timeout: 120000
+- tapOn: "채팅"
+- extendedWaitUntil:
+    visible:
+      text: ".*E2E상대.*"
+    timeout: 30000
+- takeScreenshot: 03-rooms
+- tapOn:
+    text: ".*E2E상대.*"
+- extendedWaitUntil:
+    visible: "안녕하세요 E2E 메시지"
+    timeout: 30000
+- takeScreenshot: 03-room
