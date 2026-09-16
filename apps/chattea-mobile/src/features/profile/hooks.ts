@@ -3,7 +3,7 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { Alert } from "react-native";
 
-import { CONSUMABLE_BALANCE_QUERY, type ConsumableBalance } from "@/features/billing";
+import { CURRENT_SUBSCRIPTION_QUERY, type CurrentSubscription } from "@/features/billing";
 
 import { ME_QUERY, selectAndUploadProfilePhoto, UPDATE_PROFILE_MUTATION } from "./api";
 import { MAX_PROFILE_PHOTOS } from "./constants";
@@ -15,20 +15,14 @@ export const useCurrentUser = () => useQuery<MeData>(ME_QUERY);
 
 export const useProfile = () => {
   const me = useQuery<MeData>(ME_QUERY);
-  const balance = useQuery<{ consumableBalance: ConsumableBalance }>(CONSUMABLE_BALANCE_QUERY);
+  const subscription = useQuery<{ currentSubscription: CurrentSubscription }>(
+    CURRENT_SUBSCRIPTION_QUERY,
+  );
 
-  return { me, balance };
+  return { me, subscription };
 };
 
-export const useProfileForm = (user: CurrentUser, completion: boolean) => {
-  const [updateProfile, updateState] = useMutation<{ updateUserProfile: CurrentUser }>(
-    UPDATE_PROFILE_MUTATION,
-  );
-  const [userName, setUserName] = useState(user.userName);
-  const [birthDate, setBirthDate] = useState(user.birthDate ?? "");
-  const [region, setRegion] = useState(user.region ?? "");
-  const [interestedGender, setInterestedGender] = useState(user.interestedGender ?? "everyone");
-  const [intro, setIntro] = useState(user.intro);
+const useProfilePhotoList = (user: CurrentUser) => {
   const [photos, setPhotos] = useState<VerifiedProfilePhoto[]>(() =>
     [...user.photos]
       .sort((a, b) => a.position - b.position)
@@ -51,6 +45,50 @@ export const useProfileForm = (user: CurrentUser, completion: boolean) => {
       setUploading(false);
     }
   };
+
+  return { photos, setPhotos, uploading, addPhoto };
+};
+
+export const useMyProfileEditor = (user: CurrentUser) => {
+  const [updateProfile, updateState] = useMutation<{ updateUserProfile: CurrentUser }>(
+    UPDATE_PROFILE_MUTATION,
+  );
+  const [intro, setIntro] = useState(user.intro);
+  const { photos, uploading, addPhoto } = useProfilePhotoList(user);
+
+  const save = async () => {
+    try {
+      await updateProfile({
+        variables: {
+          input: buildProfileUpdateInput({
+            birthDate: user.birthDate ?? "",
+            interestedGender: user.interestedGender ?? "everyone",
+            intro,
+            photos,
+            region: user.region ?? "",
+            userName: user.userName,
+          }),
+        },
+        refetchQueries: [ME_QUERY],
+      });
+    } catch (error) {
+      showProfileActionError(error);
+    }
+  };
+
+  return { intro, setIntro, photos, uploading, addPhoto, save, updateState };
+};
+
+export const useProfileForm = (user: CurrentUser, completion: boolean) => {
+  const [updateProfile, updateState] = useMutation<{ updateUserProfile: CurrentUser }>(
+    UPDATE_PROFILE_MUTATION,
+  );
+  const [userName, setUserName] = useState(user.userName);
+  const [birthDate, setBirthDate] = useState(user.birthDate ?? "");
+  const [region, setRegion] = useState(user.region ?? "");
+  const [interestedGender, setInterestedGender] = useState(user.interestedGender ?? "everyone");
+  const [intro, setIntro] = useState(user.intro);
+  const { photos, setPhotos, uploading, addPhoto } = useProfilePhotoList(user);
 
   const save = async () => {
     if (!userName.trim() || !birthDate.trim() || !region || !intro.trim() || photos.length === 0) {

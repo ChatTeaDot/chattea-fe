@@ -1,13 +1,16 @@
 import { useMutation, useQuery } from "@apollo/client/react";
 import { router } from "expo-router";
-import { createContext, useCallback, useContext } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 import { showActionError } from "@/shared/lib";
 
 import { MARK_NOTIFICATION_READ_MUTATION, NOTIFICATIONS_QUERY } from "./api";
+import { DEFAULT_NOTIFICATION_PREFERENCES } from "./constants";
+import { loadNotificationPreferences, saveNotificationPreferences } from "./storage";
 import type {
   AppNotification,
   NotificationNavigationCoordinator,
+  NotificationPreferences,
   NotificationsData,
   PushNotificationsContextValue,
 } from "./types";
@@ -22,6 +25,23 @@ export const usePushNotifications = (): PushNotificationsContextValue => {
   const value = useContext(PushNotificationsContext);
   if (!value) throw new Error("PushNotificationsProvider missing");
   return value;
+};
+
+export const useNotificationPreferences = () => {
+  const [preferences, setPreferences] = useState<NotificationPreferences>({
+    ...DEFAULT_NOTIFICATION_PREFERENCES,
+  });
+  useEffect(() => {
+    void loadNotificationPreferences().then(setPreferences);
+  }, []);
+  const setPreference = (key: keyof NotificationPreferences, value: boolean) => {
+    setPreferences((current) => {
+      const next = { ...current, [key]: value };
+      void saveNotificationPreferences(next);
+      return next;
+    });
+  };
+  return { preferences, setPreference };
 };
 
 export const useNotificationNavigation = (): NotificationNavigationCoordinator => {

@@ -1,20 +1,8 @@
-import { router } from "expo-router";
-import { View } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
-
-import { CreditBalanceCard } from "@/features/billing";
-import { ProfileSummaryCard, useProfile } from "@/features/profile";
-import {
-  ErrorState,
-  LoadingState,
-  NativeButton,
-  NativeScreen,
-  NativeScroll,
-  SectionHeading,
-} from "@/shared/components";
+import { MyProfileEditor, useProfile } from "@/features/profile";
+import { ErrorState, LoadingState, NativeScreen, NativeScroll } from "@/shared/components";
 
 const ProfileScreen = () => {
-  const { me, balance } = useProfile();
+  const { me, subscription } = useProfile();
   if (me.loading)
     return (
       <NativeScreen>
@@ -31,32 +19,13 @@ const ProfileScreen = () => {
         </NativeScroll>
       </NativeScreen>
     );
-  const user = me.data.me;
   return (
-    <NativeScreen>
-      <NativeScroll>
-        <ProfileSummaryCard user={user} />
-        <SectionHeading title="내 이용권" />
-        <CreditBalanceCard balance={balance} onViewPlans={() => router.push("/premium")} />
-        <View style={styles.stackTight}>
-          <NativeButton
-            label="알림"
-            onPress={() => router.push("/notifications")}
-            tone="secondary"
-            fullWidth
-          />
-          <NativeButton
-            label="설정"
-            onPress={() => router.push("/settings")}
-            tone="secondary"
-            fullWidth
-          />
-        </View>
-      </NativeScroll>
-    </NativeScreen>
+    <MyProfileEditor
+      key={me.data.me.id}
+      planId={subscription.data?.currentSubscription.planId}
+      user={me.data.me}
+    />
   );
 };
-
-const styles = StyleSheet.create((theme) => ({ stackTight: { gap: theme.spacing.sm } }));
 
 export default ProfileScreen;

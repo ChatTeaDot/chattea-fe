@@ -38,10 +38,7 @@ const ThemedStack = () => {
       />
       <Stack.Screen name="settings" options={{ title: "설정" }} />
       <Stack.Screen name="notifications" options={{ title: "알림" }} />
-      <Stack.Screen
-        name="premium"
-        options={{ presentation: "formSheet", title: "구독과 아이템" }}
-      />
+      <Stack.Screen name="premium" options={{ title: "플랜" }} />
       <Stack.Screen
         name="community/new"
         options={{ presentation: "formSheet", title: "글 쓰기" }}

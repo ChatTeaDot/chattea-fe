@@ -695,3 +695,24 @@ describe("native action helpers", () => {
 vi.mock("react-native-purchases", () => ({ default: {} }));
 
 vi.mock("expo-secure-store", () => ({}));
+
+vi.mock("lucide-react-native", async () => {
+  const React = await vi.importActual<typeof import("react")>("react");
+  const icon = (name: string) => {
+    const Icon = () => React.createElement("i", { "data-icon": name });
+    Icon.displayName = name;
+    return Icon;
+  };
+  return {
+    Ban: icon("Ban"),
+    Bell: icon("Bell"),
+    Check: icon("Check"),
+    ChevronLeft: icon("ChevronLeft"),
+    ChevronRight: icon("ChevronRight"),
+    Crown: icon("Crown"),
+    ImagePlus: icon("ImagePlus"),
+    LogOut: icon("LogOut"),
+    MessageCircle: icon("MessageCircle"),
+    Settings: icon("Settings"),
+  };
+});

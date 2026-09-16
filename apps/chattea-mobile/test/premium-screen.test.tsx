@@ -29,7 +29,7 @@ vi.mock("@apollo/client/react", () => ({
     if (source.includes("NativeBillingProducts")) {
       return {
         data: {
-          billingProducts: [{ id: "chattea_basic_monthly", kind: "subscription", name: "Basic" }],
+          billingProducts: [{ id: "chattea_gold_monthly", kind: "subscription", name: "Gold" }],
         },
         error: undefined,
         loading: false,
@@ -52,23 +52,12 @@ vi.mock("@apollo/client/react", () => ({
 vi.mock("../src/shared/components", async () => {
   const React = await vi.importActual<typeof import("react")>("react");
   return {
-    MetaText: ({ children }: { children?: ReactNode }) =>
-      React.createElement("small", null, children),
-    NativeButton: ({
-      disabled,
-      label,
-    }: {
-      disabled?: boolean;
-      label: string;
-      onPress: () => void;
-    }) => React.createElement("button", { disabled }, label),
-    NativeCard: ({ children }: { children?: ReactNode }) =>
-      React.createElement("article", null, children),
+    AppButton: ({ disabled, title }: { disabled?: boolean; title: string }) =>
+      React.createElement("button", { disabled }, title),
+    BottomCta: ({ children }: { children?: ReactNode }) =>
+      React.createElement("footer", null, children),
     NativeScreen: ({ children }: { children?: ReactNode }) =>
       React.createElement("main", null, children),
-    NativeScroll: ({ children }: { children?: ReactNode }) =>
-      React.createElement("section", null, children),
-    SectionHeading: ({ title }: { title: string }) => React.createElement("h2", null, title),
   };
 });
 vi.mock("../src/shared/lib", () => ({
@@ -78,10 +67,17 @@ vi.mock("react-native", async () => {
   const React = await vi.importActual<typeof import("react")>("react");
   return {
     Alert: { alert: vi.fn() },
+    Pressable: ({ children, disabled }: { children?: ReactNode; disabled?: boolean }) =>
+      React.createElement("button", { disabled: Boolean(disabled) }, children),
+    ScrollView: ({ children }: { children?: ReactNode }) =>
+      React.createElement("section", null, children),
     Text: ({ children }: { children?: ReactNode }) => React.createElement("span", null, children),
     View: ({ children }: { children?: ReactNode }) => React.createElement("div", null, children),
   };
 });
+vi.mock("react-native-safe-area-context", () => ({
+  SafeAreaView: ({ children }: { children?: ReactNode }) => children,
+}));
 
 vi.mock("react-native-unistyles", () => ({ StyleSheet: { create: () => ({}) } }));
 
@@ -111,22 +107,21 @@ describe("premium screen", () => {
     const markup = renderPremium();
 
     expect(markup).toContain("이 빌드에는 App Store 결제가 설정되지 않았어요.");
-    expect(markup).toContain('<button disabled="">구매하기</button>');
-    expect(markup).toContain('<button disabled="">구매 복원</button>');
-    expect(markup).not.toContain("결제를 준비하고 있어요");
+    expect(markup).toContain('<button disabled="">Gold 구독하기</button>');
+    expect(markup).toMatch(/<button disabled=""><span>이전 구매 복원<\/span><\/button>/);
   });
 
-  it("shows the store price and enables only an exactly mapped product", () => {
+  it("shows the store price and enables purchase for an exactly mapped product", () => {
     billing.value = {
       logOut: vi.fn(() => Promise.resolve()),
       purchase: vi.fn(() => Promise.resolve("purchased" as const)),
       restore: vi.fn(() => Promise.resolve("restored" as const)),
       state: {
         packages: {
-          chattea_basic_monthly: {
+          chattea_gold_monthly: {
             package: {
-              identifier: "basic-package",
-              product: { identifier: "chattea_basic_monthly", priceString: "₩9,900" },
+              identifier: "gold-package",
+              product: { identifier: "chattea_gold_monthly", priceString: "₩9,900" },
             },
             priceString: "₩9,900",
           },
@@ -140,8 +135,8 @@ describe("premium screen", () => {
     const markup = renderPremium();
 
     expect(markup).toContain("₩9,900");
-    expect(markup).toContain("<button>구매하기</button>");
-    expect(markup).toContain("<button>구매 복원</button>");
+    expect(markup).toContain("<button>Gold 구독하기</button>");
+    expect(markup).toMatch(/<button><span>이전 구매 복원<\/span><\/button>/);
   });
 
   it("keeps store controls disabled while backend reconciliation is pending", () => {
@@ -151,10 +146,10 @@ describe("premium screen", () => {
       restore: vi.fn(() => Promise.resolve("restored" as const)),
       state: {
         packages: {
-          chattea_basic_monthly: {
+          chattea_gold_monthly: {
             package: {
-              identifier: "basic-package",
-              product: { identifier: "chattea_basic_monthly", priceString: "₩9,900" },
+              identifier: "gold-package",
+              product: { identifier: "chattea_gold_monthly", priceString: "₩9,900" },
             },
             priceString: "₩9,900",
           },
@@ -168,8 +163,8 @@ describe("premium screen", () => {
     const markup = renderPremium();
 
     expect(markup).toContain("스토어 구매를 서버 계정에 반영하고 있어요.");
-    expect(markup).toContain('<button disabled="">구매하기</button>');
-    expect(markup).toContain('<button disabled="">구매 복원</button>');
+    expect(markup).toContain('<button disabled="">Gold 구독하기</button>');
+    expect(markup).toMatch(/<button disabled=""><span>이전 구매 복원<\/span><\/button>/);
   });
 });
 

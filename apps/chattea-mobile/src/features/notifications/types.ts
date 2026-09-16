@@ -89,4 +89,7 @@ export type NotificationRowProps = AppNotification & {
   onVisit: (notification: AppNotification) => void;
 };
 
-export type NotificationSettingsCardProps = { pushNotifications: { state: PushRegistrationState } };
+export type NotificationPreferences = {
+  match: boolean;
+  message: boolean;
+};
