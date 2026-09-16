@@ -91,7 +91,7 @@ const NativeSessionGate = ({ children }: PropsWithChildren) => {
           {protectedContent}
         </View>
         <View accessibilityLiveRegion="polite" style={styles.terminationOverlay}>
-          <Text style={styles.loadingText}>ChatTea를 준비하고 있어요.</Text>
+          <Text style={styles.loadingText}>채티를 준비하고 있어요.</Text>
         </View>
       </View>
     );
@@ -100,7 +100,7 @@ const NativeSessionGate = ({ children }: PropsWithChildren) => {
   if (!hydrated || (session && user.loading && !user.data)) {
     return (
       <View style={styles.loading}>
-        <Text style={styles.loadingText}>ChatTea를 준비하고 있어요.</Text>
+        <Text style={styles.loadingText}>채티를 준비하고 있어요.</Text>
       </View>
     );
   }
