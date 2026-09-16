@@ -83,7 +83,7 @@ describe("session storage", () => {
     const { getSessionRedirect } = await import("../src/providers/utils/session-routing");
 
     expect(getSessionRedirect(false, false)).toBeNull();
-    expect(getSessionRedirect(true, false)).toBe("/phone");
+    expect(getSessionRedirect(true, false)).toBe("/");
     expect(getSessionRedirect(true, true)).toBeNull();
   });
 });

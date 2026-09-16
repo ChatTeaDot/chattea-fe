@@ -84,12 +84,13 @@ const LikesScreen = () => {
 const styles = StyleSheet.create((theme) => ({
   gridContent: {
     gap: theme.spacing.control,
+    paddingBottom: theme.sizes.tabBar + theme.spacing.xl,
   },
   columns: {
     gap: theme.spacing.control,
   },
   cta: {
-    paddingBottom: theme.spacing.sm,
+    paddingBottom: theme.sizes.tabBar + theme.spacing.sm,
     paddingHorizontal: theme.spacing.screen,
     paddingTop: theme.spacing.sm,
   },

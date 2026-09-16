@@ -65,7 +65,7 @@ const styles = StyleSheet.create((theme) => ({
     paddingBottom: theme.spacing.md,
   },
   cta: {
-    paddingBottom: theme.spacing.sm,
+    paddingBottom: theme.sizes.tabBar + theme.spacing.sm,
     paddingHorizontal: theme.spacing.screen,
     paddingTop: theme.spacing.sm,
   },

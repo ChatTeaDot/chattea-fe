@@ -1,7 +1,7 @@
 import type { RevenueCatState } from "@/features/billing";
 import type { PushRegistrationState } from "@/features/notifications";
 
-export const PUBLIC_ROOTS = new Set(["index", "phone", "code", "signup"]);
+export const PUBLIC_ROOTS = new Set(["index", "signup"]);
 
 export const SESSION_KEY = "chattea.session";
 

@@ -7,6 +7,7 @@ import {
   AuthActionButton,
   AuthField,
   BottomCta,
+  GenderField,
   PhotoPicker,
   SIGNUP_MBTI_MAX_LENGTH,
   SIGNUP_NAME_MAX_LENGTH,
@@ -19,9 +20,11 @@ import type { AppTheme } from "@/theme/unistyles";
 const SignupScreen = () => {
   const {
     continuation,
-    signupToken,
+    kakaoToken,
     userName,
     setUserName,
+    gender,
+    setGender,
     heightCm,
     setHeightCm,
     job,
@@ -43,8 +46,8 @@ const SignupScreen = () => {
     );
   }
 
-  if (!signupToken) {
-    return <Redirect href="/phone" />;
+  if (!kakaoToken) {
+    return <Redirect href="/" />;
   }
 
   return (
@@ -67,6 +70,7 @@ const SignupScreen = () => {
             placeholder="채티에서 쓸 이름"
             value={userName}
           />
+          <GenderField onChange={setGender} value={gender} />
           <AuthField
             keyboardType="number-pad"
             label="키"
@@ -90,7 +94,7 @@ const SignupScreen = () => {
       </KeyboardAwareScrollView>
       <BottomCta>
         <AuthActionButton
-          disabled={!userName.trim() || !termsAccepted || pending}
+          disabled={!userName.trim() || !gender || !termsAccepted || pending}
           loading={pending}
           onPress={() => void submit()}
           title="가입 완료"

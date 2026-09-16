@@ -263,6 +263,12 @@ vi.mock("expo-router", async () => {
     }),
   };
 });
+vi.mock("expo-router/react-navigation", async () => {
+  const React = await vi.importActual<typeof import("react")>("react");
+  return {
+    HeaderHeightContext: React.createContext(0),
+  };
+});
 vi.mock("expo-symbols", async () => {
   const React = await vi.importActual<typeof import("react")>("react");
   return {
@@ -470,7 +476,7 @@ describe("routed native collection screens", () => {
     expect(mocks.legendLists).toHaveLength(1);
     expect(mocks.legendLists[0]).toMatchObject({
       automaticallyAdjustKeyboardInsets: true,
-      contentInsetAdjustmentBehavior: "automatic",
+      contentInset: { bottom: 0, left: 0, right: 0, top: 0 },
       data: expect.any(Array),
       keyExtractor: expect.any(Function),
       ListHeaderComponentStyle: expect.any(Array),

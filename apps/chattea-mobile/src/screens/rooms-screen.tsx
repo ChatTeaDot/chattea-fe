@@ -65,7 +65,7 @@ const RoomsScreen = () => {
   );
 };
 
-const styles = StyleSheet.create((theme) => ({
+const styles = StyleSheet.create((theme, rt) => ({
   listContent: {
     gap: 0,
     paddingBottom: theme.spacing.md,
@@ -74,7 +74,7 @@ const styles = StyleSheet.create((theme) => ({
   footer: {
     borderTopColor: theme.colors.surface,
     borderTopWidth: 1,
-    paddingBottom: theme.spacing.md,
+    paddingBottom: rt.insets.bottom + theme.sizes.tabBar + theme.spacing.md,
     paddingHorizontal: theme.spacing.screen,
     paddingTop: theme.spacing.xs,
   },

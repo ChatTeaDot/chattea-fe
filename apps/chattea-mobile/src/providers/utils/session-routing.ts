@@ -3,7 +3,7 @@ export const getSessionRedirect = (hydrated: boolean, hasSession: boolean) => {
     return null;
   }
 
-  return hasSession ? null : "/phone";
+  return hasSession ? null : "/";
 };
 
 type NativeSessionNavigationState = {

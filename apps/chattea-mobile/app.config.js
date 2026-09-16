@@ -72,7 +72,7 @@ if (process.env.DATADOG_API_KEY) {
 
 module.exports = {
   expo: {
-    name: "ChatTea",
+    name: "채티",
     slug: "chattea",
     scheme: "chattea",
     version: "0.1.0",

@@ -24,8 +24,6 @@ const ThemedStack = () => {
     >
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="phone" options={{ title: "로그인" }} />
-      <Stack.Screen name="code" options={{ title: "전화번호 인증" }} />
       <Stack.Screen name="signup" options={{ title: "프로필 만들기" }} />
       <Stack.Screen name="room/[room-id]" options={{ title: "대화", gestureEnabled: true }} />
       <Stack.Screen

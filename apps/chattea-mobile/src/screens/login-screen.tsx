@@ -1,4 +1,3 @@
-import { router } from "expo-router";
 import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
@@ -19,11 +18,6 @@ const LoginScreen = () => {
           onPress={() => void submit()}
           title="카카오로 시작"
           variant="kakao"
-        />
-        <AuthActionButton
-          onPress={() => router.push("/phone")}
-          title="전화번호로 시작"
-          variant="secondary"
         />
       </View>
     </View>

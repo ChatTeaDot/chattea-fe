@@ -50,12 +50,14 @@ const CommunityScreen = () => {
 
   return (
     <NativeScreen>
-      <ChipRow items={COMMUNITY_FILTERS} onSelect={setFilter} selected={filter} />
       <NativeList
         contentContainerStyle={styles.listContent}
         data={posts.data?.communityPosts ?? []}
         keyExtractor={keyExtractor}
         ListEmptyComponent={empty}
+        ListHeaderComponent={
+          <ChipRow items={COMMUNITY_FILTERS} onSelect={setFilter} selected={filter} />
+        }
         renderItem={renderPost}
       />
       <WriteFab onPress={() => router.push("/community/new")} />

@@ -14,11 +14,7 @@ export type User = {
   intro: string;
 };
 
-export type VerifyPhoneResult =
-  | { status: "LOGIN"; session: Session }
-  | { status: "SIGNUP_REQUIRED"; signupToken: string };
-
-export type CompletePhoneSignupResult = {
+export type CompleteKakaoSignupResult = {
   session: Session;
 };
 
@@ -35,76 +31,13 @@ export type KakaoLoginResult =
       userName: string | null;
     };
 
-export type PhoneVerificationPurpose = "Signup" | "Login" | "PasswordReset";
-
-export type RequestPhoneCodeMutation = {
-  readonly requestPhoneCode: {
-    readonly ok: boolean;
-  };
-};
-
-export type RequestPhoneCodeVariables = {
-  readonly input: {
-    readonly phone: string;
-    readonly purpose: PhoneVerificationPurpose;
-  };
-};
-
-export type VerifyPhoneCodeMutation = {
-  readonly verifyPhoneCode: {
-    readonly existingUser: boolean;
-    readonly phoneVerificationToken?: string | null;
-    readonly tokenPayload?: {
-      readonly accessToken: string;
-      readonly refreshToken: string;
-    } | null;
-  };
-};
-
-export type VerifyPhoneCodeVariables = {
-  readonly input: {
-    readonly phone: string;
-    readonly code: string;
-  };
-};
-
-export type CompletePhoneSignupMutation = {
-  readonly completePhoneSignup: {
-    readonly accessToken: string;
-    readonly refreshToken: string;
-  };
-};
-
-export type CompletePhoneSignupVariables = {
-  readonly input: {
-    readonly phoneVerificationToken: string;
-    readonly userName: string;
-    readonly gender: Gender;
-    readonly email: string;
-    readonly password: string;
-    readonly termsAccepted: boolean;
-  };
-};
-
 export type SignupProfileInput = {
+  readonly gender: Gender;
   readonly heightCm?: number;
   readonly job?: string;
   readonly mbti?: string;
   readonly termsAccepted: boolean;
   readonly userName: string;
-};
-
-export type CompletePhoneProfileSignupVariables = {
-  readonly input: SignupProfileInput & {
-    readonly phoneVerificationToken: string;
-  };
-};
-
-export type CompleteKakaoProfileSignupVariables = {
-  readonly input: SignupProfileInput & {
-    readonly kakaoPhoneVerificationToken: string;
-    readonly phoneVerificationToken: string;
-  };
 };
 
 export type LoginWithKakaoMutation = {
@@ -129,20 +62,16 @@ export type LoginWithKakaoVariables = {
   readonly accessToken: string;
 };
 
-export type CompleteKakaoPhoneSignupMutation = {
+export type CompleteKakaoSignupMutation = {
   readonly completeKakaoPhoneSignup: {
     readonly accessToken: string;
     readonly refreshToken: string;
   };
 };
 
-export type CompleteKakaoPhoneSignupVariables = {
-  readonly input: {
+export type CompleteKakaoSignupVariables = {
+  readonly input: SignupProfileInput & {
     readonly kakaoPhoneVerificationToken: string;
-    readonly phoneVerificationToken: string;
-    readonly userName: string;
-    readonly gender: Gender;
-    readonly termsAccepted: boolean;
   };
 };
 
@@ -158,12 +87,6 @@ export type AuthFieldProps = TextInputProps & {
   label: string;
 };
 
-export type CodeFieldProps = {
-  autoFocus?: boolean;
-  onChange: (value: string) => void;
-  value: string;
-};
-
 export type PhotoPickerProps = {
   onPress: () => void;
   uri?: string;
@@ -176,8 +99,6 @@ export type TermsAcceptanceProps = {
 
 export type AuthContinuation = {
   readonly kakaoToken?: string;
-  readonly phone?: string;
-  readonly signupToken?: string;
 };
 
 export type StoredAuthContinuation = AuthContinuation & {

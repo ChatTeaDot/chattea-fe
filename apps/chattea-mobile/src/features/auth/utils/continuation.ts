@@ -45,23 +45,18 @@ export const loadAuthContinuation = async (): Promise<AuthContinuation | null> =
     }
     const expiresAt = Reflect.get(stored, "expiresAt");
     const kakaoToken = Reflect.get(stored, "kakaoToken");
-    const phone = Reflect.get(stored, "phone");
-    const signupToken = Reflect.get(stored, "signupToken");
     if (
-      (phone !== undefined && (typeof phone !== "string" || !phone)) ||
       typeof expiresAt !== "number" ||
       !Number.isSafeInteger(expiresAt) ||
       expiresAt <= Date.now() ||
-      (kakaoToken !== undefined && (typeof kakaoToken !== "string" || !kakaoToken)) ||
-      (signupToken !== undefined && (typeof signupToken !== "string" || !signupToken)) ||
-      (!phone && !kakaoToken) ||
-      (signupToken !== undefined && !phone)
+      typeof kakaoToken !== "string" ||
+      !kakaoToken
     ) {
       await clearAuthContinuation();
       return null;
     }
 
-    return { kakaoToken, phone, signupToken };
+    return { kakaoToken };
   } catch {
     await clearAuthContinuation();
     return null;

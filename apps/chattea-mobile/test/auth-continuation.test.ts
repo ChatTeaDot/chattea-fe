@@ -23,8 +23,6 @@ describe("auth continuation", () => {
     const continuation = await import("../src/features/auth/utils/continuation");
     const value = {
       kakaoToken: "kakao-token",
-      phone: "+821012345678",
-      signupToken: "signup-token",
     };
 
     await continuation.saveAuthContinuation(value, Date.now() + 60_000);
