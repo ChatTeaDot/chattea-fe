@@ -2,8 +2,9 @@ import { Stack } from "expo-router";
 
 const MatchesLayout = () => {
   return (
-    <Stack screenOptions={{ headerLargeTitle: true, headerShadowVisible: false }}>
-      <Stack.Screen name="index" options={{ title: "오늘의 인연" }} />
+    <Stack screenOptions={{ headerShadowVisible: false, headerTitleAlign: "left" }}>
+      <Stack.Screen name="index" options={{ title: "채티" }} />
+      <Stack.Screen name="list" options={{ title: "새 매치" }} />
     </Stack>
   );
 };

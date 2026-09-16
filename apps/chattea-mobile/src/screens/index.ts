@@ -1,8 +1,11 @@
+export { default as CandidateDetailScreen } from "./candidate-detail-screen";
 export { default as CodeScreen } from "./code-screen";
 export { default as CommunityPostScreen } from "./community-post-screen";
 export { default as CommunityScreen } from "./community-screen";
 export { default as CommunityWriteScreen } from "./community-write-screen";
 export { default as LikesScreen } from "./likes-screen";
+export { default as MatchListScreen } from "./match-list-screen";
+export { default as MatchSheetScreen } from "./match-sheet-screen";
 export { default as NotificationsScreen } from "./notifications-screen";
 export { default as PhoneScreen } from "./phone-screen";
 export { default as PremiumScreen } from "./premium-screen";

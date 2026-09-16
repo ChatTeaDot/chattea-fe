@@ -1,70 +1,78 @@
 import { router, Stack } from "expo-router";
+import { useCallback } from "react";
 import { View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StyleSheet } from "react-native-unistyles";
 
-import { MatchCandidateCard, useTodayMatches } from "@/features/matches";
+import { MatchActionBar, SwipeCard, useTodayMatches } from "@/features/matches";
 import {
   EmptyState,
   ErrorState,
   LoadingState,
   NativeButton,
   NativeScreen,
-  NativeScroll,
 } from "@/shared/components";
-import { formatTime } from "@/shared/lib";
 
 const TodayMatchesScreen = () => {
-  const {
-    candidates,
-    candidate,
-    actionPending,
-    act,
-    undoLast,
-    activateBoost,
-    boostStateUnavailable,
-    boostActive,
-    activeBoostUntil,
-  } = useTodayMatches();
+  const { candidates, candidate, actionPending, act, undoLast } = useTodayMatches();
+  const handleSwipe = useCallback(
+    (direction: "left" | "right") => void act(direction === "right" ? "like" : "skip"),
+    [act],
+  );
+  const openDetail = useCallback(
+    () => candidate && router.push(`/candidate/${candidate.id}`),
+    [candidate],
+  );
 
   return (
     <>
       <NativeScreen>
-        <NativeScroll>
-          {candidates.loading ? <LoadingState /> : null}
-          {candidates.error ? <ErrorState /> : null}
-          {!candidates.loading && !candidates.error && !candidate ? (
-            <EmptyState
-              title="오늘의 인연을 모두 살펴봤어요"
-              body="다음 추천이 준비되면 알려드릴게요."
+        <GestureHandlerRootView style={styles.stage}>
+          {candidates.loading ? (
+            <View style={styles.placeholder}>
+              <LoadingState />
+            </View>
+          ) : candidates.error ? (
+            <ErrorState />
+          ) : candidate ? (
+            <SwipeCard
+              candidate={candidate}
+              disabled={actionPending}
+              key={candidate.id}
+              onPress={openDetail}
+              onSwipe={handleSwipe}
             />
-          ) : null}
-          {candidate ? (
-            <View style={styles.stack}>
-              <MatchCandidateCard
-                candidate={candidate}
-                actionPending={actionPending}
-                act={act}
-                undoLast={undoLast}
+          ) : (
+            <View style={styles.placeholder}>
+              <EmptyState
+                title="오늘의 인연을 모두 살펴봤어요"
+                body="다음 추천이 준비되면 알려드릴게요."
               />
               <NativeButton
-                disabled={actionPending || boostStateUnavailable || boostActive}
-                label={
-                  boostActive && activeBoostUntil
-                    ? `${formatTime(activeBoostUntil)} 만료 · 부스트 사용 중`
-                    : boostStateUnavailable
-                      ? "부스트 상태 확인 중"
-                      : "30분 부스트 사용하기"
-                }
-                onPress={() => void activateBoost()}
-                tone="secondary"
+                label="다시 불러오기"
+                onPress={() => void candidates.refetch()}
                 fullWidth
               />
             </View>
-          ) : null}
-        </NativeScroll>
+          )}
+        </GestureHandlerRootView>
+        {candidate ? (
+          <MatchActionBar
+            disabled={actionPending}
+            onLike={() => void act("like")}
+            onSkip={() => void act("skip")}
+            onUndo={() => void undoLast()}
+          />
+        ) : null}
       </NativeScreen>
       {process.env.EXPO_OS === "ios" ? (
         <Stack.Toolbar placement="right">
+          <Stack.Toolbar.Button
+            icon="sparkles"
+            onPress={() => router.push("/matches/list")}
+          >
+            <Stack.Toolbar.Label>새 매치</Stack.Toolbar.Label>
+          </Stack.Toolbar.Button>
           <Stack.Toolbar.Button icon="bell" onPress={() => router.push("/notifications")}>
             <Stack.Toolbar.Label>알림</Stack.Toolbar.Label>
           </Stack.Toolbar.Button>
@@ -74,6 +82,15 @@ const TodayMatchesScreen = () => {
   );
 };
 
-const styles = StyleSheet.create((theme) => ({ stack: { gap: theme.spacing.md } }));
+const styles = StyleSheet.create((theme) => ({
+  stage: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  placeholder: {
+    gap: theme.spacing.md,
+    marginHorizontal: theme.spacing.screen,
+  },
+}));
 
 export default TodayMatchesScreen;
