@@ -1,8 +1,11 @@
 import { memo, useCallback } from "react";
+import { View } from "react-native";
+import { StyleSheet } from "react-native-unistyles";
 
 import { type RoomsData, useChatRooms } from "@/features/chat";
 import { RoomRow as RoomRowComponent } from "@/features/chat";
 import {
+  AppButton,
   EmptyState,
   ErrorState,
   LoadingState,
@@ -17,6 +20,8 @@ const keyExtractor = (item: RoomsData["chatRooms"][number]) => item.id;
 
 const RoomsScreen = () => {
   const { rooms, openRoom } = useChatRooms();
+  const roomList = rooms.data?.chatRooms ?? [];
+  const firstUnreadId = roomList.find((room) => room.unreadCount > 0)?.id;
   const renderRoom = useCallback(
     ({ item }: { item: NonNullable<RoomsData["chatRooms"]>[number] }) => (
       <RoomRow
@@ -43,13 +48,36 @@ const RoomsScreen = () => {
   return (
     <NativeScreen>
       <NativeList
-        data={rooms.data?.chatRooms ?? []}
+        contentContainerStyle={styles.listContent}
+        data={roomList}
         keyExtractor={keyExtractor}
         ListEmptyComponent={empty}
         renderItem={renderRoom}
       />
+      <View style={styles.footer}>
+        <AppButton
+          disabled={!firstUnreadId}
+          onPress={() => firstUnreadId && openRoom(firstUnreadId)}
+          title="읽지 않은 대화 열기"
+        />
+      </View>
     </NativeScreen>
   );
 };
+
+const styles = StyleSheet.create((theme) => ({
+  listContent: {
+    gap: 0,
+    paddingBottom: theme.spacing.md,
+    paddingHorizontal: 0,
+  },
+  footer: {
+    borderTopColor: theme.colors.surface,
+    borderTopWidth: 1,
+    paddingBottom: theme.spacing.md,
+    paddingHorizontal: theme.spacing.screen,
+    paddingTop: theme.spacing.xs,
+  },
+}));
 
 export default RoomsScreen;

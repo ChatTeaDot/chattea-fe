@@ -1,43 +1,65 @@
+import { CheckCheck } from "lucide-react-native";
 import { useCallback } from "react";
-import { Text, View } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
+import { Pressable, Text, View } from "react-native";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-import { MetaText, NativeButton } from "@/shared/components";
 import { formatRelativeDate } from "@/shared/lib";
 
 import type { MessageRowProps } from "../types";
 
-const MessageRow = ({ createdAt, id, mine, onReport, text }: MessageRowProps) => {
+const MessageRow = ({ createdAt, id, mine, onReport, showReadStatus, text }: MessageRowProps) => {
+  const { theme } = useUnistyles();
   const report = useCallback(() => onReport(id), [id, onReport]);
   return (
     <View style={mine ? styles.messageMine : styles.messageOther}>
       <View style={mine ? styles.bubbleMine : styles.bubbleOther}>
         <Text style={mine ? styles.bubbleMineText : styles.bubbleOtherText}>{text}</Text>
       </View>
-      <View style={styles.messageMeta}>
-        <MetaText>{formatRelativeDate(createdAt)}</MetaText>
-        {!mine ? <NativeButton label="신고" onPress={report} tone="quiet" /> : null}
-      </View>
+      {mine && showReadStatus ? (
+        <View style={styles.messageMeta}>
+          <Text style={styles.metaText}>읽음</Text>
+          <CheckCheck color={theme.colors.muted} size={16} strokeWidth={1.5} />
+        </View>
+      ) : null}
+      {!mine ? (
+        <View style={styles.messageMeta}>
+          <Text style={styles.metaText}>{formatRelativeDate(createdAt)}</Text>
+          <Pressable
+            accessibilityLabel="메시지 신고"
+            accessibilityRole="button"
+            hitSlop={8}
+            onPress={report}
+          >
+            <Text style={styles.metaAction}>신고</Text>
+          </Pressable>
+        </View>
+      ) : null}
     </View>
   );
 };
+
 const styles = StyleSheet.create((theme) => ({
   messageMine: { alignItems: "flex-end", gap: theme.spacing.xs },
   messageOther: { alignItems: "flex-start", gap: theme.spacing.xs },
   bubbleMine: {
-    backgroundColor: theme.colors.primary,
-    borderRadius: 18,
-    maxWidth: "84%",
-    padding: theme.spacing.md,
+    backgroundColor: theme.colors.accent,
+    borderRadius: theme.radii.xxl,
+    maxWidth: "76%",
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.control,
   },
   bubbleOther: {
-    backgroundColor: theme.colors.surfaceSoft,
-    borderRadius: 18,
-    maxWidth: "84%",
-    padding: theme.spacing.md,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.radii.xxl,
+    maxWidth: "76%",
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.control,
   },
-  bubbleMineText: { color: theme.colors.primaryText, fontSize: 16, lineHeight: 22 },
-  bubbleOtherText: { color: theme.colors.text, fontSize: 16, lineHeight: 22 },
+  bubbleMineText: { color: theme.colors.accentText, fontSize: 15, lineHeight: 22 },
+  bubbleOtherText: { color: theme.colors.text, fontSize: 15, lineHeight: 22 },
   messageMeta: { alignItems: "center", flexDirection: "row", gap: theme.spacing.xs },
+  metaText: { color: theme.colors.muted, fontSize: 12, lineHeight: 18 },
+  metaAction: { color: theme.colors.muted, fontSize: 12, lineHeight: 18 },
 }));
+
 export default MessageRow;

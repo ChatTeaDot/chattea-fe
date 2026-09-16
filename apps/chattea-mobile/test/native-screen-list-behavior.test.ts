@@ -252,7 +252,7 @@ vi.mock("expo-router", async () => {
   );
   return {
     router: { push: vi.fn(), replace: vi.fn(), back: vi.fn() },
-    Stack: { Toolbar },
+    Stack: { Screen: () => null, Toolbar },
     useLocalSearchParams: () => ({
       "candidate-id": "candidate-1",
       name: "후보",
@@ -299,6 +299,26 @@ vi.mock("react-native-reanimated", async () => {
     useSharedValue: (value: unknown) => ({ value }),
     withSpring: (value: unknown) => value,
     withTiming: (value: unknown) => value,
+  };
+});
+vi.mock("react-native-keyboard-controller", async () => {
+  const React = await vi.importActual<typeof import("react")>("react");
+  return {
+    KeyboardStickyView: ({ children }: { children?: ReactNode }) =>
+      React.createElement("nav", null, children),
+  };
+});
+vi.mock("lucide-react-native", async () => {
+  const React = await vi.importActual<typeof import("react")>("react");
+  const icon = (name: string) => {
+    const Icon = () => React.createElement("i", { "data-icon": name });
+    Icon.displayName = name;
+    return Icon;
+  };
+  return {
+    CheckCheck: icon("check-check"),
+    EllipsisVertical: icon("ellipsis-vertical"),
+    Send: icon("send"),
   };
 });
 vi.mock("react-native", async () => {
@@ -353,16 +373,17 @@ vi.mock("react-native-safe-area-context", async () => {
         children as ReactNode,
       );
     },
+    useSafeAreaInsets: () => ({ bottom: 34, left: 0, right: 0, top: 0 }),
   };
 });
 vi.mock("react-native-unistyles", async () => {
-  const { colors, radii, spacing, typography } = await import("../src/theme/constants");
+  const { colors, radii, sizes, spacing, typography } = await import("../src/theme/constants");
   return {
     StyleSheet: {
       create: (factory: (theme: Record<string, unknown>) => unknown) =>
-        factory({ colors, radii, spacing, typography }),
+        factory({ colors, radii, sizes, spacing, typography }),
     },
-    useUnistyles: () => ({ theme: { colors, radii, spacing, typography } }),
+    useUnistyles: () => ({ theme: { colors, radii, sizes, spacing, typography } }),
   };
 });
 
