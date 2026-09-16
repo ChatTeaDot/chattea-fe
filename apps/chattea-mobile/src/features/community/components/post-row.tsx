@@ -2,41 +2,55 @@ import { useCallback } from "react";
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { MetaText, NativeCard } from "@/shared/components";
 import { formatRelativeDate } from "@/shared/lib";
 
 import type { PostRowProps } from "../types";
 
-const PostRow = ({
-  authorName,
-  body,
-  commentCount,
-  createdAt,
-  id,
-  onOpen,
-  title,
-}: PostRowProps) => {
+const PostRow = ({ authorName, commentCount, createdAt, id, onOpen, title }: PostRowProps) => {
   const open = useCallback(() => onOpen(id), [id, onOpen]);
   return (
-    <Pressable accessibilityRole="link" onPress={open} style={styles.pressableCard}>
-      <NativeCard>
-        <View style={styles.postMeta}>
-          <MetaText>{authorName}</MetaText>
-          <MetaText>{formatRelativeDate(createdAt)}</MetaText>
-        </View>
-        <Text style={styles.postTitle}>{title}</Text>
-        <Text numberOfLines={2} style={styles.postBody}>
-          {body}
+    <Pressable
+      accessibilityRole="link"
+      onPress={open}
+      style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
+    >
+      <View style={styles.body}>
+        <Text numberOfLines={1} style={styles.title}>
+          {title}
         </Text>
-        <MetaText>댓글 {commentCount}개</MetaText>
-      </NativeCard>
+        <Text numberOfLines={1} style={styles.sub}>
+          {`${authorName} · 댓글 ${commentCount} · ${formatRelativeDate(createdAt)}`}
+        </Text>
+      </View>
     </Pressable>
   );
 };
+
 const styles = StyleSheet.create((theme) => ({
-  pressableCard: { borderRadius: 20 },
-  postMeta: { flexDirection: "row", justifyContent: "space-between" },
-  postTitle: { color: theme.colors.text, fontSize: 18, fontWeight: "800", letterSpacing: -0.3 },
-  postBody: { color: theme.colors.muted, fontSize: 15, lineHeight: 22 },
+  row: {
+    borderBottomColor: theme.colors.surface,
+    borderBottomWidth: 1,
+    minHeight: 56,
+    paddingHorizontal: theme.spacing.screen,
+    paddingVertical: theme.spacing.control,
+  },
+  rowPressed: {
+    backgroundColor: theme.colors.surface,
+  },
+  body: {
+    flex: 1,
+    gap: theme.spacing.xs,
+    minWidth: 0,
+  },
+  title: {
+    color: theme.colors.text,
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  sub: {
+    color: theme.colors.muted,
+    fontSize: 13,
+  },
 }));
+
 export default PostRow;

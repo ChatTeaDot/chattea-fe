@@ -1,3 +1,9 @@
+import type { COMMUNITY_CATEGORIES, COMMUNITY_FILTERS } from "./constants";
+
+export type CommunityCategory = (typeof COMMUNITY_CATEGORIES)[number];
+
+export type CommunityFilter = (typeof COMMUNITY_FILTERS)[number];
+
 export type CommunityPost = {
   id: string;
   authorName: string;
@@ -45,4 +51,19 @@ export type PostRowProps = Omit<CommunityPost, "id"> & {
   onOpen: (id: string) => void;
 };
 
-export type PostDetailCardProps = { post: CommunityPost; reportPost: () => void };
+export type PostDetailCardProps = { post: CommunityPost };
+
+export type ChipRowProps<ItemT extends string> = {
+  items: readonly ItemT[];
+  onSelect: (item: ItemT) => void;
+  selected: ItemT;
+};
+
+export type CommentInputBarProps = {
+  disabled: boolean;
+  onChangeBody: (body: string) => void;
+  onSubmit: () => void;
+  value: string;
+};
+
+export type WriteFabProps = { onPress: () => void };

@@ -38,6 +38,7 @@
     "expo-router": "^56.2.20",
     "expo-secure-store": "~56.0.4",
     "expo-splash-screen": "~56.0.15",
+    "expo-symbols": "56.0.7",
     "graphql": "^16.11.0",
     "lucide-react-native": "^1.46.0",
     "react": "^19.2.3",
