@@ -1,7 +1,15 @@
+import { useQuery } from "@tanstack/react-query";
+
+import { communityTitleQuery } from "../api";
+
+import { heading } from "./community-page.css";
+
 const CommunityPage = () => {
+  const { data: title } = useQuery(communityTitleQuery());
+
   return (
     <main>
-      <h1>지금 나누는 이야기</h1>
+      <h1 className={heading}>{title}</h1>
     </main>
   );
 };

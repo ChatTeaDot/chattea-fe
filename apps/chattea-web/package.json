@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3000 --host",
+    "dev": "tsx src/app/server.ts",
     "build": "vite build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "tsc -p tsconfig.json --noEmit",
@@ -13,6 +13,11 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
+    "@fastify/middie": "^9.3.4",
+    "@fastify/static": "^10.1.3",
+    "@tanstack/react-query": "^5.102.8",
+    "@vanilla-extract/css": "^1.21.2",
+    "fastify": "^5.12.4",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },
@@ -20,8 +25,10 @@
     "@types/node": "^24.5.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "@vanilla-extract/vite-plugin": "^5.2.6",
     "@vitejs/plugin-react": "^5.0.4",
     "prettier": "^3.5.3",
+    "tsx": "^4.23.13",
     "typescript": "^6.0.3",
     "vite": "^7.1.5",
     "vitest": "^3.2.4"
