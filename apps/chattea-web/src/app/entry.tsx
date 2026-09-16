@@ -1,5 +1,7 @@
 import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import { hydrateRoot } from "react-dom/client";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { CommunityPage } from "@/pages/community";
 
@@ -9,8 +11,13 @@ if (!root) {
   throw new Error("ROOT_ELEMENT_MISSING");
 }
 
-createRoot(root).render(
+const queryClient = new QueryClient();
+
+hydrateRoot(
+  root,
   <StrictMode>
-    <CommunityPage />
+    <QueryClientProvider client={queryClient}>
+      <CommunityPage />
+    </QueryClientProvider>
   </StrictMode>,
 );
