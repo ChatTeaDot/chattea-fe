@@ -105,9 +105,7 @@ const CommunityPostScreen = () => {
       />
       <CommentInputBar
         disabled={!draft.body.trim() || commentState.loading}
-        onChangeBody={(body) =>
-          setDraft((current) => updateCommunityCommentDraft(current, body))
-        }
+        onChangeBody={(body) => setDraft((current) => updateCommunityCommentDraft(current, body))}
         onSubmit={() => void submitComment()}
         value={draft.body}
       />

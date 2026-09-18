@@ -3,13 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 
 import { CandidateDetailBody, useCandidateDetail } from "@/features/matches";
-import {
-  AppButton,
-  EmptyState,
-  ErrorState,
-  LoadingState,
-  NativeScreen,
-} from "@/shared/components";
+import { AppButton, EmptyState, ErrorState, LoadingState, NativeScreen } from "@/shared/components";
 
 const CandidateDetailScreen = () => {
   const { candidate, error, likePending, loading, sendLike } = useCandidateDetail();

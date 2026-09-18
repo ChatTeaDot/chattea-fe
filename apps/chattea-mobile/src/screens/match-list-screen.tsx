@@ -5,13 +5,7 @@ import { StyleSheet } from "react-native-unistyles";
 
 import { useChatRooms } from "@/features/chat";
 import { NewMatchAvatar } from "@/features/matches";
-import {
-  AppButton,
-  EmptyState,
-  ErrorState,
-  LoadingState,
-  NativeScreen,
-} from "@/shared/components";
+import { AppButton, EmptyState, ErrorState, LoadingState, NativeScreen } from "@/shared/components";
 
 const MatchListScreen = () => {
   const { rooms, openRoom } = useChatRooms();

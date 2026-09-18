@@ -67,10 +67,7 @@ const TodayMatchesScreen = () => {
       </NativeScreen>
       {process.env.EXPO_OS === "ios" ? (
         <Stack.Toolbar placement="right">
-          <Stack.Toolbar.Button
-            icon="sparkles"
-            onPress={() => router.push("/matches/list")}
-          >
+          <Stack.Toolbar.Button icon="sparkles" onPress={() => router.push("/matches/list")}>
             <Stack.Toolbar.Label>새 매치</Stack.Toolbar.Label>
           </Stack.Toolbar.Button>
           <Stack.Toolbar.Button icon="bell" onPress={() => router.push("/notifications")}>

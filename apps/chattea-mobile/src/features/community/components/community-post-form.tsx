@@ -37,7 +37,9 @@ const CommunityPostForm = () => {
         <NativeTextInput
           maxLength={COMMUNITY_BODY_MAX_LENGTH}
           multiline
-          onChangeText={(body) => setDraft((current) => updateCommunityPostDraft(current, { body }))}
+          onChangeText={(body) =>
+            setDraft((current) => updateCommunityPostDraft(current, { body }))
+          }
           placeholder="익명으로 올라가요. 편하게 써요…"
           style={[styles.field, styles.area]}
           textAlignVertical="top"
