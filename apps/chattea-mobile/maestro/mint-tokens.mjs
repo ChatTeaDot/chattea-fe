@@ -1,11 +1,13 @@
+import { Buffer } from "node:buffer";
 import { execFileSync } from "node:child_process";
 import { createHmac, randomUUID } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const beDir = process.env.CHATTEA_BE_DIR ?? "/Volumes/Untitled/Documents/Github/chattea-workspace/chattea-be";
+const beDir =
+  process.env.CHATTEA_BE_DIR ?? "/Volumes/Untitled/Documents/Github/chattea-workspace/chattea-be";
 const envFile = process.env.CHATTEA_ENV_FILE ?? join(here, "..", ".env");
 
 const env = Object.fromEntries(
@@ -50,15 +52,22 @@ const refreshTokenHash = execFileSync(
 execFileSync(
   "psql",
   [
-    "-h", process.env.PGHOST ?? "127.0.0.1",
-    "-p", process.env.PGPORT ?? "5432",
-    "-U", process.env.PGUSER ?? "chattea",
-    "-d", process.env.PGDATABASE ?? "chattea",
+    "-h",
+    process.env.PGHOST ?? "127.0.0.1",
+    "-p",
+    process.env.PGPORT ?? "5432",
+    "-U",
+    process.env.PGUSER ?? "chattea",
+    "-d",
+    process.env.PGDATABASE ?? "chattea",
     "-c",
     `INSERT INTO "refreshToken" (id, "userId", "deviceId", "refreshToken", "refreshTokenExp", "createdAt", "updatedAt")
      VALUES ('${randomUUID()}', '${userId}', '${deviceId}', '${refreshTokenHash}', to_timestamp(${now + 86400 * 30}), now(), now())
      ON CONFLICT ("userId", "deviceId") DO UPDATE SET "refreshToken" = EXCLUDED."refreshToken", "refreshTokenExp" = EXCLUDED."refreshTokenExp", "updatedAt" = now();`,
   ],
-  { env: { ...process.env, PGPASSWORD: process.env.PGPASSWORD ?? "chattea-dev" }, stdio: ["ignore", "pipe", "inherit"] },
+  {
+    env: { ...process.env, PGPASSWORD: process.env.PGPASSWORD ?? "chattea-dev" },
+    stdio: ["ignore", "pipe", "inherit"],
+  },
 );
 console.log(`wrote dev tokens to ${envFile} for user ${userId}`);

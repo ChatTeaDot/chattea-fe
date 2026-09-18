@@ -48,10 +48,7 @@ const RoomScreen = () => {
   const openRoomMenu = useCallback(() => {
     if (lastOtherId) reportMessage(lastOtherId);
   }, [lastOtherId, reportMessage]);
-  const headerRight = useCallback(
-    () => <RoomMenuButton onPress={openRoomMenu} />,
-    [openRoomMenu],
-  );
+  const headerRight = useCallback(() => <RoomMenuButton onPress={openRoomMenu} />, [openRoomMenu]);
   const renderMessage = useCallback(
     ({ item }: { item: ChatMessage }) => {
       const mine = item.senderUserId === currentUserId;

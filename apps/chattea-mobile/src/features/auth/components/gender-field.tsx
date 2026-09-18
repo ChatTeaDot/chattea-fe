@@ -8,7 +8,13 @@ const OPTIONS: { label: string; value: Gender }[] = [
   { label: "여성", value: "female" },
 ];
 
-const GenderField = ({ onChange, value }: { onChange: (value: Gender) => void; value?: Gender }) => {
+const GenderField = ({
+  onChange,
+  value,
+}: {
+  onChange: (value: Gender) => void;
+  value?: Gender;
+}) => {
   return (
     <View style={styles.wrap}>
       <Text style={styles.label}>성별</Text>

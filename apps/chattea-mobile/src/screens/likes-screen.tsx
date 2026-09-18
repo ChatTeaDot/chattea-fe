@@ -24,10 +24,7 @@ import {
 const GridCell = memo(LikeGridCell);
 GridCell.displayName = "LikeGridCell";
 
-const VEIL_IDS = Array.from(
-  { length: VEIL_PLACEHOLDER_COUNT },
-  (_, index) => `veil-${index}`,
-);
+const VEIL_IDS = Array.from({ length: VEIL_PLACEHOLDER_COUNT }, (_, index) => `veil-${index}`);
 
 const keyExtractor = (item: { id: string }) => item.id;
 

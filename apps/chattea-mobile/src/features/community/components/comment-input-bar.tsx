@@ -26,10 +26,7 @@ const CommentInputBar = ({ disabled, onChangeBody, onSubmit, value }: CommentInp
             accessibilityState={{ disabled }}
             disabled={disabled}
             onPress={onSubmit}
-            style={({ pressed }) => [
-              styles.send,
-              (pressed || disabled) && styles.sendDisabled,
-            ]}
+            style={({ pressed }) => [styles.send, (pressed || disabled) && styles.sendDisabled]}
           >
             <SymbolView
               name={{ android: "send", ios: "paperplane.fill" }}

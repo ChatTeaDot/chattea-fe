@@ -57,7 +57,17 @@ export const spacing = {
   card: 16,
 };
 
-export const radii = { sm: 4, md: 8, lg: 12, xl: 16, xxl: 20, utility: 12, card: 20, cta: 9999, pill: 9999 };
+export const radii = {
+  sm: 4,
+  md: 8,
+  lg: 12,
+  xl: 16,
+  xxl: 20,
+  utility: 12,
+  card: 20,
+  cta: 9999,
+  pill: 9999,
+};
 
 export const typography = {
   display: { fontSize: 28, lineHeight: 36, fontWeight: "700" as const },

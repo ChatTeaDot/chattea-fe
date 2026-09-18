@@ -394,12 +394,7 @@ vi.mock("react-native-unistyles", async () => {
   const { colors, radii, sizes, spacing, typography } = await import("../src/theme/constants");
   return {
     StyleSheet: {
-      create: (
-        factory: (
-          theme: Record<string, unknown>,
-          rt: Record<string, unknown>,
-        ) => unknown,
-      ) =>
+      create: (factory: (theme: Record<string, unknown>, rt: Record<string, unknown>) => unknown) =>
         factory(
           { colors, radii, sizes, spacing, typography },
           { insets: { bottom: 0, left: 0, right: 0, top: 0 } },
