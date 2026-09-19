@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { type NotificationResponseLike } from "../src/features/notifications/types";
+import { type NotificationResponseLike } from "../src/features/notifications/api";
 import { createNotificationNavigationCoordinator } from "../src/features/notifications/utils/notification-route";
 import {
   getNativeSessionDestination,

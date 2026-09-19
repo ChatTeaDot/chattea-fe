@@ -3,9 +3,13 @@ import { Platform } from "react-native";
 import { useReducedMotion } from "react-native-reanimated";
 import { useUnistyles } from "react-native-unistyles";
 
-import { NativeIntegrationsProvider, RootProvider, withSentry } from "@/providers";
-import NativeSessionGate from "@/providers/session-gate";
-import type { AppTheme } from "@/theme/unistyles";
+import {
+  NativeIntegrationsProvider,
+  NativeSessionGate,
+  RootProvider,
+  withSentry,
+} from "@/providers";
+import type { AppTheme } from "@/theme";
 
 const ThemedStack = () => {
   const { theme } = useUnistyles() as { theme: AppTheme };

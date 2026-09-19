@@ -9,21 +9,19 @@ import { formatTime, runExclusiveAction } from "@/shared/lib";
 
 import {
   ACTIVATE_BOOST_MUTATION,
+  type ActivateBoostData,
+  type CandidatesData,
+  type InteractionResult,
   LIKE_USER_MUTATION,
   LIKED_ME_CANDIDATES_QUERY,
+  type LikedCandidatesData,
   MATCH_CANDIDATES_QUERY,
+  type MatchCandidate,
   SKIP_CANDIDATE_MUTATION,
   SUPERLIKE_MUTATION,
   UNDO_MATCH_ACTION_MUTATION,
 } from "./api";
 import { MAX_TIMER_DELAY_MS } from "./constants";
-import {
-  type ActivateBoostData,
-  type CandidatesData,
-  type InteractionResult,
-  type LikedCandidatesData,
-  type MatchCandidate,
-} from "./types";
 import { getLikesErrorKind, openMatchSheet, showMatchActionError } from "./utils";
 
 export const useTodayMatches = () => {

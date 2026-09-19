@@ -7,19 +7,17 @@ import { useRouteParam } from "@/shared/hooks";
 import { showActionError } from "@/shared/lib";
 
 import {
+  type CommentsData,
   COMMUNITY_COMMENTS_QUERY,
   COMMUNITY_POSTS_QUERY,
+  type CommunityComment,
+  type CommunityPost,
   CREATE_COMMUNITY_COMMENT_MUTATION,
   CREATE_COMMUNITY_POST_MUTATION,
+  type PostsData,
   REPORT_COMMUNITY_COMMENT_MUTATION,
   REPORT_COMMUNITY_POST_MUTATION,
 } from "./api";
-import {
-  type CommentsData,
-  type CommunityComment,
-  type CommunityPost,
-  type PostsData,
-} from "./types";
 import {
   createCommunityCommentDraft,
   createCommunityPostDraft,

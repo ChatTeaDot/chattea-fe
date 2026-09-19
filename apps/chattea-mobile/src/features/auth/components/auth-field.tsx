@@ -1,7 +1,7 @@
 import { Text, TextInput, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-import type { AppTheme } from "@/theme/unistyles";
+import type { AppTheme } from "@/theme";
 
 import type { AuthFieldProps } from "../types";
 

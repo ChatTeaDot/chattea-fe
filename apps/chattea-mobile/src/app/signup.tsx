@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 import { useUnistyles } from "react-native-unistyles";
 
 import { SignupScreen } from "@/screens";
-import type { AppTheme } from "@/theme/unistyles";
+import type { AppTheme } from "@/theme";
 
 const SignupRoute = () => {
   const { theme } = useUnistyles() as { theme: AppTheme };

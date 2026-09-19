@@ -6,15 +6,13 @@ import { showActionError } from "@/shared/lib";
 
 import {
   BILLING_PRODUCTS_QUERY,
-  CONSUMABLE_BALANCE_QUERY,
-  CURRENT_SUBSCRIPTION_QUERY,
-} from "./api";
-import {
   type BillingProduct,
+  CONSUMABLE_BALANCE_QUERY,
   type ConsumableBalance,
+  CURRENT_SUBSCRIPTION_QUERY,
   type CurrentSubscription,
-  type RevenueCatContextValue,
-} from "./types";
+} from "./api";
+import { type RevenueCatContextValue } from "./types";
 
 export const RevenueCatContext = createContext<RevenueCatContextValue | null>(null);
 

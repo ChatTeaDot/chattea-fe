@@ -15,7 +15,7 @@ import {
   useSignup,
 } from "@/features/auth";
 import { ContentState, Screen } from "@/shared/components";
-import type { AppTheme } from "@/theme/unistyles";
+import type { AppTheme } from "@/theme";
 
 const SignupScreen = () => {
   const {

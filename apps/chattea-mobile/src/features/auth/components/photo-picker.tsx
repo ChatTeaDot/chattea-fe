@@ -3,7 +3,7 @@ import { ImagePlus } from "lucide-react-native";
 import { Pressable } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-import type { AppTheme } from "@/theme/unistyles";
+import type { AppTheme } from "@/theme";
 
 import type { PhotoPickerProps } from "../types";
 

@@ -1,18 +1,13 @@
-import { useMutation } from "@apollo/client/react";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 
-import { useSession } from "@/providers/session-provider";
+import { useSession } from "@/providers";
 
-import {
-  COMPLETE_KAKAO_SIGNUP_MUTATION,
-  LOGIN_WITH_KAKAO_MUTATION,
-  mapCompleteKakaoSignupResult,
-  mapLoginWithKakaoResult,
-} from "./api";
+import type { Gender, SignupProfileInput } from "./api";
+import { useCompleteKakaoSignup, useLoginWithKakao } from "./api";
 import { SIGNUP_CONTINUATION_TTL_MS } from "./constants";
-import type { AuthContinuation, Gender, SignupProfileInput } from "./types";
+import type { AuthContinuation } from "./types";
 import {
   clearAuthContinuation,
   getAuthContinuationExpiresAt,
@@ -20,46 +15,6 @@ import {
   saveAuthContinuation,
 } from "./utils/continuation";
 import { loginWithKakaoNative } from "./utils/kakao-native";
-
-export const useLoginWithKakao = () => {
-  const [mutate, result] = useMutation(LOGIN_WITH_KAKAO_MUTATION);
-
-  return {
-    ...result,
-    isPending: result.loading,
-    mutateAsync: async (accessToken: string) => {
-      const { data } = await mutate({ variables: { accessToken } });
-
-      return mapLoginWithKakaoResult(data);
-    },
-  };
-};
-
-export const useCompleteKakaoSignup = () => {
-  const [mutate, result] = useMutation(COMPLETE_KAKAO_SIGNUP_MUTATION);
-
-  return {
-    ...result,
-    isPending: result.loading,
-    mutateAsync: async ({
-      kakaoPhoneVerificationToken,
-      ...profile
-    }: SignupProfileInput & {
-      readonly kakaoPhoneVerificationToken: string;
-    }) => {
-      const { data } = await mutate({
-        variables: {
-          input: {
-            ...profile,
-            kakaoPhoneVerificationToken,
-          },
-        },
-      });
-
-      return mapCompleteKakaoSignupResult(data);
-    },
-  };
-};
 
 export const useAuthContinuation = () => {
   const [continuation, setContinuation] = useState<AuthContinuation | null>();

@@ -1,5 +1,6 @@
+import type { VerifiedProfilePhoto } from "../api";
 import { CONTENT_TYPES, MAX_PROFILE_PHOTO_BYTES } from "../constants";
-import type { ProfilePhotoUploadDependencies, VerifiedProfilePhoto } from "../types";
+import type { ProfilePhotoUploadDependencies } from "../types";
 
 const normalizeContentType = (value?: string | null): "image/jpeg" | "image/png" | "image/webp" => {
   const normalized = value?.trim().toLowerCase();

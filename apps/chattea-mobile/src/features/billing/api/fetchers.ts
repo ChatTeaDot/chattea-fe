@@ -2,7 +2,7 @@ import { type ApolloClient, gql } from "@apollo/client";
 
 import { apolloClient } from "@/shared/graphql";
 
-import type { BackendBillingState, ConsumableBalance, CurrentSubscription } from "./types";
+import type { BackendBillingState, ConsumableBalance, CurrentSubscription } from "./schemas";
 
 export const BILLING_PRODUCTS_QUERY = gql`
   query NativeBillingProducts {

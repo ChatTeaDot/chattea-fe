@@ -1,5 +1,5 @@
+import type { DevicePushToken } from "../api";
 import type {
-  DevicePushToken,
   PushRegistrationLifecycleInput,
   PushRegistrationState,
   StoredPushRegistration,

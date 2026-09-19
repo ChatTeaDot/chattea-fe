@@ -1,6 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 
-import { devRefreshToken, devSessionToken, SESSION_KEY } from "@/providers/constants";
+import { devRefreshToken, devSessionToken, SESSION_KEY } from "../constants";
 
 export type StoredSession = {
   accessToken: string;

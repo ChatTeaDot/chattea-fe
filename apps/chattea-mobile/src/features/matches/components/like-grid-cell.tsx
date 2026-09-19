@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-import type { AppTheme } from "@/theme/unistyles";
+import type { AppTheme } from "@/theme";
 
 import type { LikeGridCellProps } from "../types";
 

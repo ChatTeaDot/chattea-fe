@@ -1,7 +1,7 @@
 import { Platform, Pressable, Text } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-import type { AppTheme } from "@/theme/unistyles";
+import type { AppTheme } from "@/theme";
 
 type AppButtonProps = {
   title: string;
