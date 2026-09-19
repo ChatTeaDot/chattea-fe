@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import type { Gender } from "../types";
+import type { Gender } from "../api";
 
 const OPTIONS: { label: string; value: Gender }[] = [
   { label: "남성", value: "male" },

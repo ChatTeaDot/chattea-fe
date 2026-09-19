@@ -4,20 +4,21 @@ import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
 
-import { ME_QUERY } from "@/features/profile";
-import { type MeData } from "@/features/profile";
+import { ME_QUERY, type MeData } from "@/features/profile";
 import { useRouteParam } from "@/shared/hooks";
 import { showActionError } from "@/shared/lib";
 
 import {
   CHAT_MESSAGES_QUERY,
   CHAT_ROOMS_QUERY,
+  type ChatMessage,
   MARK_ROOM_READ_MUTATION,
+  type MessagesData,
   REPORT_MESSAGE_MUTATION,
+  type RoomsData,
   SEND_MESSAGE_MUTATION,
 } from "./api";
 import { CHAT_PAGE_SIZE, CHAT_POLL_INTERVAL_MS } from "./constants";
-import { type ChatMessage, type MessagesData, type RoomsData } from "./types";
 import {
   createChatMessageDraft,
   getMessageTextLimit,

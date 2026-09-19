@@ -1,10 +1,10 @@
+import type { BackendBillingState } from "../api";
 import {
   BILLING_PRODUCT_IDS,
   DEFAULT_RECONCILIATION_DELAYS_MS,
   SUBSCRIPTION_PRODUCT_IDS,
 } from "../constants";
 import type {
-  BackendBillingState,
   ReconciliationRequest,
   RevenueCatCustomerInfo,
   RevenueCatKeys,

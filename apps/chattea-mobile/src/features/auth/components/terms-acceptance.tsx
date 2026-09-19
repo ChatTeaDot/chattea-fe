@@ -1,7 +1,7 @@
 import { Pressable, Text } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import type { AppTheme } from "@/theme/unistyles";
+import type { AppTheme } from "@/theme";
 
 import type { TermsAcceptanceProps } from "../types";
 

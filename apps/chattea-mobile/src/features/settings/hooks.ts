@@ -5,8 +5,7 @@ import { Alert } from "react-native";
 
 import { useRevenueCat } from "@/features/billing";
 import { usePushNotifications } from "@/features/notifications";
-import { useSession } from "@/providers/session-provider";
-import { performInstallationLogout } from "@/providers/utils/session-actions";
+import { performInstallationLogout, useSession } from "@/providers";
 import { apolloClient, revokeGraphQLSession } from "@/shared/graphql";
 import { formatDate, showActionError } from "@/shared/lib";
 

@@ -1,29 +1,9 @@
+import type { CommunityPost } from "./api/schemas";
 import type { COMMUNITY_CATEGORIES, COMMUNITY_FILTERS } from "./constants";
 
 export type CommunityCategory = (typeof COMMUNITY_CATEGORIES)[number];
 
 export type CommunityFilter = (typeof COMMUNITY_FILTERS)[number];
-
-export type CommunityPost = {
-  id: string;
-  authorName: string;
-  title: string;
-  body: string;
-  commentCount: number;
-  createdAt: string;
-};
-
-export type CommunityComment = {
-  id: string;
-  postId: string;
-  authorName: string;
-  body: string;
-  createdAt: string;
-};
-
-export type PostsData = { communityPosts: CommunityPost[] };
-
-export type CommentsData = { communityComments: CommunityComment[] };
 
 export type KeyFactory = () => string;
 

@@ -2,7 +2,7 @@ import { Image } from "expo-image";
 import { Pressable } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-import type { AppTheme } from "@/theme/unistyles";
+import type { AppTheme } from "@/theme";
 
 import type { RoundActionButtonProps } from "../types";
 

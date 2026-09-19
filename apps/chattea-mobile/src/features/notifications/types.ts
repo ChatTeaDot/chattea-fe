@@ -1,22 +1,11 @@
+import type { AppNotification, DevicePushToken } from "./api/schemas";
 import { type createNotificationNavigationCoordinator } from "./utils/notification-route";
-
-export type AppNotification = {
-  body: string;
-  createdAt: string;
-  id: string;
-  readAt: string | null;
-  route: string | null;
-  title: string;
-  type: string;
-};
 
 export type PushNotificationsContextValue = {
   clearLocal: () => Promise<void>;
   state: PushRegistrationState;
   unregisterInstallation: () => Promise<void>;
 };
-
-export type NotificationsData = { notifications: AppNotification[] };
 
 export type NotificationNavigationCoordinator = ReturnType<
   typeof createNotificationNavigationCoordinator
@@ -30,21 +19,6 @@ export type NotificationRoute =
   | `/community/${string}`
   | `/room/${string}`
   | `/rooms/${string}`;
-
-export type NotificationResponseLike = {
-  actionIdentifier: string;
-  notification: {
-    request: {
-      content: { data?: Record<string, unknown> };
-      identifier: string;
-    };
-  };
-};
-
-export type DevicePushToken = {
-  data: unknown;
-  type: string;
-};
 
 export type StoredPushRegistration = {
   currentToken: string | null;

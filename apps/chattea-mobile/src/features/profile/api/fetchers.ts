@@ -2,13 +2,13 @@ import { gql } from "@apollo/client";
 
 import { apolloClient } from "@/shared/graphql";
 
+import type { ProfilePhotoUploadDependencies } from "../types";
+import { uploadProfilePhoto } from "../utils/upload-profile-photo";
 import type {
   CreatedProfileUpload,
   CreateProfileUploadInput,
   FinalizedProfileUpload,
-  ProfilePhotoUploadDependencies,
-} from "./types";
-import { uploadProfilePhoto } from "./utils/upload-profile-photo";
+} from "./schemas";
 
 export const CREATE_UPLOAD_MUTATION = gql`
   mutation NativeCreateUpload($input: CreateUploadInput!) {

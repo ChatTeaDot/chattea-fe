@@ -4,14 +4,17 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 
 import { showActionError } from "@/shared/lib";
 
-import { MARK_NOTIFICATION_READ_MUTATION, NOTIFICATIONS_QUERY } from "./api";
+import {
+  type AppNotification,
+  MARK_NOTIFICATION_READ_MUTATION,
+  NOTIFICATIONS_QUERY,
+  type NotificationsData,
+} from "./api";
 import { DEFAULT_NOTIFICATION_PREFERENCES } from "./constants";
 import { loadNotificationPreferences, saveNotificationPreferences } from "./storage";
 import type {
-  AppNotification,
   NotificationNavigationCoordinator,
   NotificationPreferences,
-  NotificationsData,
   PushNotificationsContextValue,
 } from "./types";
 import { parseNotificationRoute } from "./utils/notification-route";

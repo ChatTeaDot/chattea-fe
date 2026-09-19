@@ -12,7 +12,7 @@ import type {
   LoginWithKakaoVariables,
   Session,
   SignupProfileInput,
-} from "./types";
+} from "./schemas";
 
 export const LOGIN_WITH_KAKAO_MUTATION: TypedDocumentNode<
   LoginWithKakaoMutation,

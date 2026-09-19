@@ -2,7 +2,7 @@ import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 import { AuthActionButton, useKakaoLogin } from "@/features/auth";
-import type { AppTheme } from "@/theme/unistyles";
+import type { AppTheme } from "@/theme";
 
 const LoginScreen = () => {
   const { pending, submit } = useKakaoLogin();

@@ -5,13 +5,17 @@ import { Alert } from "react-native";
 
 import { CURRENT_SUBSCRIPTION_QUERY, type CurrentSubscription } from "@/features/billing";
 
-import { ME_QUERY, selectAndUploadProfilePhoto, UPDATE_PROFILE_MUTATION } from "./api";
+import {
+  type CurrentUser,
+  ME_QUERY,
+  type MeData,
+  selectAndUploadProfilePhoto,
+  UPDATE_PROFILE_MUTATION,
+  type VerifiedProfilePhoto,
+} from "./api";
 import { MAX_PROFILE_PHOTOS } from "./constants";
-import { type CurrentUser, type MeData, type VerifiedProfilePhoto } from "./types";
 import { showProfileActionError } from "./utils";
 import { buildProfileUpdateInput } from "./utils/profile-input";
-
-export const useCurrentUser = () => useQuery<MeData>(ME_QUERY);
 
 export const useProfile = () => {
   const me = useQuery<MeData>(ME_QUERY);

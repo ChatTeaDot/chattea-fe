@@ -1,7 +1,7 @@
 import { Text, TextInput, TextInputProps, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-import type { AppTheme } from "@/theme/unistyles";
+import type { AppTheme } from "@/theme";
 
 type AppInputProps = TextInputProps & {
   label: string;

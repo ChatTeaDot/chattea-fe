@@ -1,5 +1,6 @@
+import type { NotificationResponseLike } from "../api";
 import { EXACT_ROUTES, UUID_PATTERN } from "../constants";
-import type { NotificationResponseLike, NotificationRoute } from "../types";
+import type { NotificationRoute } from "../types";
 
 export const parseNotificationRoute = (value: unknown): NotificationRoute | null => {
   if (typeof value !== "string" || value.trim() !== value) return null;

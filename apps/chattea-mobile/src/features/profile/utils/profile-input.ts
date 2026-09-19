@@ -1,4 +1,4 @@
-import type { ProfileUpdateFields } from "../types";
+import type { ProfileUpdateFields } from "../api";
 
 export const buildProfileUpdateInput = (fields: ProfileUpdateFields) => ({
   birthDate: fields.birthDate,

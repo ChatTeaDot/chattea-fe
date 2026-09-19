@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-import type { AppTheme } from "@/theme/unistyles";
+import type { AppTheme } from "@/theme";
 
 const BottomCta = ({ children }: PropsWithChildren) => {
   const { rt } = useUnistyles();

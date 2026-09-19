@@ -44,8 +44,8 @@ describe("production app configuration", () => {
 
   it("enables the native notifications plugin", () => {
     const config = parseConfig();
-    const pluginNames = config.expo.plugins.map((plugin) =>
-      typeof plugin === "string" ? plugin : plugin[0],
+    const pluginNames = config.expo.plugins.flatMap((plugin) =>
+      typeof plugin === "string" ? [plugin] : Array.isArray(plugin) ? [plugin[0]] : [],
     );
 
     expect(pluginNames).toContain("expo-notifications");

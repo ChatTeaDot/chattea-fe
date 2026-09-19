@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 
-import type { MatchCandidate } from "../types";
+import type { MatchCandidate } from "../api";
 
 export const openMatchSheet = (candidate: MatchCandidate, roomId: string) => {
   router.push({
