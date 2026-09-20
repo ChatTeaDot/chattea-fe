@@ -4,7 +4,7 @@ import simpleImportSort from "eslint-plugin-simple-import-sort";
 export default [
   ...expo,
   {
-    ignores: [".expo/**", "dist/**", "ios/**", "android/**"],
+    ignores: [".expo/**", "dist/**", "ios/**", "android/**", ".rnstorybook/storybook.requires.ts"],
   },
   {
     plugins: {

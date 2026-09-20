@@ -8,6 +8,8 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "storybook": "EXPO_PUBLIC_STORYBOOK=true expo start",
+    "storybook-generate": "sb-rn-get-stories",
     "audit:all": "pnpm audit --audit-level high",
     "audit:prod": "pnpm audit --prod --audit-level high",
     "deps:check": "expo install --check && pnpm peers check",
@@ -57,12 +59,19 @@
     "react-native-worklets": "0.8.3"
   },
   "devDependencies": {
+    "@gorhom/bottom-sheet": "^5.2.14",
+    "@react-native-async-storage/async-storage": "^3.1.1",
+    "@storybook/addon-ondevice-actions": "10.0.0",
+    "@storybook/addon-ondevice-backgrounds": "10.0.0",
+    "@storybook/addon-ondevice-controls": "10.0.0",
+    "@storybook/react-native": "10.0.0",
     "@types/react": "~19.2.14",
     "eslint": "^9.29.0",
     "eslint-config-expo": "^56.0.4",
     "eslint-plugin-simple-import-sort": "^13.0.0",
     "prettier": "^3.5.3",
     "react-dom": "^19.2.3",
+    "storybook": "^10.6.0",
     "typescript": "^6.0.3",
     "vitest": "^3.2.4"
   }
