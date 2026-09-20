@@ -17,7 +17,7 @@ apps/chattea-web      Vite React — 네이티브 커뮤니티 탭의 WebView용
 ## 아키텍처
 
 - **피처 단위 구조**: `src/features/<name>`이 `api/`(fetchers·schemas·hooks), `components/`, `types.ts`, `hooks.ts`를 갖고 배럴로만 외부 노출
-- **디자인 시스템**: `src/theme`에 scale → semantic → app 토큰 3계층(당근 SEED 참고), 라이트/다크 테마. 공용 컴포넌트는 온디바이스 Storybook(`EXPO_PUBLIC_STORYBOOK=true pnpm storybook`)으로 문서화
+- **디자인 시스템**: `src/theme`에 scale → semantic → app 토큰 3계층, 라이트/다크 테마. 공용 컴포넌트는 온디바이스 Storybook(`EXPO_PUBLIC_STORYBOOK=true pnpm storybook`)으로 문서화
 - **커뮤니티 WebView**: `chattea-web`은 Fastify + Vite middlewareMode로 개발 서버를 구성하고, `/community`를 `renderToPipeableStream`으로 스트리밍. 모바일 탭이 WebView로 로드
 - **세션**: SecureStore 기반 토큰 저장 + Apollo auth link, 카카오 네이티브 로그인 → 백엔드 JWT 교환
 
