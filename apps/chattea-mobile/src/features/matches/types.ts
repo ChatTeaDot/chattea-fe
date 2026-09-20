@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import type { MatchCandidate } from "./api/schemas";
 
 export type SwipeCardProps = {
@@ -16,7 +18,7 @@ export type MatchActionBarProps = {
 
 export type RoundActionButtonProps = {
   disabled: boolean;
-  icon: string;
+  icon: ReactNode;
   label: string;
   main?: boolean;
   onPress: () => void;

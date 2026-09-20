@@ -60,7 +60,7 @@ const findUnreachableSourceFiles = (): string[] => {
   const sourceFiles = ts.sys
     .readDirectory(sourceRoot, [".ts", ".tsx"], undefined, undefined)
     .map((fileName) => resolve(fileName))
-    .filter((fileName) => !fileName.endsWith(".d.ts"));
+    .filter((fileName) => !fileName.endsWith(".d.ts") && !fileName.includes(".stories."));
   const sourceFileSet = new Set(sourceFiles);
   const roots = [
     resolve(projectRoot, "index.ts"),
@@ -106,6 +106,7 @@ describe("Expo route source reachability", () => {
   it("exports a named arrow component as the default of every TSX module", () => {
     const violations: string[] = [];
     for (const fileName of ts.sys.readDirectory(sourceRoot, [".tsx"])) {
+      if (fileName.includes(".stories.")) continue;
       const source = ts.createSourceFile(
         fileName,
         readFileSync(fileName, "utf8"),

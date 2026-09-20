@@ -12,6 +12,11 @@ auditConfig:
     - GHSA-w3rx-r6r6-pgpr
     - GHSA-5p2g-fcmc-qvqq
 
+peerDependencyRules:
+  allowedVersions:
+    react-native-reanimated: "*"
+    react-native-safe-area-context: "*"
+
 overrides:
   "@types/react-dom@>=19.3.0": 19.2.7
   "@xmldom/xmldom@>=0.7.0 <=0.8.14": 0.8.15

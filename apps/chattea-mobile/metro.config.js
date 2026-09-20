@@ -8,6 +8,14 @@ const getDefaultConfig = (projectRoot, options) => {
   });
 };
 
-module.exports = getDatadogExpoConfig(__dirname, {
-  getDefaultConfig,
-});
+const { withStorybook } = require("@storybook/react-native/metro/withStorybook");
+
+module.exports = withStorybook(
+  getDatadogExpoConfig(__dirname, {
+    getDefaultConfig,
+  }),
+  {
+    enabled: process.env.EXPO_PUBLIC_STORYBOOK === "true",
+    configPath: "./.rnstorybook",
+  },
+);

@@ -1,4 +1,4 @@
-import { SymbolView } from "expo-symbols";
+import { Send } from "lucide-react-native";
 import { Pressable, View } from "react-native";
 import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -28,11 +28,7 @@ const CommentInputBar = ({ disabled, onChangeBody, onSubmit, value }: CommentInp
             onPress={onSubmit}
             style={({ pressed }) => [styles.send, (pressed || disabled) && styles.sendDisabled]}
           >
-            <SymbolView
-              name={{ android: "send", ios: "paperplane.fill" }}
-              size={16}
-              tintColor={theme.colors.accentText}
-            />
+            <Send color={theme.colors.accentText} size={16} />
           </Pressable>
         </View>
       </SafeAreaView>

@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { BadgeCheck } from "lucide-react-native";
 import { useState } from "react";
 import { ScrollView, Text, useWindowDimensions, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
@@ -55,13 +56,7 @@ const CandidateDetailBody = ({ candidate }: CandidateDetailBodyProps) => {
           <Text style={styles.name}>
             {candidate.userName} {candidate.age}
           </Text>
-          {candidate.blackRecommended ? (
-            <Image
-              source="sf:checkmark.seal.fill"
-              style={styles.badge}
-              tintColor={theme.colors.accent}
-            />
-          ) : null}
+          {candidate.blackRecommended ? <BadgeCheck color={theme.colors.accent} size={20} /> : null}
         </View>
         <Text style={styles.sub}>{candidate.region}</Text>
         <Text style={styles.bio}>{candidate.intro || "반가워요. 이야기를 나눠 보고 싶어요."}</Text>
@@ -103,10 +98,6 @@ const styles = StyleSheet.create((theme) => ({
     color: theme.colors.text,
     fontSize: 20,
     fontWeight: "700",
-  },
-  badge: {
-    height: 20,
-    width: 20,
   },
   sub: {
     color: theme.colors.muted,

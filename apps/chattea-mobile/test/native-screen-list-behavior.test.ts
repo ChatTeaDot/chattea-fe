@@ -330,9 +330,15 @@ vi.mock("lucide-react-native", async () => {
     return Icon;
   };
   return {
+    BadgeCheck: icon("badge-check"),
     CheckCheck: icon("check-check"),
     EllipsisVertical: icon("ellipsis-vertical"),
+    Heart: icon("heart"),
+    Lock: icon("lock"),
+    Pencil: icon("pencil"),
     Send: icon("send"),
+    Undo2: icon("undo-2"),
+    X: icon("x"),
   };
 });
 vi.mock("react-native", async () => {
@@ -724,16 +730,24 @@ vi.mock("lucide-react-native", async () => {
     return Icon;
   };
   return {
+    BadgeCheck: icon("BadgeCheck"),
     Ban: icon("Ban"),
     Bell: icon("Bell"),
     Check: icon("Check"),
     ChevronLeft: icon("ChevronLeft"),
     ChevronRight: icon("ChevronRight"),
     Crown: icon("Crown"),
+    EllipsisVertical: icon("EllipsisVertical"),
+    Heart: icon("Heart"),
     ImagePlus: icon("ImagePlus"),
+    Lock: icon("Lock"),
     LogOut: icon("LogOut"),
     MessageCircle: icon("MessageCircle"),
+    Pencil: icon("Pencil"),
     Send: icon("Send"),
     Settings: icon("Settings"),
+    Sparkles: icon("Sparkles"),
+    Undo2: icon("Undo2"),
+    X: icon("X"),
   };
 });
