@@ -1,0 +1,37 @@
+{
+  "name": "@chattea/design-system",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./theme": "./src/theme/index.ts",
+    "./theme/*": "./src/theme/*.ts",
+    "./components": "./src/components/index.ts"
+  },
+  "peerDependencies": {
+    "expo-image": "*",
+    "expo-router": "*",
+    "react": "*",
+    "react-native": "*",
+    "react-native-safe-area-context": "*",
+    "react-native-unistyles": "*",
+    "@legendapp/list": "*"
+  },
+  "devDependencies": {
+    "@legendapp/list": "^3.2.0",
+    "@types/react": "~19.2.14",
+    "expo-image": "~56.0.13",
+    "expo-router": "^56.2.21",
+    "react": "^19.2.3",
+    "react-native": "^0.85.3",
+    "react-native-safe-area-context": "^5.7.0",
+    "react-native-unistyles": "^3.2.5",
+    "@storybook/react-native": "10.0.0",
+    "storybook": "^10.6.0",
+    "expo": "^56.0.22",
+    "react-native-nitro-modules": "0.35.7",
+    "react-native-reanimated": "4.3.1"
+  }
+}

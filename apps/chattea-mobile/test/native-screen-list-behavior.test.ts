@@ -397,7 +397,8 @@ vi.mock("react-native-safe-area-context", async () => {
   };
 });
 vi.mock("react-native-unistyles", async () => {
-  const { colors, radii, sizes, spacing, typography } = await import("../src/theme/constants");
+  const { colors, radii, sizes, spacing, typography } =
+    await import("@chattea/design-system/theme/constants");
   return {
     StyleSheet: {
       create: (factory: (theme: Record<string, unknown>, rt: Record<string, unknown>) => unknown) =>

@@ -1,5 +1,6 @@
 packages:
   - "apps/*"
+  - "packages/*"
 
 allowBuilds:
   "@datadog/mobile-react-native": true
@@ -16,6 +17,8 @@ peerDependencyRules:
   allowedVersions:
     react-native-reanimated: "*"
     react-native-safe-area-context: "*"
+
+dedupePeerDependents: true
 
 overrides:
   "@types/react-dom@>=19.3.0": 19.2.7

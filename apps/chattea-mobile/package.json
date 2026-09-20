@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@apollo/client": "^4.2.11",
+    "@chattea/design-system": "workspace:*",
     "@datadog/mobile-react-native": "^3.5.2",
     "@expo/metro-runtime": "~56.0.21",
     "@legendapp/list": "^3.2.0",
