@@ -7,16 +7,6 @@ apps/chattea-mobile   Expo 56 / React Native 앱 (iOS · Android)
 apps/chattea-web      Vite React — 네이티브 커뮤니티 탭의 WebView용 SSR 웹
 ```
 
-## 스크린샷
-
-| 매칭 | 커뮤니티 | 채팅 |
-| --- | --- | --- |
-| ![매칭](https://raw.githubusercontent.com/cyjoon68/chattea-workspace/develop/docs/screenshots/matches.png) | ![커뮤니티](https://raw.githubusercontent.com/cyjoon68/chattea-workspace/develop/docs/screenshots/community.png) | ![채팅](https://raw.githubusercontent.com/cyjoon68/chattea-workspace/develop/docs/screenshots/chat-room.png) |
-
-| 좋아요 | 게시글 | 프로필 |
-| --- | --- | --- |
-| ![좋아요](https://raw.githubusercontent.com/cyjoon68/chattea-workspace/develop/docs/screenshots/likes.png) | ![게시글](https://raw.githubusercontent.com/cyjoon68/chattea-workspace/develop/docs/screenshots/community-post.png) | ![프로필](https://raw.githubusercontent.com/cyjoon68/chattea-workspace/develop/docs/screenshots/profile.png) |
-
 ## 기술 스택
 
 - **모바일**: Expo 56, Expo Router, React Native Unistyles, Apollo Client, react-native-reanimated, LegendList
