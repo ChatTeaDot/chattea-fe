@@ -1,5 +1,6 @@
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
+import { Lock } from "lucide-react-native";
 import { useCallback } from "react";
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
@@ -33,7 +34,7 @@ const LikeGridCell = ({ disabled, id, locked, name, onPress, photoUrl }: LikeGri
       )}
       {locked ? (
         <BlurView intensity={24} style={styles.veil} tint="light">
-          <Image source="sf:lock.fill" style={styles.lock} tintColor={theme.colors.primaryText} />
+          <Lock color={theme.colors.primaryText} size={20} />
           <Text style={styles.veilText}>Basic부터 확인</Text>
         </BlurView>
       ) : null}
@@ -60,10 +61,6 @@ const styles = StyleSheet.create((theme) => ({
     backgroundColor: theme.colors.accentSoft,
     gap: theme.spacing.xs,
     justifyContent: "center",
-  },
-  lock: {
-    height: 20,
-    width: 20,
   },
   veilText: {
     color: theme.colors.primaryText,

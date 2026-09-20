@@ -1,5 +1,5 @@
 import { useNavigation } from "expo-router";
-import { SymbolView } from "expo-symbols";
+import { EllipsisVertical } from "lucide-react-native";
 import { memo, useCallback, useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
@@ -69,12 +69,7 @@ const CommunityPostScreen = () => {
           onPress={reportPost}
           style={styles.headerAction}
         >
-          <SymbolView
-            name={{ android: "more_vert", ios: "ellipsis" }}
-            size={20}
-            style={styles.moreIcon}
-            tintColor={theme.colors.text}
-          />
+          <EllipsisVertical color={theme.colors.text} size={20} />
         </Pressable>
       ),
     });
@@ -120,9 +115,7 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: "center",
     width: 44,
   },
-  moreIcon: {
-    transform: [{ rotate: "90deg" }],
-  },
+
   listContent: {
     gap: 0,
     paddingBottom: theme.spacing.xl,

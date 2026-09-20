@@ -1,13 +1,9 @@
-import { Image } from "expo-image";
 import { Pressable } from "react-native";
-import { StyleSheet, useUnistyles } from "react-native-unistyles";
-
-import type { AppTheme } from "@/theme";
+import { StyleSheet } from "react-native-unistyles";
 
 import type { RoundActionButtonProps } from "../types";
 
 const RoundActionButton = ({ disabled, icon, label, main, onPress }: RoundActionButtonProps) => {
-  const { theme } = useUnistyles() as { theme: AppTheme };
   return (
     <Pressable
       accessibilityLabel={label}
@@ -21,11 +17,7 @@ const RoundActionButton = ({ disabled, icon, label, main, onPress }: RoundAction
         (pressed || disabled) && styles.pressed,
       ]}
     >
-      <Image
-        source={icon}
-        style={main ? styles.mainIcon : styles.sideIcon}
-        tintColor={main ? theme.colors.primaryText : theme.colors.muted}
-      />
+      {icon}
     </Pressable>
   );
 };
@@ -48,14 +40,6 @@ const styles = StyleSheet.create((theme) => ({
     boxShadow: "0 4px 16px rgba(236,72,153,0.4)",
     height: 68,
     width: 68,
-  },
-  sideIcon: {
-    height: 24,
-    width: 24,
-  },
-  mainIcon: {
-    height: 28,
-    width: 28,
   },
   pressed: {
     opacity: 0.62,

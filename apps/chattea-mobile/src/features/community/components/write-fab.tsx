@@ -1,4 +1,4 @@
-import { SymbolView } from "expo-symbols";
+import { Pencil } from "lucide-react-native";
 import { Pressable } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
@@ -13,11 +13,7 @@ const WriteFab = ({ onPress }: WriteFabProps) => {
       onPress={onPress}
       style={({ pressed }) => [styles.fab, pressed && styles.fabPressed]}
     >
-      <SymbolView
-        name={{ android: "edit", ios: "pencil" }}
-        size={24}
-        tintColor={theme.colors.accentText}
-      />
+      <Pencil color={theme.colors.accentText} size={24} />
     </Pressable>
   );
 };
