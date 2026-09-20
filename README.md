@@ -11,11 +11,11 @@ apps/chattea-web      Vite React — 네이티브 커뮤니티 탭의 WebView용
 
 | 매칭 | 커뮤니티 | 채팅 |
 | --- | --- | --- |
-| ![매칭](docs/screenshots/matches.png) | ![커뮤니티](docs/screenshots/community.png) | ![채팅](docs/screenshots/chat-room.png) |
+| ![매칭](https://raw.githubusercontent.com/cyjoon68/chattea-workspace/develop/docs/screenshots/matches.png) | ![커뮤니티](https://raw.githubusercontent.com/cyjoon68/chattea-workspace/develop/docs/screenshots/community.png) | ![채팅](https://raw.githubusercontent.com/cyjoon68/chattea-workspace/develop/docs/screenshots/chat-room.png) |
 
 | 좋아요 | 게시글 | 프로필 |
 | --- | --- | --- |
-| ![좋아요](docs/screenshots/likes.png) | ![게시글](docs/screenshots/community-post.png) | ![프로필](docs/screenshots/profile.png) |
+| ![좋아요](https://raw.githubusercontent.com/cyjoon68/chattea-workspace/develop/docs/screenshots/likes.png) | ![게시글](https://raw.githubusercontent.com/cyjoon68/chattea-workspace/develop/docs/screenshots/community-post.png) | ![프로필](https://raw.githubusercontent.com/cyjoon68/chattea-workspace/develop/docs/screenshots/profile.png) |
 
 ## 기술 스택
 
