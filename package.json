@@ -1,0 +1,22 @@
+{
+  "name": "chattea-fe",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.0.4",
+  "scripts": {
+    "dev": "pnpm --filter chattea-mobile start",
+    "dev:mobile": "pnpm --filter chattea-mobile start",
+    "dev:web": "pnpm --filter chattea-web dev",
+    "start": "pnpm --filter chattea-mobile start",
+    "android": "pnpm --filter chattea-mobile android",
+    "ios": "pnpm --filter chattea-mobile ios",
+    "audit:all": "pnpm --filter chattea-mobile audit:all",
+    "audit:prod": "pnpm --filter chattea-mobile audit:prod",
+    "deps:check": "pnpm --filter chattea-mobile deps:check",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "format": "pnpm -r format",
+    "format:check": "pnpm -r format:check",
+    "test": "pnpm -r test"
+  }
+}

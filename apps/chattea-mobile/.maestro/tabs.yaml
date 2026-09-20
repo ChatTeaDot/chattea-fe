@@ -1,0 +1,32 @@
+appId: com.cyjoon.chattea
+---
+- launchApp
+- runFlow:
+    when:
+      visible: "Dismiss"
+    commands:
+      - tapOn: "Dismiss"
+- assertVisible: "매칭"
+- assertVisible: "채티"
+- assertVisible: "E2E상대 29"
+- assertVisible: "관심 보내기"
+- assertVisible: "이번엔 넘기기"
+- tapOn: "좋아요"
+- assertVisible: "나를 좋아한 사람"
+- assertVisible: "누군지 확인하기"
+- assertVisible: "내 정보"
+- tapOn: "채팅"
+- assertVisible: "E2E상대"
+- assertVisible: "읽지 않은 대화 열기"
+- assertVisible: "매칭"
+- tapOn: "커뮤니티"
+- assertVisible: "전체"
+- assertVisible: "연애"
+- assertVisible: "일상"
+- assertVisible: "질문"
+- assertVisible: ".*E2E 커뮤니티 글.*"
+- assertVisible: "매칭"
+- tapOn: "내 정보"
+- assertVisible: "소개 (60자)"
+- assertVisible: "저장"
+- assertVisible: "채팅"
