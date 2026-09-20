@@ -1,4 +1,4 @@
-import "./src/theme/unistyles";
+import "@chattea/design-system/theme";
 
 if (process.env.EXPO_PUBLIC_STORYBOOK === "true") {
   const { registerRootComponent } = require("expo");

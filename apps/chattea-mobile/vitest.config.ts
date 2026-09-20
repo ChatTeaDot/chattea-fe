@@ -6,6 +6,9 @@ export default defineConfig({
   define: {
     __DEV__: "true",
   },
+  esbuild: {
+    jsx: "automatic",
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),

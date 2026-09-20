@@ -1,7 +1,7 @@
 import { ActivityIndicator, Text, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-import type { AppTheme } from "@/theme";
+import type { AppTheme } from "../theme";
 
 import AppButton from "./app-button";
 import { defaultCopy } from "./constants";
