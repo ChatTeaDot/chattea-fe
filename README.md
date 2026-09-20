@@ -11,11 +11,11 @@ apps/chattea-web      Vite React, 커뮤니티 WebView용 (:3000)
 
 | 매칭 | 커뮤니티 | 채팅 |
 | --- | --- | --- |
-| ![매칭](https://github.com/ChatTeaDot/chattea-workspace/raw/develop/docs/screenshots/matches.png) | ![커뮤니티](https://github.com/ChatTeaDot/chattea-workspace/raw/develop/docs/screenshots/community.png) | ![채팅](https://github.com/ChatTeaDot/chattea-workspace/raw/develop/docs/screenshots/chat-room.png) |
+| ![매칭](https://raw.githubusercontent.com/ChatTeaDot/chattea-workspace/develop/docs/screenshots/matches.png) | ![커뮤니티](https://raw.githubusercontent.com/ChatTeaDot/chattea-workspace/develop/docs/screenshots/community.png) | ![채팅](https://raw.githubusercontent.com/ChatTeaDot/chattea-workspace/develop/docs/screenshots/chat-room.png) |
 
 | 좋아요 | 게시글 | 프로필 |
 | --- | --- | --- |
-| ![좋아요](https://github.com/ChatTeaDot/chattea-workspace/raw/develop/docs/screenshots/likes.png) | ![게시글](https://github.com/ChatTeaDot/chattea-workspace/raw/develop/docs/screenshots/community-post.png) | ![프로필](https://github.com/ChatTeaDot/chattea-workspace/raw/develop/docs/screenshots/profile.png) |
+| ![좋아요](https://raw.githubusercontent.com/ChatTeaDot/chattea-workspace/develop/docs/screenshots/likes.png) | ![게시글](https://raw.githubusercontent.com/ChatTeaDot/chattea-workspace/develop/docs/screenshots/community-post.png) | ![프로필](https://raw.githubusercontent.com/ChatTeaDot/chattea-workspace/develop/docs/screenshots/profile.png) |
 
 ## 요구사항
 
