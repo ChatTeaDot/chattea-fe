@@ -7,6 +7,16 @@ apps/chattea-mobile   Expo 56 / React Native
 apps/chattea-web      Vite React, 커뮤니티 WebView용 (:3000)
 ```
 
+## 스크린샷
+
+| 매칭 | 커뮤니티 | 채팅 |
+| --- | --- | --- |
+| ![매칭](docs/screenshots/matches.png) | ![커뮤니티](docs/screenshots/community.png) | ![채팅](docs/screenshots/chat-room.png) |
+
+| 좋아요 | 게시글 | 프로필 |
+| --- | --- | --- |
+| ![좋아요](docs/screenshots/likes.png) | ![게시글](docs/screenshots/community-post.png) | ![프로필](docs/screenshots/profile.png) |
+
 ## 요구사항
 
 - Node.js 24
