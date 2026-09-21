@@ -4,6 +4,8 @@ import fastify, { type FastifyInstance } from "fastify";
 
 import { COMMUNITY_PATH } from "@/shared/config/constants";
 
+import { createVitalsStore, registerVitalsRoutes } from "./vitals";
+
 type CreateAppOptions = {
   loadTemplate: () => Promise<string>;
   render: (writable: Writable) => Promise<void>;
@@ -24,6 +26,8 @@ export const createApp = async ({
     await render(reply.raw);
     reply.raw.end(tail);
   });
+
+  registerVitalsRoutes(app, createVitalsStore());
 
   return app;
 };

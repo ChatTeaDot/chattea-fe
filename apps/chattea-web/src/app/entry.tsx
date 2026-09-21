@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { CommunityPage } from "@/pages/community";
 
+import { reportVitals } from "./report-vitals";
+
 const root = document.getElementById("root");
 
 if (!root) {
@@ -12,6 +14,8 @@ if (!root) {
 }
 
 const queryClient = new QueryClient();
+
+reportVitals();
 
 hydrateRoot(
   root,
