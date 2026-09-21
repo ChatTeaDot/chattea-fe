@@ -1,4 +1,6 @@
 import { gql, type TypedDocumentNode } from "@apollo/client";
+import { ApolloProvider as ApolloContextProvider } from "@apollo/client/react";
+import TestRenderer, { act } from "react-test-renderer";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import ApolloProvider from "../src/providers/apollo-provider";
@@ -9,6 +11,8 @@ import {
   setGraphQLSession,
   setGraphQLSessionHandlers,
 } from "../src/shared/graphql";
+
+(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 const secureStore = vi.hoisted(() => ({
   delayReads: false,
@@ -208,10 +212,14 @@ describe("Apollo GraphQL infrastructure", () => {
   it("provides the shared Apollo client", () => {
     const child = "child";
 
-    const element = ApolloProvider({ children: child });
+    let renderer: TestRenderer.ReactTestRenderer | undefined;
+    act(() => {
+      renderer = TestRenderer.create(<ApolloProvider>{child}</ApolloProvider>);
+    });
+    const element = renderer?.root.findByType(ApolloContextProvider);
 
-    expect(element.props.client).toBe(apolloClient);
-    expect(element.props.children).toBe(child);
+    expect(element?.props.client).toBe(apolloClient);
+    expect(element?.props.children).toBe(child);
   });
 
   it("clears cached user data when the session token changes", () => {

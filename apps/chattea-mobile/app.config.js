@@ -89,6 +89,9 @@ module.exports = {
     slug: "chattea",
     scheme: "chattea",
     version: "0.1.0",
+    experiments: {
+      reactCompiler: true,
+    },
     orientation: "portrait",
     userInterfaceStyle: "automatic",
     plugins,
