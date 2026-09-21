@@ -1,17 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
+import { Suspense } from "react";
 
-import { communityTitleQuery } from "../api";
+import { COMMUNITY_FALLBACK } from "@/shared/config/constants";
 
-import { heading } from "./community-page.css";
+import CommunityTitle from "./community-title";
 
-const CommunityPage = () => {
-  const { data: title } = useQuery(communityTitleQuery());
-
-  return (
-    <main>
-      <h1 className={heading}>{title}</h1>
-    </main>
-  );
-};
+const CommunityPage = () => (
+  <main>
+    <Suspense fallback={<p>{COMMUNITY_FALLBACK}</p>}>
+      <CommunityTitle />
+    </Suspense>
+  </main>
+);
 
 export default CommunityPage;

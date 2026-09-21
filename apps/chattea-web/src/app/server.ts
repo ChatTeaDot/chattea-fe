@@ -20,11 +20,11 @@ const app = await createApp({
     const template = await readFile(indexHtmlPath, "utf8");
     return vite.transformIndexHtml(COMMUNITY_PATH, template);
   },
-  render: async (writable) => {
+  render: async (writable, options) => {
     const { renderApp } = (await vite.ssrLoadModule(
       "/src/app/entry-server.tsx",
     )) as typeof import("./entry-server");
-    await renderApp(writable);
+    await renderApp(writable, options);
   },
 });
 
