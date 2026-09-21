@@ -1,11 +1,12 @@
 import { router } from "expo-router";
-import { memo, useCallback } from "react";
+import { memo } from "react";
 import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 
 import {
   getLikesErrorKind,
+  LIKE_GRID_CELL_HEIGHT,
   LikeGridCell,
   useLikes,
   VEIL_PLACEHOLDER_COUNT,
@@ -32,19 +33,20 @@ const LikesScreen = () => {
   const { likes, likeState, sendInterest, refetchLikes } = useLikes();
   const errorKind = likes.error ? getLikesErrorKind(likes.error) : undefined;
   const locked = errorKind === "entitlement";
-  const openPremium = useCallback(() => router.push("/premium"), []);
-  const renderCell = useCallback(
-    ({ item }: { item: { id: string; userName?: string; photos?: { url: string }[] } }) => (
-      <GridCell
-        disabled={likes.loading || likeState.loading}
-        id={item.id}
-        locked={locked}
-        name={item.userName ?? ""}
-        onPress={locked ? openPremium : sendInterest}
-        photoUrl={item.photos?.[0]?.url}
-      />
-    ),
-    [likeState.loading, likes.loading, locked, openPremium, sendInterest],
+  const openPremium = () => router.push("/premium");
+  const renderCell = ({
+    item,
+  }: {
+    item: { id: string; userName?: string; photos?: { url: string }[] };
+  }) => (
+    <GridCell
+      disabled={likes.loading || likeState.loading}
+      id={item.id}
+      locked={locked}
+      name={item.userName ?? ""}
+      onPress={locked ? openPremium : sendInterest}
+      photoUrl={item.photos?.[0]?.url}
+    />
   );
   const empty = likes.loading ? (
     <LoadingState />
@@ -64,6 +66,7 @@ const LikesScreen = () => {
         columnWrapperStyle={styles.columns}
         contentContainerStyle={styles.gridContent}
         data={locked ? VEIL_IDS.map((id) => ({ id })) : (likes.data?.likedMeCandidates ?? [])}
+        estimatedItemSize={LIKE_GRID_CELL_HEIGHT}
         keyExtractor={keyExtractor}
         ListEmptyComponent={locked ? null : empty}
         numColumns={2}

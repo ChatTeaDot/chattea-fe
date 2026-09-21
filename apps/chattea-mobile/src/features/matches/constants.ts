@@ -5,3 +5,4 @@ export const SWIPE_OFFSCREEN = 1.4;
 export const SWIPE_ROTATION = 12;
 export const SWIPE_EXIT_DURATION_MS = 200;
 export const VEIL_PLACEHOLDER_COUNT = 4;
+export const LIKE_GRID_CELL_HEIGHT = 184;

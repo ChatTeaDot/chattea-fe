@@ -1,11 +1,10 @@
-import { useCallback } from "react";
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 import type { RoomRowProps } from "../types";
 
 const RoomRow = ({ id, lastMessage, name, onOpen, unreadCount }: RoomRowProps) => {
-  const open = useCallback(() => onOpen(id), [id, onOpen]);
+  const open = () => onOpen(id);
   return (
     <Pressable
       accessibilityLabel={name}

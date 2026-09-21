@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client/react";
 import { randomUUID } from "expo-crypto";
 import { router } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 
 import { ME_QUERY, type MeData } from "@/features/profile";
@@ -29,7 +29,7 @@ import {
 
 export const useChatRooms = () => {
   const rooms = useQuery<RoomsData>(CHAT_ROOMS_QUERY);
-  const openRoom = useCallback((id: string) => router.push(`/rooms/${id}`), []);
+  const openRoom = (id: string) => router.push(`/rooms/${id}`);
 
   return { rooms, openRoom };
 };
@@ -76,23 +76,20 @@ export const useChatRoom = () => {
     }
   };
 
-  const reportMessage = useCallback(
-    (messageId: string) => {
-      Alert.alert("이 메시지를 신고할까요?", "운영팀이 내용을 확인해요.", [
-        { text: "취소", style: "cancel" },
-        {
-          text: "신고하기",
-          style: "destructive",
-          onPress: () => {
-            void report({ variables: { input: { messageId, reason: "사용자 신고" } } })
-              .then(() => Alert.alert("신고를 접수했어요", "확인 후 필요한 조치를 할게요."))
-              .catch(showActionError);
-          },
+  const reportMessage = (messageId: string) => {
+    Alert.alert("이 메시지를 신고할까요?", "운영팀이 내용을 확인해요.", [
+      { text: "취소", style: "cancel" },
+      {
+        text: "신고하기",
+        style: "destructive",
+        onPress: () => {
+          void report({ variables: { input: { messageId, reason: "사용자 신고" } } })
+            .then(() => Alert.alert("신고를 접수했어요", "확인 후 필요한 조치를 할게요."))
+            .catch(showActionError);
         },
-      ]);
-    },
-    [report],
-  );
+      },
+    ]);
+  };
   const currentUserId = me.data?.me.id;
   const roomName = roomsQuery.data?.chatRooms.find((room) => room.id === roomId)?.name;
 
