@@ -1,0 +1,18 @@
+appId: com.cyjoon.chattea
+---
+- launchApp:
+    clearState: true
+- openLink: "chattea://expo-development-client/?url=http%3A%2F%2Flocalhost%3A8081"
+- extendedWaitUntil:
+    visible: "Continue"
+    timeout: 120000
+- tapOn: "Continue"
+- tapOn:
+    point: "89%,49%"
+- extendedWaitUntil:
+    visible: "매칭"
+    timeout: 120000
+- tapOn: "커뮤니티"
+- extendedWaitUntil:
+    visible: "커뮤니티"
+    timeout: 30000
