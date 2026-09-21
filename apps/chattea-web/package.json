@@ -19,7 +19,8 @@
     "@vanilla-extract/css": "^1.21.2",
     "fastify": "^5.12.4",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "web-vitals": "^6.2.2"
   },
   "devDependencies": {
     "@types/node": "^24.5.2",

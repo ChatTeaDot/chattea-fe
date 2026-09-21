@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import { type PropsWithChildren, useEffect, useRef } from "react";
 
 import { useRevenueCat } from "@/features/billing";
+import { CommunityWebviewPrewarm } from "@/features/community";
 import { usePushNotifications } from "@/features/notifications";
 import { apolloClient } from "@/shared/graphql";
 
@@ -47,6 +48,7 @@ const NativeIntegrationsProvider = ({ children }: PropsWithChildren) => {
     <RevenueCatProvider>
       <PushNotificationsProvider>
         <SessionTerminationCoordinator />
+        <CommunityWebviewPrewarm />
         {children}
       </PushNotificationsProvider>
     </RevenueCatProvider>

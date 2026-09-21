@@ -52,6 +52,7 @@ const mocks = vi.hoisted(() => ({
   queryOptions: [] as (Record<string, unknown> | undefined)[],
   queryRefetch: vi.fn(),
   safeAreas: [] as Record<string, unknown>[],
+  webviews: [] as Record<string, unknown>[],
 }));
 
 const candidate = {
@@ -253,6 +254,7 @@ vi.mock("expo-router", async () => {
   return {
     router: { push: vi.fn(), replace: vi.fn(), back: vi.fn() },
     Stack: { Screen: () => null, Toolbar },
+    useFocusEffect: () => undefined,
     useNavigation: () => ({ setOptions: () => undefined }),
     useLocalSearchParams: () => ({
       "candidate-id": "candidate-1",
@@ -261,6 +263,17 @@ vi.mock("expo-router", async () => {
       "post-id": "post-1",
       "room-id": "room-1",
     }),
+  };
+});
+vi.mock("react-native-webview", async () => {
+  const React = await vi.importActual<typeof import("react")>("react");
+  return {
+    WebView: (props: Record<string, unknown>) => {
+      mocks.webviews.push(props);
+      return React.createElement("iframe", {
+        src: (props.source as { uri: string }).uri,
+      });
+    },
   };
 });
 vi.mock("expo-router/react-navigation", async () => {
@@ -397,7 +410,8 @@ vi.mock("react-native-safe-area-context", async () => {
   };
 });
 vi.mock("react-native-unistyles", async () => {
-  const { colors, radii, sizes, spacing, typography } = await import("../src/theme/constants");
+  const { colors, radii, sizes, spacing, typography } =
+    await import("@chattea/design-system/theme/constants");
   return {
     StyleSheet: {
       create: (factory: (theme: Record<string, unknown>, rt: Record<string, unknown>) => unknown) =>
@@ -461,12 +475,12 @@ beforeEach(() => {
   mocks.queryOptions.length = 0;
   mocks.queryRefetch.mockReset().mockResolvedValue({ data: queryData });
   mocks.safeAreas.length = 0;
+  mocks.webviews.length = 0;
 });
 
 describe("routed native collection screens", () => {
   it.each([
     ["rooms", RoomsScreen],
-    ["community", CommunityScreen],
     ["likes", LikesScreen],
     ["notifications", NotificationsScreen],
     ["comments", CommunityPostScreen],
@@ -486,6 +500,18 @@ describe("routed native collection screens", () => {
     });
     expect((mocks.legendLists[0]?.ListHeaderComponentStyle as unknown[])[0]).toEqual({
       paddingBottom: 24,
+    });
+  });
+
+  it("renders community through a webview pointed at the community web url", () => {
+    renderScreen(CommunityScreen);
+
+    expect(mocks.webviews).toHaveLength(1);
+    expect(mocks.webviews[0]).toMatchObject({
+      onLoadEnd: expect.any(Function),
+      onLoadStart: expect.any(Function),
+      onMessage: expect.any(Function),
+      source: { uri: expect.stringContaining("/community") },
     });
   });
 

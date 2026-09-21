@@ -3,3 +3,4 @@ android/
 dist/
 node_modules/
 .expo/
+.rnstorybook/storybook.requires.ts

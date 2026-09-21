@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client/react";
-import { router } from "expo-router";
-import { useCallback, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
 
 import { useRouteParam } from "@/shared/hooks";
@@ -18,12 +18,18 @@ import {
   REPORT_COMMUNITY_COMMENT_MUTATION,
   REPORT_COMMUNITY_POST_MUTATION,
 } from "./api";
+import { WEBVIEW_TRACE_SETTLE_MS } from "./constants";
 import {
   createCommunityCommentDraft,
   createCommunityPostDraft,
   toCreateCommunityCommentVariables,
   toCreateCommunityPostVariables,
 } from "./utils/idempotency";
+import {
+  createWebviewTrace,
+  parseVitalsMessage,
+  type WebviewTrace,
+} from "./utils/webview-trace";
 
 export const useCommunityPosts = () => {
   const posts = useQuery<PostsData>(COMMUNITY_POSTS_QUERY);
@@ -112,6 +118,81 @@ export const useCommunityPost = () => {
     reportPost,
     reportCommentById,
   };
+};
+
+const webviewTraceTags = {
+  env: process.env.EXPO_PUBLIC_SERVICE_ENV ?? "development",
+  release: process.env.EXPO_PUBLIC_SERVICE_VERSION ?? "dev",
+  screen: "community",
+};
+
+export const useCommunityWebviewTrace = () => {
+  const traceRef = useRef<WebviewTrace | null>(null);
+  const loadedOnceRef = useRef(false);
+  const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const getTrace = useCallback(() => {
+    if (!traceRef.current) {
+      traceRef.current = createWebviewTrace(webviewTraceTags);
+      traceRef.current.mark("tab-focus");
+    }
+    return traceRef.current;
+  }, []);
+
+  const scheduleClose = useCallback(() => {
+    if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
+    settleTimerRef.current = setTimeout(
+      () => traceRef.current?.close(),
+      WEBVIEW_TRACE_SETTLE_MS,
+    );
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      traceRef.current?.close();
+      traceRef.current = createWebviewTrace(webviewTraceTags);
+      traceRef.current.mark("tab-focus");
+      if (loadedOnceRef.current) {
+        traceRef.current.mark("webview-ready");
+        scheduleClose();
+      }
+      return () => traceRef.current?.close();
+    }, [scheduleClose]),
+  );
+
+  useEffect(() => {
+    getTrace().mark("screen-mount");
+    return () => {
+      if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
+    };
+  }, [getTrace]);
+
+  const onMount = useCallback(() => {
+    getTrace().mark("webview-mount");
+  }, [getTrace]);
+
+  const onLoadStart = useCallback(() => {
+    getTrace().mark("load-start");
+  }, [getTrace]);
+
+  const onLoadEnd = useCallback(() => {
+    getTrace().mark("load-end");
+    loadedOnceRef.current = true;
+    scheduleClose();
+  }, [getTrace, scheduleClose]);
+
+  const onMessage = useCallback(
+    (data: string) => {
+      const vital = parseVitalsMessage(data);
+      if (!vital) return;
+      const trace = getTrace();
+      trace.mark(`web:${vital.name}`);
+      if (vital.name === "LCP") trace.close();
+    },
+    [getTrace],
+  );
+
+  return { onLoadEnd, onLoadStart, onMessage, onMount };
 };
 
 export const useCommunityPostDraft = () => {
