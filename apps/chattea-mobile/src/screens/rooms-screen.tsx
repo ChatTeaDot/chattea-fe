@@ -1,9 +1,13 @@
-import { memo, useCallback } from "react";
+import { memo } from "react";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { type RoomsData, useChatRooms } from "@/features/chat";
-import { RoomRow as RoomRowComponent } from "@/features/chat";
+import {
+  ROOM_ROW_ESTIMATED_HEIGHT,
+  RoomRow as RoomRowComponent,
+  type RoomsData,
+  useChatRooms,
+} from "@/features/chat";
 import {
   AppButton,
   EmptyState,
@@ -22,17 +26,14 @@ const RoomsScreen = () => {
   const { rooms, openRoom } = useChatRooms();
   const roomList = rooms.data?.chatRooms ?? [];
   const firstUnreadId = roomList.find((room) => room.unreadCount > 0)?.id;
-  const renderRoom = useCallback(
-    ({ item }: { item: NonNullable<RoomsData["chatRooms"]>[number] }) => (
-      <RoomRow
-        id={item.id}
-        lastMessage={item.lastMessage}
-        name={item.name}
-        onOpen={openRoom}
-        unreadCount={item.unreadCount}
-      />
-    ),
-    [openRoom],
+  const renderRoom = ({ item }: { item: NonNullable<RoomsData["chatRooms"]>[number] }) => (
+    <RoomRow
+      id={item.id}
+      lastMessage={item.lastMessage}
+      name={item.name}
+      onOpen={openRoom}
+      unreadCount={item.unreadCount}
+    />
   );
   const empty = rooms.loading ? (
     <LoadingState />
@@ -50,6 +51,7 @@ const RoomsScreen = () => {
       <NativeList
         contentContainerStyle={styles.listContent}
         data={roomList}
+        estimatedItemSize={ROOM_ROW_ESTIMATED_HEIGHT}
         keyExtractor={keyExtractor}
         ListEmptyComponent={empty}
         renderItem={renderRoom}

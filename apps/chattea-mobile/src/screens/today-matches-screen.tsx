@@ -1,6 +1,5 @@
 import { router, Stack } from "expo-router";
 import { Bell, Sparkles } from "lucide-react-native";
-import { useCallback } from "react";
 import { Pressable, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
@@ -41,24 +40,22 @@ const AndroidHeaderActions = () => {
 
 const TodayMatchesScreen = () => {
   const { candidates, candidate, actionPending, act, undoLast } = useTodayMatches();
-  const handleSwipe = useCallback(
-    (direction: "left" | "right") => void act(direction === "right" ? "like" : "skip"),
-    [act],
-  );
-  const openDetail = useCallback(
-    () => candidate && router.push(`/candidate/${candidate.id}`),
-    [candidate],
-  );
+  const candidatesLoading = candidates.loading;
+  const candidatesError = candidates.error;
+  const refetchCandidates = candidates.refetch;
+  const handleSwipe = (direction: "left" | "right") =>
+    void act(direction === "right" ? "like" : "skip");
+  const openDetail = () => candidate && router.push(`/candidate/${candidate.id}`);
 
   return (
     <>
       <NativeScreen>
         <GestureHandlerRootView style={styles.stage}>
-          {candidates.loading ? (
+          {candidatesLoading ? (
             <View style={styles.placeholder}>
               <LoadingState />
             </View>
-          ) : candidates.error ? (
+          ) : candidatesError ? (
             <ErrorState />
           ) : candidate ? (
             <SwipeCard
@@ -76,7 +73,7 @@ const TodayMatchesScreen = () => {
               />
               <NativeButton
                 label="다시 불러오기"
-                onPress={() => void candidates.refetch()}
+                onPress={() => void refetchCandidates()}
                 fullWidth
               />
             </View>

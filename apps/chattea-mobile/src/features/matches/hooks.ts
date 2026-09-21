@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client/react";
 import { router } from "expo-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
 
 import { CONSUMABLE_BALANCE_QUERY, type ConsumableBalance } from "@/features/billing";
@@ -23,6 +23,114 @@ import {
 } from "./api";
 import { MAX_TIMER_DELAY_MS } from "./constants";
 import { getLikesErrorKind, openMatchSheet, showMatchActionError } from "./utils";
+
+type UserIdVariables = { variables: { userId: string } };
+
+type LikeMutate = (
+  options: UserIdVariables,
+) => Promise<{ data?: { likeUser?: InteractionResult } | null }>;
+type SkipMutate = (options: UserIdVariables) => Promise<unknown>;
+type SuperLikeMutate = (
+  options: UserIdVariables,
+) => Promise<{ data?: { superLikeUser?: InteractionResult } | null }>;
+
+type MatchActionKind = "like" | "skip" | "superlike";
+
+const performMatchAction = async (
+  kind: MatchActionKind,
+  candidate: MatchCandidate,
+  mutations: { like: LikeMutate; skip: SkipMutate; superLike: SuperLikeMutate },
+  refresh: () => Promise<unknown>,
+) => {
+  try {
+    if (kind === "skip") {
+      await mutations.skip({ variables: { userId: candidate.id } });
+    } else {
+      const result =
+        kind === "like"
+          ? (await mutations.like({ variables: { userId: candidate.id } })).data?.likeUser
+          : (await mutations.superLike({ variables: { userId: candidate.id } })).data
+              ?.superLikeUser;
+      if (result?.matched && result.roomId) {
+        openMatchSheet(candidate, result.roomId);
+      }
+    }
+    await refresh();
+  } catch (error) {
+    showMatchActionError(error);
+  }
+};
+
+const performUndo = async (
+  undo: () => Promise<{ data?: { undoLastMatchAction: { reverted: boolean } } | null }>,
+  refresh: () => Promise<unknown>,
+) => {
+  try {
+    const response = await undo();
+    if (!response.data?.undoLastMatchAction.reverted) {
+      Alert.alert("되돌릴 선택이 없어요", "새로운 인연을 살펴봐 주세요.");
+      return;
+    }
+    await refresh();
+  } catch (error) {
+    showMatchActionError(error);
+  }
+};
+
+const performBoostActivation = async (
+  boost: () => Promise<{ data?: ActivateBoostData | null }>,
+) => {
+  try {
+    const response = await boost();
+    const activation = response.data?.activateBoost;
+    if (
+      !activation ||
+      !Number.isFinite(Date.parse(activation.activeUntil)) ||
+      !Number.isInteger(activation.remainingBoostCredits) ||
+      activation.remainingBoostCredits < 0
+    ) {
+      showMatchActionError(new Error("BOOST_ACTIVATION_EMPTY_RESPONSE"));
+      return;
+    }
+    Alert.alert(
+      "부스트를 시작했어요",
+      `${formatTime(activation.activeUntil)}까지 더 많은 사람에게 보여드릴게요.`,
+    );
+  } catch (error) {
+    showMatchActionError(error);
+  }
+};
+
+const performSendInterest = async (
+  candidateId: string,
+  like: LikeMutate,
+  findCandidate: (id: string) => MatchCandidate | undefined,
+  refresh: () => Promise<unknown>,
+) => {
+  try {
+    const response = await like({ variables: { userId: candidateId } });
+    const result = response.data?.likeUser;
+    const target = findCandidate(candidateId);
+    if (result?.matched && result.roomId && target) openMatchSheet(target, result.roomId);
+    await refresh();
+  } catch (error) {
+    showMatchActionError(error);
+  }
+};
+
+const performSendLike = async (candidate: MatchCandidate, like: LikeMutate) => {
+  try {
+    const response = await like({ variables: { userId: candidate.id } });
+    const result = response.data?.likeUser;
+    if (result?.matched && result.roomId) {
+      openMatchSheet(candidate, result.roomId);
+    } else {
+      router.back();
+    }
+  } catch (error) {
+    showMatchActionError(error);
+  }
+};
 
 export const useTodayMatches = () => {
   const candidates = useQuery<CandidatesData>(MATCH_CANDIDATES_QUERY, {
@@ -94,65 +202,19 @@ export const useTodayMatches = () => {
     return () => clearTimeout(timer);
   }, [activeBoostTimestamp, boostActive, boostClock]);
 
-  const refresh = () => candidates.refetch();
-  const act = async (kind: "like" | "skip" | "superlike") => {
+  const act = async (kind: MatchActionKind) => {
     if (!candidate) return;
-    await runExclusiveAction(actionGuard, async () => {
-      try {
-        if (kind === "skip") {
-          await skip({ variables: { userId: candidate.id } });
-        } else {
-          const result =
-            kind === "like"
-              ? (await like({ variables: { userId: candidate.id } })).data?.likeUser
-              : (await superLike({ variables: { userId: candidate.id } })).data?.superLikeUser;
-          if (result?.matched && result.roomId) {
-            openMatchSheet(candidate, result.roomId);
-          }
-        }
-        await refresh();
-      } catch (error) {
-        showMatchActionError(error);
-      }
-    });
+    await runExclusiveAction(actionGuard, () =>
+      performMatchAction(kind, candidate, { like, skip, superLike }, candidates.refetch),
+    );
   };
 
   const undoLast = async () => {
-    await runExclusiveAction(actionGuard, async () => {
-      try {
-        const response = await undo();
-        if (!response.data?.undoLastMatchAction.reverted) {
-          Alert.alert("되돌릴 선택이 없어요", "새로운 인연을 살펴봐 주세요.");
-          return;
-        }
-        await refresh();
-      } catch (error) {
-        showMatchActionError(error);
-      }
-    });
+    await runExclusiveAction(actionGuard, () => performUndo(undo, candidates.refetch));
   };
 
   const activateBoost = async () => {
-    await runExclusiveAction(actionGuard, async () => {
-      try {
-        const response = await boost();
-        const activation = response.data?.activateBoost;
-        if (
-          !activation ||
-          !Number.isFinite(Date.parse(activation.activeUntil)) ||
-          !Number.isInteger(activation.remainingBoostCredits) ||
-          activation.remainingBoostCredits < 0
-        ) {
-          throw new Error("BOOST_ACTIVATION_EMPTY_RESPONSE");
-        }
-        Alert.alert(
-          "부스트를 시작했어요",
-          `${formatTime(activation.activeUntil)}까지 더 많은 사람에게 보여드릴게요.`,
-        );
-      } catch (error) {
-        showMatchActionError(error);
-      }
-    });
+    await runExclusiveAction(actionGuard, () => performBoostActivation(boost));
   };
 
   return {
@@ -174,26 +236,18 @@ export const useLikes = () => {
   });
   const [like, likeState] = useMutation<{ likeUser: InteractionResult }>(LIKE_USER_MUTATION);
   const actionGuard = useRef(false);
-  const refetchLikes = likes.refetch;
-  const likesData = useMemo(() => likes.data?.likedMeCandidates ?? [], [likes.data]);
-  const sendInterest = useCallback(
-    async (candidateId: string) => {
-      await runExclusiveAction(actionGuard, async () => {
-        try {
-          const response = await like({ variables: { userId: candidateId } });
-          const result = response.data?.likeUser;
-          const target = likesData.find((item) => item.id === candidateId);
-          if (result?.matched && result.roomId && target) openMatchSheet(target, result.roomId);
-          await refetchLikes();
-        } catch (error) {
-          showMatchActionError(error);
-        }
-      });
-    },
-    [like, likesData, refetchLikes],
-  );
+  const likesDataRef = useRef(likes.data?.likedMeCandidates ?? []);
+  useEffect(() => {
+    likesDataRef.current = likes.data?.likedMeCandidates ?? [];
+  });
+  const findCandidate = (id: string) => likesDataRef.current.find((item) => item.id === id);
+  const sendInterest = async (candidateId: string) => {
+    await runExclusiveAction(actionGuard, () =>
+      performSendInterest(candidateId, like, findCandidate, likes.refetch),
+    );
+  };
 
-  return { likes, likeState, sendInterest, refetchLikes };
+  return { likes, likeState, sendInterest, refetchLikes: likes.refetch };
 };
 
 export const useCandidateDetail = () => {
@@ -213,22 +267,10 @@ export const useCandidateDetail = () => {
     ...(liked.data?.likedMeCandidates ?? []),
   ].find((item) => item.id === candidateId);
 
-  const sendLike = useCallback(async () => {
+  const sendLike = async () => {
     if (!candidate) return;
-    await runExclusiveAction(actionGuard, async () => {
-      try {
-        const response = await like({ variables: { userId: candidate.id } });
-        const result = response.data?.likeUser;
-        if (result?.matched && result.roomId) {
-          openMatchSheet(candidate, result.roomId);
-        } else {
-          router.back();
-        }
-      } catch (error) {
-        showMatchActionError(error);
-      }
-    });
-  }, [candidate, like]);
+    await runExclusiveAction(actionGuard, () => performSendLike(candidate, like));
+  };
 
   return {
     candidate,

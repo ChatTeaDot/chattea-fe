@@ -1,11 +1,10 @@
-import { useCallback } from "react";
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 import type { NewMatchAvatarProps } from "../types";
 
 const NewMatchAvatar = ({ id, name, onPress }: NewMatchAvatarProps) => {
-  const handlePress = useCallback(() => onPress(id), [id, onPress]);
+  const handlePress = () => onPress(id);
   return (
     <Pressable
       accessibilityLabel={`${name}님과 대화하기`}
