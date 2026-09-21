@@ -14,10 +14,10 @@ describe("daangn meetup frontend stack", () => {
   });
 
   it("reads community data with tanstack query", () => {
-    const source = readSrc("src/pages/community/ui/community-page.tsx");
+    const source = readSrc("src/pages/community/ui/community-title.tsx");
 
     expect(source).toContain('from "@tanstack/react-query"');
-    expect(source).toContain("useQuery");
+    expect(source).toContain("useSuspenseQuery");
   });
 
   it("streams ssr with fastify and react-dom/server", () => {

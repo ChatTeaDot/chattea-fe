@@ -6,9 +6,13 @@ import { COMMUNITY_PATH } from "@/shared/config/constants";
 
 import { createVitalsStore, registerVitalsRoutes } from "./vitals";
 
+type RenderOptions = {
+  onShellReady?: () => void;
+};
+
 type CreateAppOptions = {
   loadTemplate: () => Promise<string>;
-  render: (writable: Writable) => Promise<void>;
+  render: (writable: Writable, options?: RenderOptions) => Promise<void>;
 };
 
 export const createApp = async ({
@@ -21,9 +25,23 @@ export const createApp = async ({
 
   app.get(COMMUNITY_PATH, async (_request, reply) => {
     reply.hijack();
-    reply.raw.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    const startedAt = performance.now();
+    reply.raw.writeHead(200, {
+      "content-type": "text/html; charset=utf-8",
+      trailer: "server-timing",
+    });
     reply.raw.write(head);
-    await render(reply.raw);
+    let shellMs = 0;
+    await render(reply.raw, {
+      onShellReady: () => {
+        shellMs = performance.now() - startedAt;
+      },
+    });
+    if (typeof reply.raw.addTrailers === "function") {
+      reply.raw.addTrailers({
+        "server-timing": `shell;dur=${shellMs.toFixed(1)}`,
+      });
+    }
     reply.raw.end(tail);
   });
 
