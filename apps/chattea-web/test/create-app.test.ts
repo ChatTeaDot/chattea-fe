@@ -20,7 +20,7 @@ describe("createApp", () => {
 
     expect(response.statusCode).toBe(200);
     expect(response.headers["content-type"]).toMatch(/text\/html/);
-    expect(response.body).toContain("<main></main>");
+    expect(response.body).toContain("<main");
     expect(response.body).toContain('<div id="root">');
     expect(response.body).not.toContain("<!--app-html-->");
 

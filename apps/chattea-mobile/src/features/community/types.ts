@@ -1,9 +1,7 @@
 import type { CommunityPost } from "./api/schemas";
-import type { COMMUNITY_CATEGORIES, COMMUNITY_FILTERS } from "./constants";
+import type { COMMUNITY_CATEGORIES } from "./constants";
 
 export type CommunityCategory = (typeof COMMUNITY_CATEGORIES)[number];
-
-export type CommunityFilter = (typeof COMMUNITY_FILTERS)[number];
 
 export type KeyFactory = () => string;
 
@@ -26,11 +24,6 @@ export type CommentRowProps = {
   onReport: (id: string) => void;
 };
 
-export type PostRowProps = Omit<CommunityPost, "id"> & {
-  id: string;
-  onOpen: (id: string) => void;
-};
-
 export type PostDetailCardProps = { post: CommunityPost };
 
 export type ChipRowProps<ItemT extends string> = {
@@ -45,5 +38,3 @@ export type CommentInputBarProps = {
   onSubmit: () => void;
   value: string;
 };
-
-export type WriteFabProps = { onPress: () => void };
