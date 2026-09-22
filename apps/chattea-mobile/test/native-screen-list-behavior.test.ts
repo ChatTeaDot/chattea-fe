@@ -364,6 +364,10 @@ vi.mock("react-native", async () => {
   };
   return {
     Alert: { alert: mocks.alert },
+    AppState: {
+      currentState: "active",
+      addEventListener: () => ({ remove: () => undefined }),
+    },
     KeyboardAvoidingView: container("main"),
     Platform: { OS: "ios" },
     Pressable: ({

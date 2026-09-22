@@ -1,4 +1,5 @@
-import { type PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
+import { useSegments } from "expo-router";
+import { type PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AppState, Platform } from "react-native";
 
 import type { RevenueCatState } from "@/features/billing";
@@ -12,9 +13,13 @@ import {
 
 import { useAuthenticatedUserId } from "./authenticated-user";
 import { INITIAL_BILLING_STATE } from "./constants";
+import { measureProviderInit, useProviderInitMetric } from "./utils/provider-init-metrics";
 
 const RevenueCatProvider = ({ children }: PropsWithChildren) => {
+  useProviderInitMetric("revenuecat");
   const userId = useAuthenticatedUserId();
+  const segments = useSegments() as string[];
+  const activated = useRef(false);
   const [state, setState] = useState<RevenueCatState>(INITIAL_BILLING_STATE);
   const [lifecycle] = useState(() =>
     createRevenueCatLifecycle({
@@ -31,8 +36,10 @@ const RevenueCatProvider = ({ children }: PropsWithChildren) => {
   );
 
   useEffect(() => {
-    void lifecycle.syncUser(userId);
-  }, [lifecycle, userId]);
+    if (!activated.current && !segments.includes("premium")) return;
+    activated.current = true;
+    void measureProviderInit("revenuecat:sync", () => lifecycle.syncUser(userId));
+  }, [lifecycle, segments, userId]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextState) => {

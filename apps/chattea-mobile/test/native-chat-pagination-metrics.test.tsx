@@ -35,6 +35,8 @@ vi.mock("@apollo/client/react", () => ({
         fetchMore: mocks.fetchMore,
         loading: false,
         refetch: vi.fn(),
+        startPolling: vi.fn(),
+        stopPolling: vi.fn(),
       };
     }
     return { data: undefined };
@@ -44,8 +46,11 @@ vi.mock("@/features/profile", () => ({ ME_QUERY: mocks.meQuery }));
 vi.mock("@/shared/hooks", () => ({ useRouteParam: () => "room-1" }));
 vi.mock("@/shared/lib", () => ({ showActionError: vi.fn() }));
 vi.mock("expo-crypto", () => ({ randomUUID: () => "draft-key" }));
-vi.mock("expo-router", () => ({ router: { push: vi.fn() } }));
-vi.mock("react-native", () => ({ Alert: { alert: vi.fn() } }));
+vi.mock("expo-router", () => ({ router: { push: vi.fn() }, useFocusEffect: vi.fn() }));
+vi.mock("react-native", () => ({
+  Alert: { alert: vi.fn() },
+  AppState: { currentState: "active", addEventListener: () => ({ remove: vi.fn() }) },
+}));
 
 const message = (id: string, createdAt: string): ChatMessage => ({
   createdAt,
