@@ -31,13 +31,6 @@ import {
   type WebviewTrace,
 } from "./utils/webview-trace";
 
-export const useCommunityPosts = () => {
-  const posts = useQuery<PostsData>(COMMUNITY_POSTS_QUERY);
-  const openPost = useCallback((id: string) => router.push(`/community/${id}`), []);
-
-  return { posts, openPost };
-};
-
 export const useCommunityPost = () => {
   const postId = useRouteParam("post-id");
   const posts = useQuery<PostsData>(COMMUNITY_POSTS_QUERY);
