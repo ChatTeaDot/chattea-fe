@@ -2,7 +2,7 @@ import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import { router } from "expo-router";
 import { type PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
-import { AppState, Platform } from "react-native";
+import { AppState, InteractionManager, Platform } from "react-native";
 
 import {
   createPushRegistrationLifecycle,
@@ -16,6 +16,7 @@ import { type PushRegistrationState } from "@/features/notifications";
 
 import { useAuthenticatedUserId } from "./authenticated-user";
 import { INITIAL_PUSH_STATE } from "./constants";
+import { measureProviderInit, useProviderInitMetric } from "./utils/provider-init-metrics";
 
 const getProjectId = (): string | null => {
   const extra = Constants.expoConfig?.extra;
@@ -32,6 +33,7 @@ const getProjectId = (): string | null => {
 };
 
 const PushNotificationsProvider = ({ children }: PropsWithChildren) => {
+  useProviderInitMetric("push-notifications");
   const userId = useAuthenticatedUserId();
   const notificationNavigation = useNotificationNavigation();
   const [state, setState] = useState<PushRegistrationState>(INITIAL_PUSH_STATE);
@@ -76,7 +78,11 @@ const PushNotificationsProvider = ({ children }: PropsWithChildren) => {
         shouldShowList: true,
       }),
     });
-    void lifecycle.start(userId).catch(() => undefined);
+    const registration = InteractionManager.runAfterInteractions(() => {
+      void measureProviderInit("push-notifications:register", () => lifecycle.start(userId)).catch(
+        () => undefined,
+      );
+    });
 
     const openResponse = (response: Notifications.NotificationResponse) => {
       const route = notificationNavigation.handleRuntime(response);
@@ -92,6 +98,7 @@ const PushNotificationsProvider = ({ children }: PropsWithChildren) => {
     });
 
     return () => {
+      registration.cancel();
       appStateSubscription.remove();
       responseSubscription.remove();
       tokenSubscription.remove();

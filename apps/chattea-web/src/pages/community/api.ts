@@ -2,6 +2,7 @@ import { queryOptions } from "@tanstack/react-query";
 
 import { API_GRAPHQL_PATH } from "@/shared/config/constants";
 
+import { requestAuthRefresh } from "./bridge";
 import { COMMUNITY_POSTS_STALE_TIME_MS } from "./constants";
 import type { CommunityPost } from "./types";
 
@@ -50,13 +51,23 @@ export const fetchCommunityPosts = async ({
 const clientAuthorization = () =>
   typeof window === "undefined" ? undefined : window.__CHATTEA_AUTH__?.authorization;
 
+const fetchCommunityPostsForClient = () =>
+  fetchCommunityPosts({
+    authorization: clientAuthorization(),
+    endpoint: API_GRAPHQL_PATH,
+  });
+
 export const communityPostsQuery = () =>
   queryOptions({
     queryKey: COMMUNITY_POSTS_QUERY_KEY,
     staleTime: COMMUNITY_POSTS_STALE_TIME_MS,
-    queryFn: () =>
-      fetchCommunityPosts({
-        authorization: clientAuthorization(),
-        endpoint: API_GRAPHQL_PATH,
-      }),
+    queryFn: async (): Promise<CommunityPost[]> => {
+      try {
+        return await fetchCommunityPostsForClient();
+      } catch (error) {
+        if (!(error instanceof Error) || error.message !== "COMMUNITY_POSTS_401") throw error;
+        if (!(await requestAuthRefresh())) throw error;
+        return fetchCommunityPostsForClient();
+      }
+    },
   });

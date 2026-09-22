@@ -16,11 +16,13 @@ import { ME_QUERY } from "@/features/profile";
 import AuthenticatedUserProvider from "./authenticated-user";
 import { PUBLIC_ROOTS } from "./constants";
 import { useSession } from "./session-provider";
+import { useProviderInitMetric } from "./utils/provider-init-metrics";
 import { getNativeSessionDestination } from "./utils/session-routing";
 
 type MeData = { me: CurrentUser };
 
 const NativeSessionGate = ({ children }: PropsWithChildren) => {
+  useProviderInitMetric("session-gate");
   const { hydrated, requestSessionTermination, session } = useSession();
   const segments = useSegments() as string[];
   const user = useQuery<MeData>(ME_QUERY, {

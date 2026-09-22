@@ -1,8 +1,8 @@
 import { useMutation, useQuery } from "@apollo/client/react";
 import { randomUUID } from "expo-crypto";
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import { Alert, AppState } from "react-native";
 
 import { ME_QUERY, type MeData } from "@/features/profile";
 import { useRouteParam } from "@/shared/hooks";
@@ -26,6 +26,12 @@ import {
   normalizeMessageDraft,
   toSendChatMessageVariables,
 } from "./utils/message-policy";
+import {
+  createOptimisticChatMessage,
+  dedupeChatMessages,
+  isChatPollingEnabled,
+  mergeChatMessage,
+} from "./utils/message-sync";
 
 export const useChatRooms = () => {
   const rooms = useQuery<RoomsData>(CHAT_ROOMS_QUERY);
@@ -41,13 +47,14 @@ export const useChatRoom = () => {
   const messages = useQuery<MessagesData>(CHAT_MESSAGES_QUERY, {
     skip: !roomId,
     variables: { input: { roomId, first: CHAT_PAGE_SIZE } },
-    pollInterval: CHAT_POLL_INTERVAL_MS,
   });
   const [markRead] = useMutation<{ markChatRoomRead: boolean }>(MARK_ROOM_READ_MUTATION);
   const [send, sendState] = useMutation<{ sendChatMessage: ChatMessage }>(SEND_MESSAGE_MUTATION);
   const [report] = useMutation<{ reportChatMessage: boolean }>(REPORT_MESSAGE_MUTATION);
   const [draft, setDraft] = useState(() => createChatMessageDraft(randomUUID));
   const [lastSentRoomId, setLastSentRoomId] = useState<string | null>(null);
+  const [focused, setFocused] = useState(false);
+  const [appState, setAppState] = useState(AppState.currentState);
   const messageTextLimit = getMessageTextLimit(
     hasConversationStarted(
       messages.data?.chatMessages.length ?? 0,
@@ -55,6 +62,29 @@ export const useChatRoom = () => {
     ),
   );
   const messageDraft = normalizeMessageDraft(draft.text, messageTextLimit);
+
+  useFocusEffect(
+    useCallback(() => {
+      setFocused(true);
+      return () => setFocused(false);
+    }, []),
+  );
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", setAppState);
+    return () => subscription.remove();
+  }, []);
+
+  const { refetch, startPolling, stopPolling } = messages;
+  useEffect(() => {
+    if (!roomId || !isChatPollingEnabled(appState, focused)) {
+      stopPolling();
+      return;
+    }
+    void refetch();
+    startPolling(CHAT_POLL_INTERVAL_MS);
+    return () => stopPolling();
+  }, [appState, focused, refetch, roomId, startPolling, stopPolling]);
 
   useEffect(() => {
     if (roomId) void markRead({ variables: { input: { roomId } } });
@@ -64,8 +94,29 @@ export const useChatRoom = () => {
     if (!roomId || !messageDraft) return;
     const variables = toSendChatMessageVariables(roomId, draft, messageTextLimit);
     const submittedKey = draft.idempotencyKey;
+    const optimistic = createOptimisticChatMessage(
+      roomId,
+      draft,
+      messageTextLimit,
+      currentUserId ?? null,
+    );
     try {
-      await send({ variables });
+      await send({
+        optimisticResponse: { sendChatMessage: optimistic },
+        update: (cache, { data }) => {
+          const message = data?.sendChatMessage;
+          if (!message) return;
+          cache.updateQuery<MessagesData>(
+            {
+              query: CHAT_MESSAGES_QUERY,
+              variables: { input: { first: CHAT_PAGE_SIZE, roomId } },
+            },
+            (existing) =>
+              existing && { chatMessages: mergeChatMessage(existing.chatMessages, message) },
+          );
+        },
+        variables,
+      });
       setLastSentRoomId(roomId);
       setDraft((current) =>
         current.idempotencyKey === submittedKey ? createChatMessageDraft(randomUUID) : current,
@@ -92,9 +143,11 @@ export const useChatRoom = () => {
   };
   const currentUserId = me.data?.me.id;
   const roomName = roomsQuery.data?.chatRooms.find((room) => room.id === roomId)?.name;
+  const messageList = dedupeChatMessages(messages.data?.chatMessages ?? []);
 
   return {
     messages,
+    messageList,
     roomName,
     draft,
     setDraft,
