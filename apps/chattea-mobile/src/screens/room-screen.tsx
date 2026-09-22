@@ -7,7 +7,9 @@ import { StyleSheet } from "react-native-unistyles";
 
 import type { ChatMessage } from "@/features/chat";
 import {
+  CHAT_START_REACHED_THRESHOLD,
   MessageComposer,
+  MessagePageLoading,
   MessageRow as MessageRowComponent,
   RoomMenuButton,
   updateChatMessageDraft,
@@ -30,6 +32,9 @@ const RoomScreen = () => {
   const insets = useSafeAreaInsets();
   const {
     messages,
+    messageList,
+    loadingOlder,
+    loadOlderMessages,
     roomName,
     draft,
     setDraft,
@@ -39,7 +44,6 @@ const RoomScreen = () => {
     sendMessage,
     reportMessage,
     currentUserId,
-    messageList,
   } = useChatRoom();
   const lastMineId = [...messageList].reverse().find((m) => m.senderUserId === currentUserId)?.id;
   const lastOtherId = [...messageList]
@@ -92,7 +96,11 @@ const RoomScreen = () => {
         getItemType={getItemType}
         keyExtractor={keyExtractor}
         ListEmptyComponent={empty}
+        ListHeaderComponent={loadingOlder ? <MessagePageLoading /> : undefined}
         maintainScrollAtEnd
+        maintainVisibleContentPosition
+        onStartReached={() => void loadOlderMessages()}
+        onStartReachedThreshold={CHAT_START_REACHED_THRESHOLD}
         renderItem={renderMessage}
       />
       <KeyboardStickyView offset={{ opened: insets.bottom }}>

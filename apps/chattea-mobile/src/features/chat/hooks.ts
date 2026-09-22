@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client/react";
 import { randomUUID } from "expo-crypto";
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Alert, AppState } from "react-native";
 
 import { ME_QUERY, type MeData } from "@/features/profile";
@@ -23,12 +23,12 @@ import {
   createChatMessageDraft,
   getMessageTextLimit,
   hasConversationStarted,
+  mergeChatMessages,
   normalizeMessageDraft,
   toSendChatMessageVariables,
-} from "./utils/message-policy";
+} from "./utils";
 import {
   createOptimisticChatMessage,
-  dedupeChatMessages,
   isChatPollingEnabled,
   mergeChatMessage,
 } from "./utils/message-sync";
@@ -53,8 +53,17 @@ export const useChatRoom = () => {
   const [report] = useMutation<{ reportChatMessage: boolean }>(REPORT_MESSAGE_MUTATION);
   const [draft, setDraft] = useState(() => createChatMessageDraft(randomUUID));
   const [lastSentRoomId, setLastSentRoomId] = useState<string | null>(null);
+  const [history, setHistory] = useState({ roomId, messages: [] as ChatMessage[], loading: false });
+  const pagination = useRef({ hasMore: true, loading: false, roomId });
   const [focused, setFocused] = useState(false);
   const [appState, setAppState] = useState(AppState.currentState);
+  const newestMessages = messages.data?.chatMessages;
+  const messageList = useMemo(
+    () =>
+      mergeChatMessages(history.roomId === roomId ? history.messages : [], newestMessages ?? []),
+    [history, newestMessages, roomId],
+  );
+  const loadingOlder = history.roomId === roomId && history.loading;
   const messageTextLimit = getMessageTextLimit(
     hasConversationStarted(
       messages.data?.chatMessages.length ?? 0,
@@ -62,6 +71,38 @@ export const useChatRoom = () => {
     ),
   );
   const messageDraft = normalizeMessageDraft(draft.text, messageTextLimit);
+
+  const loadOlderMessages = async () => {
+    const oldest = messageList[0];
+    if (!roomId || !oldest) return;
+    if (pagination.current.roomId !== roomId) {
+      pagination.current = { hasMore: true, loading: false, roomId };
+    }
+    const state = pagination.current;
+    if (state.loading || !state.hasMore) return;
+    if ((newestMessages?.length ?? 0) < CHAT_PAGE_SIZE) {
+      state.hasMore = false;
+      return;
+    }
+    state.loading = true;
+    setHistory((prev) => ({ ...prev, loading: true }));
+    try {
+      const result = await messages.fetchMore({
+        variables: { input: { roomId, first: CHAT_PAGE_SIZE, before: oldest.id } },
+      });
+      const fetched = result.data?.chatMessages ?? [];
+      if (pagination.current.roomId !== roomId) return;
+      if (fetched.length < CHAT_PAGE_SIZE) pagination.current.hasMore = false;
+      setHistory((prev) =>
+        prev.roomId === roomId
+          ? { ...prev, messages: mergeChatMessages(fetched, prev.messages) }
+          : prev,
+      );
+    } finally {
+      state.loading = false;
+      setHistory((prev) => (prev.roomId === roomId ? { ...prev, loading: false } : prev));
+    }
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -143,11 +184,12 @@ export const useChatRoom = () => {
   };
   const currentUserId = me.data?.me.id;
   const roomName = roomsQuery.data?.chatRooms.find((room) => room.id === roomId)?.name;
-  const messageList = dedupeChatMessages(messages.data?.chatMessages ?? []);
 
   return {
     messages,
     messageList,
+    loadingOlder,
+    loadOlderMessages,
     roomName,
     draft,
     setDraft,
