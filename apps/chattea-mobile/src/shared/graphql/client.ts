@@ -237,6 +237,8 @@ const createSessionLifecycleLink = () =>
 export const getGraphQLAuthorizationHeaders = (): Record<string, string> =>
   graphQLSession ? { authorization: `Bearer ${graphQLSession.accessToken}` } : {};
 
+export const refreshGraphQLSession = (): Promise<boolean> => refreshCurrentSession(true);
+
 const createTransportLink = (): ApolloLink => {
   const httpLink = new HttpLink({ credentials: "include", uri: endpoint });
   const authLink = new SetContextLink(async ({ headers }) => ({

@@ -4,6 +4,7 @@ import { createElement, type ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
+  COMMUNITY_AUTH_REFRESH_MESSAGE_TYPE,
   COMMUNITY_VITALS_MESSAGE_TYPE,
   communityWebUrl,
   WEBVIEW_TRACE_SETTLE_MS,
@@ -11,6 +12,7 @@ import {
 } from "../src/features/community/constants";
 
 const mocks = vi.hoisted(() => ({
+  refreshGraphQLSession: vi.fn(async () => true),
   webviewProps: undefined as Record<string, unknown> | undefined,
 }));
 
@@ -52,6 +54,10 @@ vi.mock("@apollo/client/react", () => ({
   useMutation: () => [vi.fn(), { loading: false }],
   useQuery: () => ({ data: undefined, loading: false, refetch: vi.fn() }),
 }));
+vi.mock("@/shared/graphql", () => ({
+  getGraphQLAuthorizationHeaders: () => ({ authorization: "Bearer test-token" }),
+  refreshGraphQLSession: mocks.refreshGraphQLSession,
+}));
 
 const { renderToStaticMarkup } = createRequire(import.meta.url)("react-dom/server") as {
   renderToStaticMarkup: (node: ReactNode) => string;
@@ -65,7 +71,7 @@ const loadTraceModule = async () => {
 type WebviewHandlers = {
   onLoadStart: () => void;
   onLoadEnd: () => void;
-  onMessage: (event: { nativeEvent: { data: string } }) => void;
+  onMessage: (event: { nativeEvent: { data: string; url?: string } }) => void;
 };
 
 const webview = () => mocks.webviewProps as unknown as WebviewHandlers;
@@ -78,6 +84,7 @@ const emittedRecords = (info: ReturnType<typeof vi.spyOn>) =>
 describe("community webview", () => {
   afterEach(() => {
     mocks.webviewProps = undefined;
+    mocks.refreshGraphQLSession.mockClear();
     vi.restoreAllMocks();
     vi.useRealTimers();
   });
@@ -171,6 +178,34 @@ describe("community webview", () => {
     expect(mocks.webviewProps?.injectedJavaScriptBeforeContentLoaded).toContain(
       "window.__CHATTEA_AUTH__",
     );
+  });
+
+  it("refreshes the session on auth refresh messages from the community origin", async () => {
+    const CommunityWebview = await loadTraceModule();
+
+    renderToStaticMarkup(createElement(CommunityWebview));
+    webview().onMessage({
+      nativeEvent: {
+        data: JSON.stringify({ type: COMMUNITY_AUTH_REFRESH_MESSAGE_TYPE }),
+        url: communityWebUrl,
+      },
+    });
+
+    expect(mocks.refreshGraphQLSession).toHaveBeenCalledTimes(1);
+  });
+
+  it("ignores auth refresh messages from a foreign origin", async () => {
+    const CommunityWebview = await loadTraceModule();
+
+    renderToStaticMarkup(createElement(CommunityWebview));
+    webview().onMessage({
+      nativeEvent: {
+        data: JSON.stringify({ type: COMMUNITY_AUTH_REFRESH_MESSAGE_TYPE }),
+        url: "https://evil.example/community",
+      },
+    });
+
+    expect(mocks.refreshGraphQLSession).not.toHaveBeenCalled();
   });
 
   it("closes the trace as soon as LCP arrives", async () => {

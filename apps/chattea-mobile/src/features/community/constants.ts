@@ -19,6 +19,12 @@ export const COMMUNITY_VITALS_MESSAGE_TYPE = "chattea.community.vital";
 
 export const COMMUNITY_NAVIGATE_MESSAGE_TYPE = "chattea.community.navigate";
 
+export const COMMUNITY_AUTH_REFRESH_MESSAGE_TYPE = "chattea.community.auth-refresh";
+
+export const COMMUNITY_AUTH_REFRESHED_EVENT = "chattea:auth-refreshed";
+
+export const COMMUNITY_AUTH_FAILED_EVENT = "chattea:auth-failed";
+
 export const COMMUNITY_NAVIGABLE_PREFIX = "/community";
 
 export const WEBVIEW_TRACE_TAG = "[webview-trace]";
