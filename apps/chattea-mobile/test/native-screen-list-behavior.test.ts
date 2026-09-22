@@ -538,6 +538,17 @@ describe("routed native collection screens", () => {
 
     expect(renderScreen(RoomScreen)).toContain("내용을 불러오지 못했어요");
   });
+
+  it("wires the chat list to load history at the top while anchoring scroll position", () => {
+    renderScreen(RoomScreen);
+
+    expect(mocks.legendLists[0]).toMatchObject({
+      maintainScrollAtEnd: true,
+      maintainVisibleContentPosition: true,
+      onStartReached: expect.any(Function),
+      onStartReachedThreshold: expect.any(Number),
+    });
+  });
 });
 
 describe("profile form accessibility", () => {
