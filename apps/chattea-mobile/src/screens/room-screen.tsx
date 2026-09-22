@@ -39,8 +39,8 @@ const RoomScreen = () => {
     sendMessage,
     reportMessage,
     currentUserId,
+    messageList,
   } = useChatRoom();
-  const messageList = messages.data?.chatMessages ?? [];
   const lastMineId = [...messageList].reverse().find((m) => m.senderUserId === currentUserId)?.id;
   const lastOtherId = [...messageList]
     .reverse()
