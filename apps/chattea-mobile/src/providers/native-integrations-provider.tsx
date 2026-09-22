@@ -1,5 +1,6 @@
 import { router } from "expo-router";
-import { type PropsWithChildren, useEffect, useRef } from "react";
+import { type PropsWithChildren, useEffect, useRef, useState } from "react";
+import { InteractionManager } from "react-native";
 
 import { useRevenueCat } from "@/features/billing";
 import { CommunityWebviewPrewarm } from "@/features/community";
@@ -9,6 +10,7 @@ import { apolloClient } from "@/shared/graphql";
 import PushNotificationsProvider from "./push-notifications-provider";
 import RevenueCatProvider from "./revenuecat-provider";
 import { useSession } from "./session-provider";
+import { useProviderInitMetric } from "./utils/provider-init-metrics";
 import { performForcedSessionTermination } from "./utils/session-actions";
 
 const SessionTerminationCoordinator = () => {
@@ -44,11 +46,19 @@ const SessionTerminationCoordinator = () => {
 };
 
 const NativeIntegrationsProvider = ({ children }: PropsWithChildren) => {
+  useProviderInitMetric("native-integrations");
+  const [interactive, setInteractive] = useState(false);
+
+  useEffect(() => {
+    const task = InteractionManager.runAfterInteractions(() => setInteractive(true));
+    return () => task.cancel();
+  }, []);
+
   return (
     <RevenueCatProvider>
       <PushNotificationsProvider>
         <SessionTerminationCoordinator />
-        <CommunityWebviewPrewarm />
+        {interactive ? <CommunityWebviewPrewarm /> : null}
         {children}
       </PushNotificationsProvider>
     </RevenueCatProvider>
