@@ -65,6 +65,10 @@ describe("communityPostsQuery", () => {
     vi.unstubAllGlobals();
   });
 
+  it("keeps hydrated data fresh so the client does not refetch on mount", () => {
+    expect(communityPostsQuery().staleTime).toBeGreaterThan(0);
+  });
+
   it("refreshes native auth and retries once on 401", async () => {
     const { postMessage, win } = stubBridgeWindow();
     const fetchMock = vi

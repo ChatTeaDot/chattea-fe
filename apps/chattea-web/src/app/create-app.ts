@@ -5,15 +5,17 @@ import fastify, { type FastifyInstance } from "fastify";
 import { COMMUNITY_PATH } from "@/shared/config/constants";
 
 import { registerGraphqlProxy } from "./graphql-proxy";
+import { injectDehydratedState } from "./ssr/dehydrated-state";
 import { createVitalsStore, registerVitalsRoutes } from "./vitals";
 
 type RenderOptions = {
+  authorization?: string;
   onShellReady?: () => void;
 };
 
 type CreateAppOptions = {
   loadTemplate: () => Promise<string>;
-  render: (writable: Writable, options?: RenderOptions) => Promise<void>;
+  render: (writable: Writable, options?: RenderOptions) => Promise<unknown>;
 };
 
 export const createApp = async ({
@@ -24,7 +26,7 @@ export const createApp = async ({
   const template = await loadTemplate();
   const [head, tail = ""] = template.split("<!--app-html-->");
 
-  app.get(COMMUNITY_PATH, async (_request, reply) => {
+  app.get(COMMUNITY_PATH, async (request, reply) => {
     reply.hijack();
     const startedAt = performance.now();
     reply.raw.writeHead(200, {
@@ -33,7 +35,9 @@ export const createApp = async ({
     });
     reply.raw.write(head);
     let shellMs = 0;
-    await render(reply.raw, {
+    const authorization = request.headers.authorization;
+    const ssrState = await render(reply.raw, {
+      authorization: typeof authorization === "string" ? authorization : undefined,
       onShellReady: () => {
         shellMs = performance.now() - startedAt;
       },
@@ -43,7 +47,7 @@ export const createApp = async ({
         "server-timing": `shell;dur=${shellMs.toFixed(1)}`,
       });
     }
-    reply.raw.end(tail);
+    reply.raw.end(injectDehydratedState(tail, ssrState));
   });
 
   registerGraphqlProxy(app);

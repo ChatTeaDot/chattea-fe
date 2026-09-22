@@ -24,7 +24,7 @@ const app = await createApp({
     const { renderApp } = (await vite.ssrLoadModule(
       "/src/app/entry-server.tsx",
     )) as typeof import("./entry-server");
-    await renderApp(writable, options);
+    return renderApp(writable, options);
   },
 });
 

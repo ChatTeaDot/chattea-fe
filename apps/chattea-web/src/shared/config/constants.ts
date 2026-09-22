@@ -8,8 +8,6 @@ export const VITAL_METRIC_NAMES = ["LCP", "FCP", "INP", "CLS", "TTFB"] as const;
 
 export const API_GRAPHQL_PATH = "/api/graphql";
 
-export const graphqlEndpoint = process.env.GRAPHQL_URL ?? "http://localhost:4000/graphql";
-
 export const COMMUNITY_NAVIGATE_MESSAGE_TYPE = "chattea.community.navigate";
 
 export const COMMUNITY_AUTH_REFRESH_MESSAGE_TYPE = "chattea.community.auth-refresh";
