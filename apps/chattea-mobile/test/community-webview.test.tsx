@@ -128,6 +128,51 @@ describe("community webview", () => {
     expect(marks["web:FCP"]).toBeTypeOf("number");
   });
 
+  it("pushes a native route for community navigate messages", async () => {
+    const { router } = await import("expo-router");
+    const push = vi.mocked(router.push);
+    push.mockClear();
+    const CommunityWebview = await loadTraceModule();
+
+    renderToStaticMarkup(createElement(CommunityWebview));
+    webview().onMessage({
+      nativeEvent: {
+        data: JSON.stringify({
+          path: "/community/post-1",
+          type: "chattea.community.navigate",
+        }),
+      },
+    });
+
+    expect(push).toHaveBeenCalledWith("/community/post-1");
+  });
+
+  it("ignores navigate messages outside the community prefix", async () => {
+    const { router } = await import("expo-router");
+    const push = vi.mocked(router.push);
+    push.mockClear();
+    const CommunityWebview = await loadTraceModule();
+
+    renderToStaticMarkup(createElement(CommunityWebview));
+    webview().onMessage({
+      nativeEvent: {
+        data: JSON.stringify({ path: "/rooms/1", type: "chattea.community.navigate" }),
+      },
+    });
+
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("injects the auth bridge before content loads", async () => {
+    const CommunityWebview = await loadTraceModule();
+
+    renderToStaticMarkup(createElement(CommunityWebview));
+
+    expect(mocks.webviewProps?.injectedJavaScriptBeforeContentLoaded).toContain(
+      "window.__CHATTEA_AUTH__",
+    );
+  });
+
   it("closes the trace as soon as LCP arrives", async () => {
     const info = vi.spyOn(console, "info").mockImplementation(() => undefined);
     const CommunityWebview = await loadTraceModule();
