@@ -1,6 +1,8 @@
 import type { FastifyInstance } from "fastify";
 
-import { API_GRAPHQL_PATH, graphqlEndpoint } from "@/shared/config/constants";
+import { API_GRAPHQL_PATH } from "@/shared/config/constants";
+
+import { graphqlEndpoint } from "./graphql-upstream";
 
 export const registerGraphqlProxy = (app: FastifyInstance) => {
   app.post(API_GRAPHQL_PATH, async (request, reply) => {

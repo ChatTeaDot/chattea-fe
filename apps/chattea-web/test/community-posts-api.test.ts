@@ -14,8 +14,9 @@ const POST = {
 
 describe("communityPostsQuery", () => {
   it("posts the community posts query to the same-origin proxy", async () => {
-    const fetchMock = vi.fn(async () =>
-      new Response(JSON.stringify({ data: { communityPosts: [POST] } }), { status: 200 }),
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ data: { communityPosts: [POST] } }), { status: 200 }),
     );
     vi.stubGlobal("fetch", fetchMock);
     vi.stubGlobal("window", { __CHATTEA_AUTH__: { authorization: "Bearer abc" } });
@@ -33,7 +34,9 @@ describe("communityPostsQuery", () => {
   it("throws when the response has no posts payload", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn(async () => new Response(JSON.stringify({ errors: [{ message: "x" }] }), { status: 200 })),
+      vi.fn(
+        async () => new Response(JSON.stringify({ errors: [{ message: "x" }] }), { status: 200 }),
+      ),
     );
 
     await expect(communityPostsQuery().queryFn!({} as never)).rejects.toThrow(
@@ -41,5 +44,9 @@ describe("communityPostsQuery", () => {
     );
 
     vi.unstubAllGlobals();
+  });
+
+  it("keeps hydrated data fresh so the client does not refetch on mount", () => {
+    expect(communityPostsQuery().staleTime).toBeGreaterThan(0);
   });
 });

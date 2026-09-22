@@ -13,11 +13,12 @@ const buildApp = () =>
 
 describe("graphql proxy", () => {
   it("forwards the query and authorization header upstream", async () => {
-    const fetchMock = vi.fn(async () =>
-      new Response(JSON.stringify({ data: { communityPosts: [] } }), {
-        headers: { "content-type": "application/json" },
-        status: 200,
-      }),
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ data: { communityPosts: [] } }), {
+          headers: { "content-type": "application/json" },
+          status: 200,
+        }),
     );
     vi.stubGlobal("fetch", fetchMock);
     const app = await buildApp();

@@ -17,21 +17,25 @@ import PostRow from "./post-row";
 const hasAuthToken = () =>
   typeof window !== "undefined" && Boolean(window.__CHATTEA_AUTH__?.authorization);
 
+const signedOut = () => typeof window !== "undefined" && !hasAuthToken();
+
 const CommunityPage = () => {
   const posts = useQuery({ ...communityPostsQuery(), enabled: hasAuthToken() });
 
   let content;
-  if (!hasAuthToken()) {
+  if (posts.data !== undefined && posts.data.length > 0) {
     content = (
-      <div className={stateWrap}>
-        <span className={stateTitle}>로그인이 필요해요</span>
-        <span className={stateBody}>앱에서 로그인하면 이야기를 볼 수 있어요.</span>
-      </div>
+      <ul className={list}>
+        {posts.data.map((post) => (
+          <PostRow key={post.id} post={post} />
+        ))}
+      </ul>
     );
-  } else if (posts.isPending) {
+  } else if (posts.data !== undefined) {
     content = (
       <div className={stateWrap}>
-        <span className={stateBody}>불러오는 중…</span>
+        <span className={stateTitle}>아직 글이 없어요</span>
+        <span className={stateBody}>첫 이야기를 남겨 보세요.</span>
       </div>
     );
   } else if (posts.isError) {
@@ -43,20 +47,18 @@ const CommunityPage = () => {
         </button>
       </div>
     );
-  } else if (posts.data.length === 0) {
+  } else if (signedOut()) {
     content = (
       <div className={stateWrap}>
-        <span className={stateTitle}>아직 글이 없어요</span>
-        <span className={stateBody}>첫 이야기를 남겨 보세요.</span>
+        <span className={stateTitle}>로그인이 필요해요</span>
+        <span className={stateBody}>앱에서 로그인하면 이야기를 볼 수 있어요.</span>
       </div>
     );
   } else {
     content = (
-      <ul className={list}>
-        {posts.data.map((post) => (
-          <PostRow key={post.id} post={post} />
-        ))}
-      </ul>
+      <div className={stateWrap}>
+        <span className={stateBody}>불러오는 중…</span>
+      </div>
     );
   }
 
