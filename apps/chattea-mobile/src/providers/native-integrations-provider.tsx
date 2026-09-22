@@ -1,6 +1,5 @@
 import { router } from "expo-router";
-import { type PropsWithChildren, useEffect, useRef, useState } from "react";
-import { InteractionManager } from "react-native";
+import { type PropsWithChildren, useEffect, useRef } from "react";
 
 import { useRevenueCat } from "@/features/billing";
 import { CommunityWebviewPrewarm } from "@/features/community";
@@ -47,18 +46,12 @@ const SessionTerminationCoordinator = () => {
 
 const NativeIntegrationsProvider = ({ children }: PropsWithChildren) => {
   useProviderInitMetric("native-integrations");
-  const [interactive, setInteractive] = useState(false);
-
-  useEffect(() => {
-    const task = InteractionManager.runAfterInteractions(() => setInteractive(true));
-    return () => task.cancel();
-  }, []);
 
   return (
     <RevenueCatProvider>
       <PushNotificationsProvider>
         <SessionTerminationCoordinator />
-        {interactive ? <CommunityWebviewPrewarm /> : null}
+        <CommunityWebviewPrewarm />
         {children}
       </PushNotificationsProvider>
     </RevenueCatProvider>
