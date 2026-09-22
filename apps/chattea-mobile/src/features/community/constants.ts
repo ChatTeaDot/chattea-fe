@@ -1,7 +1,5 @@
 export const COMMUNITY_CATEGORIES = ["연애", "일상", "질문"] as const;
 
-export const COMMUNITY_FILTERS = ["전체", ...COMMUNITY_CATEGORIES] as const;
-
 export const COMMUNITY_TITLE_MAX_LENGTH = 80;
 
 export const COMMUNITY_BODY_MAX_LENGTH = 1000;
@@ -18,6 +16,10 @@ export const communityWebviewPrewarmEnabled =
   process.env.EXPO_PUBLIC_COMMUNITY_WEBVIEW_PREWARM !== "0";
 
 export const COMMUNITY_VITALS_MESSAGE_TYPE = "chattea.community.vital";
+
+export const COMMUNITY_NAVIGATE_MESSAGE_TYPE = "chattea.community.navigate";
+
+export const COMMUNITY_NAVIGABLE_PREFIX = "/community";
 
 export const WEBVIEW_TRACE_TAG = "[webview-trace]";
 

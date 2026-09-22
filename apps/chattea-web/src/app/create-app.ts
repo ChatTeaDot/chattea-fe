@@ -4,6 +4,7 @@ import fastify, { type FastifyInstance } from "fastify";
 
 import { COMMUNITY_PATH } from "@/shared/config/constants";
 
+import { registerGraphqlProxy } from "./graphql-proxy";
 import { createVitalsStore, registerVitalsRoutes } from "./vitals";
 
 type RenderOptions = {
@@ -45,6 +46,7 @@ export const createApp = async ({
     reply.raw.end(tail);
   });
 
+  registerGraphqlProxy(app);
   registerVitalsRoutes(app, createVitalsStore());
 
   return app;

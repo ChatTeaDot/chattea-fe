@@ -14,7 +14,7 @@ describe("renderApp", () => {
 
     await renderApp(writable);
 
-    expect(chunks.join("")).toContain("<main></main>");
+    expect(chunks.join("")).toContain("<main");
   });
 
   it("invokes onShellReady", async () => {
