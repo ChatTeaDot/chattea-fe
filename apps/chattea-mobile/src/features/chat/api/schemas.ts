@@ -6,6 +6,7 @@ export type ChatRoom = {
 };
 
 export type ChatMessage = {
+  __typename?: "ChatMessage";
   id: string;
   roomId: string;
   senderUserId: string | null;
