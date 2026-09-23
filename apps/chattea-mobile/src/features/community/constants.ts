@@ -9,8 +9,7 @@ const defaultCommunityWebUrl =
     ? "http://10.0.2.2:3000/community"
     : "http://localhost:3000/community";
 
-export const communityWebUrl =
-  process.env.EXPO_PUBLIC_COMMUNITY_WEB_URL ?? defaultCommunityWebUrl;
+export const communityWebUrl = process.env.EXPO_PUBLIC_COMMUNITY_WEB_URL ?? defaultCommunityWebUrl;
 
 export const communityWebviewPrewarmEnabled =
   process.env.EXPO_PUBLIC_COMMUNITY_WEBVIEW_PREWARM !== "0";

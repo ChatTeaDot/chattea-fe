@@ -42,7 +42,9 @@ describe("webview auth bridge", () => {
 
   it("recognizes only the auth refresh message type", () => {
     expect(isAuthRefreshMessage(refreshMessage)).toBe(true);
-    expect(isAuthRefreshMessage(JSON.stringify({ type: "chattea.community.navigate" }))).toBe(false);
+    expect(isAuthRefreshMessage(JSON.stringify({ type: "chattea.community.navigate" }))).toBe(
+      false,
+    );
     expect(isAuthRefreshMessage("not-json")).toBe(false);
   });
 
