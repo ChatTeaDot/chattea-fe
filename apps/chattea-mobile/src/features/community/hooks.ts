@@ -25,11 +25,7 @@ import {
   toCreateCommunityCommentVariables,
   toCreateCommunityPostVariables,
 } from "./utils/idempotency";
-import {
-  createWebviewTrace,
-  parseVitalsMessage,
-  type WebviewTrace,
-} from "./utils/webview-trace";
+import { createWebviewTrace, parseVitalsMessage, type WebviewTrace } from "./utils/webview-trace";
 
 export const useCommunityPost = () => {
   const postId = useRouteParam("post-id");
@@ -134,10 +130,7 @@ export const useCommunityWebviewTrace = () => {
 
   const scheduleClose = useCallback(() => {
     if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
-    settleTimerRef.current = setTimeout(
-      () => traceRef.current?.close(),
-      WEBVIEW_TRACE_SETTLE_MS,
-    );
+    settleTimerRef.current = setTimeout(() => traceRef.current?.close(), WEBVIEW_TRACE_SETTLE_MS);
   }, []);
 
   useFocusEffect(

@@ -46,10 +46,7 @@ const defaultEmit = (record: WebviewTraceRecord) => {
   }
 };
 
-const buildRecord = (
-  tags: WebviewTraceTags,
-  marks: Record<string, number>,
-): WebviewTraceRecord => {
+const buildRecord = (tags: WebviewTraceTags, marks: Record<string, number>): WebviewTraceRecord => {
   const entries = Object.entries(marks).sort((a, b) => a[1] - b[1]);
   const segments: Record<string, number> = {};
   for (let index = 1; index < entries.length; index += 1) {
@@ -57,9 +54,16 @@ const buildRecord = (
     const [to, toAt] = entries[index]!;
     segments[`${from}->${to}`] = toAt - fromAt;
   }
-  const totalMs =
-    entries.length > 0 ? entries[entries.length - 1]![1] - entries[0]![1] : 0;
-  return { env: tags.env, marks, release: tags.release, schema: "webview-trace/1", screen: tags.screen, segments, totalMs };
+  const totalMs = entries.length > 0 ? entries[entries.length - 1]![1] - entries[0]![1] : 0;
+  return {
+    env: tags.env,
+    marks,
+    release: tags.release,
+    schema: "webview-trace/1",
+    screen: tags.screen,
+    segments,
+    totalMs,
+  };
 };
 
 export const createWebviewTrace = (

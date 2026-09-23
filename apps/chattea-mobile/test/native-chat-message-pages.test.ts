@@ -14,7 +14,10 @@ const message = (id: string, createdAt: string, text = id): ChatMessage => ({
 
 describe("mergeChatMessages", () => {
   it("prepends an older page before the current window in ascending order", () => {
-    const older = [message("m-1", "2026-08-01T00:00:00.000Z"), message("m-2", "2026-08-02T00:00:00.000Z")];
+    const older = [
+      message("m-1", "2026-08-01T00:00:00.000Z"),
+      message("m-2", "2026-08-02T00:00:00.000Z"),
+    ];
     const current = [message("m-3", "2026-08-03T00:00:00.000Z")];
 
     expect(mergeChatMessages(older, current).map((m) => m.id)).toEqual(["m-1", "m-2", "m-3"]);

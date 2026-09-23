@@ -2,11 +2,7 @@ import { createElement, useEffect } from "react";
 import TestRenderer, { act } from "react-test-renderer";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import {
-  CHAT_MESSAGES_QUERY,
-  CHAT_ROOMS_QUERY,
-  type ChatMessage,
-} from "../src/features/chat/api";
+import { CHAT_MESSAGES_QUERY, CHAT_ROOMS_QUERY, type ChatMessage } from "../src/features/chat/api";
 import { CHAT_PAGE_SIZE } from "../src/features/chat/constants";
 import { useChatRoom } from "../src/features/chat/hooks";
 
@@ -102,7 +98,9 @@ describe("useChatRoom pagination", () => {
     expect(mocks.fetchMore).toHaveBeenCalledWith({
       variables: { input: { before: "m-2-0", first: CHAT_PAGE_SIZE, roomId: "room-1" } },
     });
-    expect(hook.messageList.map((m) => m.id)).toEqual([...older, ...page(2, 0, CHAT_PAGE_SIZE)].map((m) => m.id));
+    expect(hook.messageList.map((m) => m.id)).toEqual(
+      [...older, ...page(2, 0, CHAT_PAGE_SIZE)].map((m) => m.id),
+    );
   });
 
   it("does not request more when the newest window is already smaller than a page", async () => {
