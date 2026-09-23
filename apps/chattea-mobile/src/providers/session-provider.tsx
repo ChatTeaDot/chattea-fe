@@ -10,6 +10,7 @@ import {
 
 import { setGraphQLSession, setGraphQLSessionHandlers } from "@/shared/graphql";
 
+import { measureProviderInit, useProviderInitMetric } from "./utils/provider-init-metrics";
 import { loadStoredSession, saveStoredSession, type StoredSession } from "./utils/session-storage";
 
 type Session = StoredSession;
@@ -43,6 +44,7 @@ export const completeSessionHydration = (
 };
 
 const SessionProvider = ({ children }: PropsWithChildren) => {
+  useProviderInitMetric("session");
   const [session, updateSession] = useState<Session | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const [terminationRequested, setTerminationRequested] = useState(false);
@@ -95,7 +97,7 @@ const SessionProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     let active = true;
 
-    loadStoredSession()
+    measureProviderInit("session:hydration", loadStoredSession)
       .then((storedSession) => {
         if (active) {
           completeSessionHydration(storedSession, updateSession, setHydrated);

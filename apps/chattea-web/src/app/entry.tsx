@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { HydrationBoundary, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { CommunityPage } from "@/pages/community";
 
@@ -21,7 +21,9 @@ hydrateRoot(
   root,
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <CommunityPage />
+      <HydrationBoundary state={window.__DEHYDRATED__}>
+        <CommunityPage />
+      </HydrationBoundary>
     </QueryClientProvider>
   </StrictMode>,
 );

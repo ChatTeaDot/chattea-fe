@@ -9,6 +9,7 @@ import { apolloClient } from "@/shared/graphql";
 import PushNotificationsProvider from "./push-notifications-provider";
 import RevenueCatProvider from "./revenuecat-provider";
 import { useSession } from "./session-provider";
+import { useProviderInitMetric } from "./utils/provider-init-metrics";
 import { performForcedSessionTermination } from "./utils/session-actions";
 
 const SessionTerminationCoordinator = () => {
@@ -44,6 +45,8 @@ const SessionTerminationCoordinator = () => {
 };
 
 const NativeIntegrationsProvider = ({ children }: PropsWithChildren) => {
+  useProviderInitMetric("native-integrations");
+
   return (
     <RevenueCatProvider>
       <PushNotificationsProvider>
