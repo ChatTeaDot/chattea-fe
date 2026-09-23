@@ -23,7 +23,7 @@ RoomRow.displayName = "RoomRow";
 const keyExtractor = (item: RoomsData["chatRooms"][number]) => item.id;
 
 const RoomsScreen = () => {
-  const { rooms, openRoom } = useChatRooms();
+  const { rooms, openRoom, prefetchRoom } = useChatRooms();
   const roomList = rooms.data?.chatRooms ?? [];
   const firstUnreadId = roomList.find((room) => room.unreadCount > 0)?.id;
   const renderRoom = ({ item }: { item: NonNullable<RoomsData["chatRooms"]>[number] }) => (
@@ -32,6 +32,7 @@ const RoomsScreen = () => {
       lastMessage={item.lastMessage}
       name={item.name}
       onOpen={openRoom}
+      onPressIn={prefetchRoom}
       unreadCount={item.unreadCount}
     />
   );

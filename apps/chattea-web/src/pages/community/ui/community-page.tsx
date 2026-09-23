@@ -1,10 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
+import { Suspense } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { communityPostsQuery } from "../api";
+import { ErrorBoundary } from "@/shared/lib";
+
 import { openWrite } from "../bridge";
+import { COMMUNITY_POSTS_QUERY_KEY } from "../api";
 
 import {
-  list,
   page,
   retryButton,
   stateBody,
@@ -12,53 +14,60 @@ import {
   stateWrap,
   writeFab,
 } from "./community-page.css";
-import PostRow from "./post-row";
+import PostList from "./post-list";
 
 const hasAuthToken = () =>
   typeof window !== "undefined" && Boolean(window.__CHATTEA_AUTH__?.authorization);
 
 const signedOut = () => typeof window !== "undefined" && !hasAuthToken();
 
+const LoadingState = () => (
+  <div className={stateWrap}>
+    <span className={stateBody}>불러오는 중…</span>
+  </div>
+);
+
 const CommunityPage = () => {
-  const posts = useQuery({ ...communityPostsQuery(), enabled: hasAuthToken() });
+  const queryClient = useQueryClient();
 
   let content;
-  if (posts.data !== undefined && posts.data.length > 0) {
-    content = (
-      <ul className={list}>
-        {posts.data.map((post) => (
-          <PostRow key={post.id} post={post} />
-        ))}
-      </ul>
-    );
-  } else if (posts.data !== undefined) {
-    content = (
-      <div className={stateWrap}>
-        <span className={stateTitle}>아직 글이 없어요</span>
-        <span className={stateBody}>첫 이야기를 남겨 보세요.</span>
-      </div>
-    );
-  } else if (posts.isError) {
-    content = (
-      <div className={stateWrap}>
-        <span className={stateTitle}>목록을 불러오지 못했어요</span>
-        <button className={retryButton} onClick={() => void posts.refetch()} type="button">
-          다시 시도
-        </button>
-      </div>
-    );
-  } else if (signedOut()) {
+  if (signedOut()) {
     content = (
       <div className={stateWrap}>
         <span className={stateTitle}>로그인이 필요해요</span>
         <span className={stateBody}>앱에서 로그인하면 이야기를 볼 수 있어요.</span>
       </div>
     );
+  } else if (
+    typeof window === "undefined" &&
+    queryClient.getQueryData(COMMUNITY_POSTS_QUERY_KEY) === undefined
+  ) {
+    content = <LoadingState />;
   } else {
     content = (
-      <div className={stateWrap}>
-        <span className={stateBody}>불러오는 중…</span>
-      </div>
+      <ErrorBoundary
+        fallback={(reset) => (
+          <div className={stateWrap}>
+            <span className={stateTitle}>목록을 불러오지 못했어요</span>
+            <button
+              className={retryButton}
+              onClick={() => {
+                void queryClient.resetQueries({
+                  queryKey: COMMUNITY_POSTS_QUERY_KEY,
+                });
+                reset();
+              }}
+              type="button"
+            >
+              다시 시도
+            </button>
+          </div>
+        )}
+      >
+        <Suspense fallback={<LoadingState />}>
+          <PostList />
+        </Suspense>
+      </ErrorBoundary>
     );
   }
 
