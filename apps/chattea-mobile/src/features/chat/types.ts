@@ -31,5 +31,6 @@ export type RoomRowProps = {
   lastMessage: string | null;
   name: string;
   onOpen: (id: string) => void;
+  onPressIn?: (id: string) => void;
   unreadCount: number;
 };

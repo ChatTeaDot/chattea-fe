@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Alert, AppState } from "react-native";
 
 import { ME_QUERY, type MeData } from "@/features/profile";
+import { apolloClient } from "@/shared/graphql";
 import { useRouteParam } from "@/shared/hooks";
 import { showActionError } from "@/shared/lib";
 
@@ -36,8 +37,16 @@ import {
 export const useChatRooms = () => {
   const rooms = useQuery<RoomsData>(CHAT_ROOMS_QUERY);
   const openRoom = (id: string) => router.push(`/rooms/${id}`);
+  const prefetchRoom = (id: string) => {
+    void apolloClient
+      .query<MessagesData>({
+        query: CHAT_MESSAGES_QUERY,
+        variables: { input: { roomId: id, first: CHAT_PAGE_SIZE } },
+      })
+      .catch(() => undefined);
+  };
 
-  return { rooms, openRoom };
+  return { rooms, openRoom, prefetchRoom };
 };
 
 export const useChatRoom = () => {

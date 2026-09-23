@@ -239,15 +239,23 @@ export const getGraphQLAuthorizationHeaders = (): Record<string, string> =>
 
 export const refreshGraphQLSession = (): Promise<boolean> => refreshCurrentSession(true);
 
+let requestSeq = 0;
+const requestSession = Date.now().toString(36);
+
 const createTransportLink = (): ApolloLink => {
   const httpLink = new HttpLink({ credentials: "include", uri: endpoint });
-  const authLink = new SetContextLink(async ({ headers }) => ({
-    headers: {
-      ...headers,
-      ...getGraphQLAuthorizationHeaders(),
-      "x-device-id": await getInstallId(),
-    },
-  }));
+  const authLink = new SetContextLink(async ({ headers }) => {
+    requestSeq += 1;
+    const deviceId = await getInstallId();
+    return {
+      headers: {
+        ...headers,
+        ...getGraphQLAuthorizationHeaders(),
+        "x-device-id": deviceId,
+        "x-request-id": `${deviceId}-${requestSession}-${requestSeq}`,
+      },
+    };
+  });
 
   return createSessionLifecycleLink().concat(authLink).concat(httpLink);
 };

@@ -3,13 +3,15 @@ import { StyleSheet } from "react-native-unistyles";
 
 import type { RoomRowProps } from "../types";
 
-const RoomRow = ({ id, lastMessage, name, onOpen, unreadCount }: RoomRowProps) => {
+const RoomRow = ({ id, lastMessage, name, onOpen, onPressIn, unreadCount }: RoomRowProps) => {
   const open = () => onOpen(id);
+  const pressIn = () => onPressIn?.(id);
   return (
     <Pressable
       accessibilityLabel={name}
       accessibilityRole="button"
       onPress={open}
+      onPressIn={pressIn}
       style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
     >
       <View style={styles.avatar} />
