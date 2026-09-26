@@ -36,15 +36,18 @@ import {
 
 export const useChatRooms = () => {
   const rooms = useQuery<RoomsData>(CHAT_ROOMS_QUERY, { fetchPolicy: "cache-first" });
-  const openRoom = (id: string) => router.push(`/rooms/${id}`);
-  const prefetchRoom = (id: string) => {
-    void apolloClient
-      .query<MessagesData>({
-        query: CHAT_MESSAGES_QUERY,
-        variables: { input: { roomId: id, first: CHAT_PAGE_SIZE } },
-      })
-      .catch(() => undefined);
-  };
+  const openRoom = useCallback((id: string) => router.push(`/rooms/${id}`), []);
+  const prefetchRoom = useCallback(
+    (id: string) => {
+      void apolloClient
+        .query<MessagesData>({
+          query: CHAT_MESSAGES_QUERY,
+          variables: { input: { roomId: id, first: CHAT_PAGE_SIZE } },
+        })
+        .catch(() => undefined);
+    },
+    [],
+  );
 
   return { rooms, openRoom, prefetchRoom };
 };
