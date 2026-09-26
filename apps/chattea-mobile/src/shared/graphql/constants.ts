@@ -9,3 +9,4 @@ const defaultEndpoint =
     : "http://localhost:4000/graphql";
 
 export const endpoint = process.env.EXPO_PUBLIC_GRAPHQL_URL ?? defaultEndpoint;
+export const apiBase = endpoint.replace(/\/graphql$/, "");
