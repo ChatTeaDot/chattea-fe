@@ -3,6 +3,7 @@ import TestRenderer, { act, type ReactTestRenderer } from "react-test-renderer";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import LikesScreen from "../src/screens/likes-screen";
+import MatchListScreen from "../src/screens/match-list-screen";
 import RoomsScreen from "../src/screens/rooms-screen";
 import TodayMatchesScreen from "../src/screens/today-matches-screen";
 
@@ -37,6 +38,7 @@ const mocks = vi.hoisted(() => ({
   renderCounts: {
     likeGridCell: 0,
     matchActionBar: 0,
+    newMatchAvatar: 0,
     roomRow: 0,
     swipeCard: 0,
   },
@@ -305,6 +307,17 @@ vi.mock("../src/features/matches/components/match-action-bar", async (importOrig
   return { default: Counted };
 });
 
+vi.mock("../src/features/matches/components/new-match-avatar", async (importOriginal) => {
+  const mod =
+    await importOriginal<typeof import("../src/features/matches/components/new-match-avatar")>();
+  const Real = mod.default;
+  const Counted = (props: Parameters<typeof Real>[0]) => {
+    mocks.renderCounts.newMatchAvatar += 1;
+    return createElement(Real, props);
+  };
+  return { default: Counted };
+});
+
 const rooms = (count: number): Room[] =>
   Array.from({ length: count }, (_, index) => ({
     id: `room-${index}`,
@@ -340,6 +353,7 @@ const mount = (Screen: ComponentType) => {
 const resetCounts = () => {
   mocks.renderCounts.likeGridCell = 0;
   mocks.renderCounts.matchActionBar = 0;
+  mocks.renderCounts.newMatchAvatar = 0;
   mocks.renderCounts.roomRow = 0;
   mocks.renderCounts.swipeCard = 0;
 };
@@ -401,6 +415,17 @@ describe("list render counts", () => {
 
     expect(mocks.renderCounts.swipeCard).toBe(0);
     expect(mocks.renderCounts.matchActionBar).toBe(0);
+  });
+
+  it("skips the new match avatar row on an unrelated parent re-render", () => {
+    mocks.chatRooms = rooms(10).map((room) => ({ ...room, lastMessage: null }));
+    mount(MatchListScreen);
+    expect(mocks.renderCounts.newMatchAvatar).toBe(10);
+
+    resetCounts();
+    act(() => mocks.rerender());
+
+    expect(mocks.renderCounts.newMatchAvatar).toBe(0);
   });
 
   it("gives the virtualized lists stable identity and size hints", () => {
