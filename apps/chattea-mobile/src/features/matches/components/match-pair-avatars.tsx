@@ -10,6 +10,7 @@ const MatchPairAvatars = ({ candidatePhoto, myPhoto }: MatchPairAvatarsProps) =>
       {candidatePhoto ? (
         <Image
           accessibilityLabel="매치된 상대의 사진"
+          cachePolicy="memory-disk"
           contentFit="cover"
           source={{ uri: candidatePhoto }}
           style={styles.avatar}
@@ -21,6 +22,7 @@ const MatchPairAvatars = ({ candidatePhoto, myPhoto }: MatchPairAvatarsProps) =>
       {myPhoto ? (
         <Image
           accessibilityLabel="내 사진"
+          cachePolicy="memory-disk"
           contentFit="cover"
           source={{ uri: myPhoto }}
           style={styles.avatar}

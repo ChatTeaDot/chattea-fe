@@ -23,6 +23,7 @@ const LikeGridCell = ({ disabled, id, locked, name, onPress, photoUrl }: LikeGri
       {photoUrl && !locked ? (
         <Image
           accessibilityLabel={`${name}님의 사진`}
+          cachePolicy="memory-disk"
           contentFit="cover"
           recyclingKey={id}
           source={{ uri: photoUrl }}
