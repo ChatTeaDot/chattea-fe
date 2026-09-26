@@ -22,7 +22,7 @@ const mocks = vi.hoisted(() => {
       retryReconciliation: vi.fn(async () => undefined),
       syncUser: vi.fn(async () => undefined),
     },
-    interactionTasks: [] as (() => void)[],
+    idleTasks: [] as (() => void)[],
     notificationResponseListener: vi.fn(() => ({ remove: vi.fn() })),
     pushLifecycle: {
       clearLocal: vi.fn(async () => undefined),
@@ -54,14 +54,14 @@ vi.mock("react-native", () => ({
   AppState: {
     addEventListener: vi.fn(() => ({ remove: vi.fn() })),
   },
-  InteractionManager: {
-    runAfterInteractions: vi.fn((task: () => void) => {
-      mocks.interactionTasks.push(task);
-      return { cancel: vi.fn() };
-    }),
-  },
   Platform: { OS: "ios" },
 }));
+
+globalThis.requestIdleCallback = (callback) => {
+  mocks.idleTasks.push(callback as () => void);
+  return mocks.idleTasks.length;
+};
+globalThis.cancelIdleCallback = () => undefined;
 
 vi.mock("expo-router", () => ({
   router: { push: vi.fn(), replace: vi.fn() },
@@ -124,8 +124,8 @@ vi.mock("@datadog/mobile-react-native", () => ({
   TrackingConsent: { GRANTED: "granted" },
 }));
 
-const flushInteractions = async () => {
-  const tasks = mocks.interactionTasks.splice(0);
+const flushIdle = async () => {
+  const tasks = mocks.idleTasks.splice(0);
   for (const task of tasks) task();
   await act(async () => undefined);
 };
@@ -141,7 +141,7 @@ const render = async (element: ReactElement) => {
 describe("provider deferral", () => {
   beforeEach(() => {
     resetStartupMetrics();
-    mocks.interactionTasks.length = 0;
+    mocks.idleTasks.length = 0;
     mocks.segments = [];
     mocks.userId = "user-1";
     vi.clearAllMocks();
@@ -150,7 +150,7 @@ describe("provider deferral", () => {
   it("defers RevenueCat sync until the premium route is entered", async () => {
     const renderer = await render(createElement(RevenueCatProvider, null, createElement("div")));
 
-    await flushInteractions();
+    await flushIdle();
     expect(mocks.billingLifecycle.syncUser).not.toHaveBeenCalled();
 
     mocks.segments = ["premium"];
@@ -176,7 +176,7 @@ describe("provider deferral", () => {
     expect(mocks.notificationResponseListener).toHaveBeenCalled();
     expect(mocks.pushLifecycle.start).not.toHaveBeenCalled();
 
-    await flushInteractions();
+    await flushIdle();
 
     expect(mocks.pushLifecycle.start).toHaveBeenCalledWith("user-1");
     expect(getProviderInitMetrics().map((metric) => metric.name)).toContain(
@@ -187,7 +187,7 @@ describe("provider deferral", () => {
   it("does not register push when signed out", async () => {
     mocks.userId = null;
     await render(createElement(PushNotificationsProvider, null, createElement("div")));
-    await flushInteractions();
+    await flushIdle();
 
     expect(mocks.pushLifecycle.start).not.toHaveBeenCalled();
     expect(mocks.pushLifecycle.stop).toHaveBeenCalled();
@@ -199,7 +199,7 @@ describe("provider deferral", () => {
     await render(createElement(ObservabilityProvider, null, createElement("div")));
     expect(mocks.sentryInit).not.toHaveBeenCalled();
 
-    await flushInteractions();
+    await flushIdle();
     expect(mocks.sentryInit).toHaveBeenCalledTimes(1);
   });
 });
