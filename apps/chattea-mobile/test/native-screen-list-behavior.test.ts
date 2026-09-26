@@ -598,7 +598,7 @@ describe("today match action locking", () => {
     renderScreen(TodayMatchesScreen);
 
     expect(mocks.queryOptions[1]).toMatchObject({
-      fetchPolicy: "cache-and-network",
+      fetchPolicy: "cache-first",
       notifyOnNetworkStatusChange: true,
     });
   });

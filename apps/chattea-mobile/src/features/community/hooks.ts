@@ -29,8 +29,9 @@ import { createWebviewTrace, parseVitalsMessage, type WebviewTrace } from "./uti
 
 export const useCommunityPost = () => {
   const postId = useRouteParam("post-id");
-  const posts = useQuery<PostsData>(COMMUNITY_POSTS_QUERY);
+  const posts = useQuery<PostsData>(COMMUNITY_POSTS_QUERY, { fetchPolicy: "cache-first" });
   const comments = useQuery<CommentsData>(COMMUNITY_COMMENTS_QUERY, {
+    fetchPolicy: "cache-first",
     skip: !postId,
     variables: { postId },
   });

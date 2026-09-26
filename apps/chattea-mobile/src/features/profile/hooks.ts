@@ -18,9 +18,10 @@ import { showProfileActionError } from "./utils";
 import { buildProfileUpdateInput } from "./utils/profile-input";
 
 export const useProfile = () => {
-  const me = useQuery<MeData>(ME_QUERY);
+  const me = useQuery<MeData>(ME_QUERY, { fetchPolicy: "cache-first" });
   const subscription = useQuery<{ currentSubscription: CurrentSubscription }>(
     CURRENT_SUBSCRIPTION_QUERY,
+    { fetchPolicy: "cache-first" },
   );
 
   return { me, subscription };
