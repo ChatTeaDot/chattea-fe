@@ -5,7 +5,6 @@ import {
 } from "@datadog/mobile-react-native";
 import * as Sentry from "@sentry/react-native";
 import { PropsWithChildren, useEffect, useMemo } from "react";
-import { InteractionManager } from "react-native";
 
 import {
   datadogClientToken,
@@ -34,10 +33,10 @@ const ObservabilityProvider = ({ children }: PropsWithChildren) => {
   useProviderInitMetric("observability");
 
   useEffect(() => {
-    const task = InteractionManager.runAfterInteractions(() => {
+    const id = requestIdleCallback(() => {
       void measureProviderInit("observability:sentry", initSentry);
     });
-    return () => task.cancel();
+    return () => cancelIdleCallback(id);
   }, []);
 
   const datadogConfig = useMemo(() => {

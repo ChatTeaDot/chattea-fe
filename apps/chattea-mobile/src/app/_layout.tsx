@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 import { useEffect } from "react";
-import { InteractionManager, Platform } from "react-native";
+import { Platform } from "react-native";
 import { useReducedMotion } from "react-native-reanimated";
 import { useUnistyles } from "react-native-unistyles";
 
@@ -66,10 +66,8 @@ const ThemedStack = () => {
 const AppRoot = () => {
   useEffect(() => {
     markStartupMilestone("app:first-commit");
-    const task = InteractionManager.runAfterInteractions(() =>
-      markStartupMilestone("app:first-interactive"),
-    );
-    return () => task.cancel();
+    const id = requestIdleCallback(() => markStartupMilestone("app:first-interactive"));
+    return () => cancelIdleCallback(id);
   }, []);
   return (
     <RootProvider>
