@@ -134,10 +134,11 @@ const performSendLike = async (candidate: MatchCandidate, like: LikeMutate) => {
 
 export const useTodayMatches = () => {
   const candidates = useQuery<CandidatesData>(MATCH_CANDIDATES_QUERY, {
+    fetchPolicy: "cache-first",
     notifyOnNetworkStatusChange: true,
   });
   const balance = useQuery<{ consumableBalance: ConsumableBalance }>(CONSUMABLE_BALANCE_QUERY, {
-    fetchPolicy: "cache-and-network",
+    fetchPolicy: "cache-first",
     notifyOnNetworkStatusChange: true,
   });
   const [like, likeState] = useMutation<{ likeUser: InteractionResult }>(LIKE_USER_MUTATION);
@@ -232,6 +233,7 @@ export const useTodayMatches = () => {
 
 export const useLikes = () => {
   const likes = useQuery<LikedCandidatesData>(LIKED_ME_CANDIDATES_QUERY, {
+    fetchPolicy: "cache-first",
     notifyOnNetworkStatusChange: true,
   });
   const [like, likeState] = useMutation<{ likeUser: InteractionResult }>(LIKE_USER_MUTATION);
@@ -253,9 +255,11 @@ export const useLikes = () => {
 export const useCandidateDetail = () => {
   const candidateId = useRouteParam("candidate-id");
   const candidates = useQuery<CandidatesData>(MATCH_CANDIDATES_QUERY, {
+    fetchPolicy: "cache-first",
     notifyOnNetworkStatusChange: true,
   });
   const liked = useQuery<LikedCandidatesData>(LIKED_ME_CANDIDATES_QUERY, {
+    fetchPolicy: "cache-first",
     notifyOnNetworkStatusChange: true,
   });
   const [like, likeState] = useMutation<{ likeUser: InteractionResult }>(LIKE_USER_MUTATION);

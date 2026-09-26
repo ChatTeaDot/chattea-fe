@@ -54,7 +54,9 @@ export const useNotificationNavigation = (): NotificationNavigationCoordinator =
 };
 
 export const useNotifications = () => {
-  const notifications = useQuery<NotificationsData>(NOTIFICATIONS_QUERY);
+  const notifications = useQuery<NotificationsData>(NOTIFICATIONS_QUERY, {
+    fetchPolicy: "cache-first",
+  });
   const [markRead] = useMutation<{ markNotificationRead: boolean }>(
     MARK_NOTIFICATION_READ_MUTATION,
   );

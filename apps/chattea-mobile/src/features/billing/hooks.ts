@@ -23,10 +23,15 @@ export const useRevenueCat = (): RevenueCatContextValue => {
 };
 
 export const usePremiumBilling = () => {
-  const products = useQuery<{ billingProducts: BillingProduct[] }>(BILLING_PRODUCTS_QUERY);
-  const balance = useQuery<{ consumableBalance: ConsumableBalance }>(CONSUMABLE_BALANCE_QUERY);
+  const products = useQuery<{ billingProducts: BillingProduct[] }>(BILLING_PRODUCTS_QUERY, {
+    fetchPolicy: "cache-first",
+  });
+  const balance = useQuery<{ consumableBalance: ConsumableBalance }>(CONSUMABLE_BALANCE_QUERY, {
+    fetchPolicy: "cache-first",
+  });
   const subscription = useQuery<{ currentSubscription: CurrentSubscription }>(
     CURRENT_SUBSCRIPTION_QUERY,
+    { fetchPolicy: "cache-first" },
   );
   const revenueCat = useRevenueCat();
   const [pending, setPending] = useState(false);

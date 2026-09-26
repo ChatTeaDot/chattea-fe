@@ -35,7 +35,7 @@ import {
 } from "./utils/message-sync";
 
 export const useChatRooms = () => {
-  const rooms = useQuery<RoomsData>(CHAT_ROOMS_QUERY);
+  const rooms = useQuery<RoomsData>(CHAT_ROOMS_QUERY, { fetchPolicy: "cache-first" });
   const openRoom = (id: string) => router.push(`/rooms/${id}`);
   const prefetchRoom = (id: string) => {
     void apolloClient
@@ -51,9 +51,10 @@ export const useChatRooms = () => {
 
 export const useChatRoom = () => {
   const roomId = useRouteParam("room-id");
-  const me = useQuery<MeData>(ME_QUERY);
-  const roomsQuery = useQuery<RoomsData>(CHAT_ROOMS_QUERY);
+  const me = useQuery<MeData>(ME_QUERY, { fetchPolicy: "cache-first" });
+  const roomsQuery = useQuery<RoomsData>(CHAT_ROOMS_QUERY, { fetchPolicy: "cache-first" });
   const messages = useQuery<MessagesData>(CHAT_MESSAGES_QUERY, {
+    fetchPolicy: "cache-first",
     skip: !roomId,
     variables: { input: { roomId, first: CHAT_PAGE_SIZE } },
   });
@@ -125,16 +126,15 @@ export const useChatRoom = () => {
     return () => subscription.remove();
   }, []);
 
-  const { refetch, startPolling, stopPolling } = messages;
+  const { startPolling, stopPolling } = messages;
   useEffect(() => {
     if (!roomId || !isChatPollingEnabled(appState, focused)) {
       stopPolling();
       return;
     }
-    void refetch();
     startPolling(CHAT_POLL_INTERVAL_MS);
     return () => stopPolling();
-  }, [appState, focused, refetch, roomId, startPolling, stopPolling]);
+  }, [appState, focused, roomId, startPolling, stopPolling]);
 
   useEffect(() => {
     if (roomId) void markRead({ variables: { input: { roomId } } });
