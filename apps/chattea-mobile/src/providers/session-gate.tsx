@@ -27,7 +27,7 @@ const NativeSessionGate = ({ children }: PropsWithChildren) => {
   const segments = useSegments() as string[];
   const user = useQuery<MeData>(ME_QUERY, {
     skip: !hydrated || !session,
-    fetchPolicy: "cache-and-network",
+    fetchPolicy: "cache-first",
   });
   const [notificationNavigation] = useState(() =>
     createNotificationNavigationCoordinator({

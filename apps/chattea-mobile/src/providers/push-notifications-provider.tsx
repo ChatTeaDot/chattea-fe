@@ -2,7 +2,7 @@ import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import { router } from "expo-router";
 import { type PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
-import { AppState, InteractionManager, Platform } from "react-native";
+import { AppState, Platform } from "react-native";
 
 import {
   createPushRegistrationLifecycle,
@@ -78,7 +78,7 @@ const PushNotificationsProvider = ({ children }: PropsWithChildren) => {
         shouldShowList: true,
       }),
     });
-    const registration = InteractionManager.runAfterInteractions(() => {
+    const registration = requestIdleCallback(() => {
       void measureProviderInit("push-notifications:register", () => lifecycle.start(userId)).catch(
         () => undefined,
       );
@@ -98,7 +98,7 @@ const PushNotificationsProvider = ({ children }: PropsWithChildren) => {
     });
 
     return () => {
-      registration.cancel();
+      cancelIdleCallback(registration);
       appStateSubscription.remove();
       responseSubscription.remove();
       tokenSubscription.remove();

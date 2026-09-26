@@ -1,5 +1,7 @@
+import { Image } from "expo-image";
 import { router, Stack } from "expo-router";
 import { Bell, Sparkles } from "lucide-react-native";
+import { useEffect } from "react";
 import { Pressable, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
@@ -46,6 +48,14 @@ const TodayMatchesScreen = () => {
   const handleSwipe = (direction: "left" | "right") =>
     void act(direction === "right" ? "like" : "skip");
   const openDetail = () => candidate && router.push(`/candidate/${candidate.id}`);
+
+  const nextCandidatePhoto = candidates.data?.matchCandidates?.[1]?.photos?.[0]?.url;
+
+  useEffect(() => {
+    if (nextCandidatePhoto) {
+      Image.prefetch([nextCandidatePhoto], "memory-disk");
+    }
+  }, [nextCandidatePhoto]);
 
   return (
     <>

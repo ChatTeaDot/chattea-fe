@@ -5,7 +5,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Alert, AppState } from "react-native";
 
 import { ME_QUERY, type MeData } from "@/features/profile";
-import { apolloClient } from "@/shared/graphql";
+import { apolloClient, getGraphQLAuthorizationHeaders } from "@/shared/graphql";
+import { apiBase } from "@/shared/graphql/constants";
+import { getInstallId } from "@/shared/graphql/utils";
 import { useRouteParam } from "@/shared/hooks";
 import { showActionError } from "@/shared/lib";
 
@@ -28,6 +30,7 @@ import {
   normalizeMessageDraft,
   toSendChatMessageVariables,
 } from "./utils";
+import { EventSource } from "./utils/event-source";
 import {
   createOptimisticChatMessage,
   isChatPollingEnabled,
@@ -35,25 +38,29 @@ import {
 } from "./utils/message-sync";
 
 export const useChatRooms = () => {
-  const rooms = useQuery<RoomsData>(CHAT_ROOMS_QUERY);
-  const openRoom = (id: string) => router.push(`/rooms/${id}`);
-  const prefetchRoom = (id: string) => {
-    void apolloClient
-      .query<MessagesData>({
-        query: CHAT_MESSAGES_QUERY,
-        variables: { input: { roomId: id, first: CHAT_PAGE_SIZE } },
-      })
-      .catch(() => undefined);
-  };
+  const rooms = useQuery<RoomsData>(CHAT_ROOMS_QUERY, { fetchPolicy: "cache-first" });
+  const openRoom = useCallback((id: string) => router.push(`/rooms/${id}`), []);
+  const prefetchRoom = useCallback(
+    (id: string) => {
+      void apolloClient
+        .query<MessagesData>({
+          query: CHAT_MESSAGES_QUERY,
+          variables: { input: { roomId: id, first: CHAT_PAGE_SIZE } },
+        })
+        .catch(() => undefined);
+    },
+    [],
+  );
 
   return { rooms, openRoom, prefetchRoom };
 };
 
 export const useChatRoom = () => {
   const roomId = useRouteParam("room-id");
-  const me = useQuery<MeData>(ME_QUERY);
-  const roomsQuery = useQuery<RoomsData>(CHAT_ROOMS_QUERY);
+  const me = useQuery<MeData>(ME_QUERY, { fetchPolicy: "cache-first" });
+  const roomsQuery = useQuery<RoomsData>(CHAT_ROOMS_QUERY, { fetchPolicy: "cache-first" });
   const messages = useQuery<MessagesData>(CHAT_MESSAGES_QUERY, {
+    fetchPolicy: "cache-first",
     skip: !roomId,
     variables: { input: { roomId, first: CHAT_PAGE_SIZE } },
   });
@@ -66,11 +73,20 @@ export const useChatRoom = () => {
   const pagination = useRef({ hasMore: true, loading: false, roomId });
   const [focused, setFocused] = useState(false);
   const [appState, setAppState] = useState(AppState.currentState);
+  const [sseMessages, setSseMessages] = useState<ChatMessage[]>([]);
+  const lastEventIdRef = useRef<string | null>(null);
+  const prevRoomIdRef = useRef<string | null>(null);
+  const eventSourceRef = useRef<EventSource | null>(null);
+  const sseActiveRef = useRef(true);
   const newestMessages = messages.data?.chatMessages;
   const messageList = useMemo(
     () =>
-      mergeChatMessages(history.roomId === roomId ? history.messages : [], newestMessages ?? []),
-    [history, newestMessages, roomId],
+      mergeChatMessages(
+        history.roomId === roomId ? history.messages : [],
+        newestMessages ?? [],
+        sseMessages.filter((message) => message.roomId === roomId),
+      ),
+    [history, newestMessages, roomId, sseMessages],
   );
   const loadingOlder = history.roomId === roomId && history.loading;
   const messageTextLimit = getMessageTextLimit(
@@ -127,13 +143,53 @@ export const useChatRoom = () => {
 
   const { refetch, startPolling, stopPolling } = messages;
   useEffect(() => {
+    sseActiveRef.current = true;
     if (!roomId || !isChatPollingEnabled(appState, focused)) {
+      eventSourceRef.current?.close();
       stopPolling();
       return;
     }
+    if (prevRoomIdRef.current !== roomId) {
+      prevRoomIdRef.current = roomId;
+      lastEventIdRef.current = null;
+    }
     void refetch();
-    startPolling(CHAT_POLL_INTERVAL_MS);
-    return () => stopPolling();
+    const connect = async () => {
+      const headers: Record<string, string> = {
+        ...getGraphQLAuthorizationHeaders(),
+        "x-device-id": await getInstallId(),
+      };
+      if (lastEventIdRef.current) {
+        headers["Last-Event-ID"] = lastEventIdRef.current;
+      }
+      eventSourceRef.current?.close();
+      const source = new EventSource(`${apiBase}/api/chat/${roomId}/stream`, { headers });
+      eventSourceRef.current = source;
+      source.onopen = () => {
+        stopPolling();
+      };
+      source.onmessage = (event) => {
+        if (!sseActiveRef.current) return;
+        try {
+          const parsed = JSON.parse(event.data) as ChatMessage;
+          if (parsed.roomId !== roomId) return;
+          setSseMessages((prev) => mergeChatMessage(prev.filter((message) => message.roomId === roomId), parsed));
+          if (event.id) lastEventIdRef.current = event.id;
+        } catch {
+          return;
+        }
+      };
+      source.onclose = () => {
+        if (!sseActiveRef.current) return;
+        startPolling(CHAT_POLL_INTERVAL_MS);
+      };
+    };
+    connect();
+    return () => {
+      sseActiveRef.current = false;
+      eventSourceRef.current?.close();
+      stopPolling();
+    };
   }, [appState, focused, refetch, roomId, startPolling, stopPolling]);
 
   useEffect(() => {

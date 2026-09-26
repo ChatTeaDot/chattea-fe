@@ -263,6 +263,13 @@ const createTransportLink = (): ApolloLink => {
 export const createApolloClient = (link: ApolloLink = createTransportLink()) =>
   new ApolloClient({
     cache: new InMemoryCache(),
+    defaultOptions: {
+      query: { fetchPolicy: "cache-first" },
+      watchQuery: {
+        fetchPolicy: "cache-first",
+        refetchOn: { online: false, windowFocus: false },
+      },
+    },
     link,
   });
 

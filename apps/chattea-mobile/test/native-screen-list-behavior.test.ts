@@ -233,12 +233,12 @@ vi.mock("@legendapp/list/react-native", async () => {
 });
 vi.mock("expo-image", async () => {
   const React = await vi.importActual<typeof import("react")>("react");
-  return {
-    Image: (props: Record<string, unknown>) => {
-      mocks.images.push(props);
-      return React.createElement("img", { alt: props.accessibilityLabel as string });
-    },
+  const Image = (props: Record<string, unknown>) => {
+    mocks.images.push(props);
+    return React.createElement("img", { alt: props.accessibilityLabel as string });
   };
+  Image.prefetch = vi.fn();
+  return { Image };
 });
 vi.mock("expo-router", async () => {
   const React = await vi.importActual<typeof import("react")>("react");
@@ -598,7 +598,7 @@ describe("today match action locking", () => {
     renderScreen(TodayMatchesScreen);
 
     expect(mocks.queryOptions[1]).toMatchObject({
-      fetchPolicy: "cache-and-network",
+      fetchPolicy: "cache-first",
       notifyOnNetworkStatusChange: true,
     });
   });

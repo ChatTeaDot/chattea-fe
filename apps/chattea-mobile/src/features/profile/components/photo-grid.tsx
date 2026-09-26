@@ -16,6 +16,7 @@ const PhotoGrid = ({ photos, uploading, onAddPhoto }: PhotoGridProps) => {
           return (
             <Image
               accessibilityLabel={`프로필 사진 ${index + 1}`}
+              cachePolicy="memory-disk"
               contentFit="cover"
               key={photo.uploadId}
               source={{ uri: photo.url }}
