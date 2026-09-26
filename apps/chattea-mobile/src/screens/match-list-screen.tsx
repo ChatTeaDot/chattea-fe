@@ -1,11 +1,15 @@
 import { router } from "expo-router";
+import { memo } from "react";
 import { ScrollView, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 
 import { useChatRooms } from "@/features/chat";
-import { NewMatchAvatar } from "@/features/matches";
+import { NewMatchAvatar as NewMatchAvatarComponent } from "@/features/matches";
 import { AppButton, EmptyState, ErrorState, LoadingState, NativeScreen } from "@/shared/components";
+
+const NewMatchAvatar = memo(NewMatchAvatarComponent);
+NewMatchAvatar.displayName = "NewMatchAvatar";
 
 const MatchListScreen = () => {
   const { rooms, openRoom } = useChatRooms();
