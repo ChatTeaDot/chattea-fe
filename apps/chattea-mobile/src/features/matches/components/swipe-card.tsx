@@ -69,7 +69,13 @@ const SwipeCard = ({ candidate, disabled, onPress, onSwipe }: SwipeCardProps) =>
         {photo ? (
           <Image
             accessibilityLabel={`${candidate.userName}님의 대표 사진`}
+            cachePolicy="memory-disk"
             contentFit="cover"
+            onLoad={(event) => {
+              if (__DEV__) {
+                console.log("[image-cache] swipe-card", event.source.url, event.cacheType);
+              }
+            }}
             recyclingKey={candidate.id}
             source={{ uri: photo }}
             style={styles.photo}

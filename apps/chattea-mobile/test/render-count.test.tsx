@@ -121,10 +121,10 @@ vi.mock("@legendapp/list/react-native", async () => {
 
 vi.mock("expo-image", async () => {
   const React = await vi.importActual<typeof import("react")>("react");
-  return {
-    Image: (props: Record<string, unknown>) =>
-      React.createElement("img", { alt: props.accessibilityLabel as string }),
-  };
+  const Image = (props: Record<string, unknown>) =>
+    React.createElement("img", { alt: props.accessibilityLabel as string });
+  Image.prefetch = vi.fn();
+  return { Image };
 });
 
 vi.mock("expo-router", async () => {

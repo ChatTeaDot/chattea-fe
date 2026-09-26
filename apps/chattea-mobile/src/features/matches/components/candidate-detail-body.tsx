@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
 import { BadgeCheck } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, Text, useWindowDimensions, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
@@ -15,6 +15,15 @@ const CandidateDetailBody = ({ candidate }: CandidateDetailBodyProps) => {
   const photos = candidate.photos.length
     ? [...candidate.photos].sort((a, b) => a.position - b.position)
     : [null];
+
+  const nextPhoto = photos[page + 1]?.url;
+
+  useEffect(() => {
+    if (nextPhoto) {
+      Image.prefetch([nextPhoto], "memory-disk");
+    }
+  }, [nextPhoto]);
+
   return (
     <View>
       <ScrollView
@@ -29,8 +38,14 @@ const CandidateDetailBody = ({ candidate }: CandidateDetailBodyProps) => {
           photo ? (
             <Image
               accessibilityLabel={`${candidate.userName}님의 사진 ${index + 1}`}
+              cachePolicy="memory-disk"
               contentFit="cover"
               key={photo.url}
+              onLoad={(event) => {
+                if (__DEV__) {
+                  console.log("[image-cache] candidate-detail", event.source.url, event.cacheType);
+                }
+              }}
               recyclingKey={`${candidate.id}-${index}`}
               source={{ uri: photo.url }}
               style={[styles.stripPhoto, { width }]}
