@@ -1,0 +1,11 @@
+export declare const page: string;
+export declare const list: string;
+export declare const rowButton: string;
+export declare const rowBody: string;
+export declare const rowTitle: string;
+export declare const rowSub: string;
+export declare const stateWrap: string;
+export declare const stateTitle: string;
+export declare const stateBody: string;
+export declare const retryButton: string;
+export declare const writeFab: string;
