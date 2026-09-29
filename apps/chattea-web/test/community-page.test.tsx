@@ -48,5 +48,16 @@ describe("CommunityPage", () => {
     const html = renderPage();
 
     expect(html).toContain("불러오는 중");
+    expect(html).toContain('role="status"');
+  });
+
+  it("exposes landmark, heading, and labelled controls", () => {
+    const html = renderPage(primedClient());
+
+    expect(html).toContain("<main");
+    expect(html).toContain("<h1");
+    expect(html).toContain('aria-label="글쓰기"');
+    expect(html).toContain("<button");
+    expect(html).toContain("<li>");
   });
 });
