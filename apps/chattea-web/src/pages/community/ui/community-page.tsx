@@ -1,6 +1,7 @@
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { ANALYTICS_EVENT, ANALYTICS_SCREEN, track } from "@/shared/analytics";
 import { ErrorBoundary } from "@/shared/lib";
 
 import { openWrite } from "../bridge";
@@ -29,6 +30,13 @@ const LoadingState = () => (
 
 const CommunityPage = () => {
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    track(ANALYTICS_EVENT.communityView, {
+      screen: ANALYTICS_SCREEN.community,
+      source: "webview",
+    });
+  }, []);
 
   let content;
   if (signedOut()) {
