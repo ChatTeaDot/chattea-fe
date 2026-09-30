@@ -1,0 +1,14 @@
+{
+  "actions": {
+    "retry": "다시 시도"
+  },
+  "dates": {
+    "justNow": "방금",
+    "minutesAgo": "{{count}}분 전",
+    "hoursAgo": "{{count}}시간 전",
+    "daysAgo": "{{count}}일 전"
+  },
+  "states": {
+    "loading": "불러오는 중…"
+  }
+}

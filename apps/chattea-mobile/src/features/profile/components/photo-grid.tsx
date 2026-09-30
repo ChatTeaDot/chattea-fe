@@ -3,10 +3,13 @@ import { ImagePlus } from "lucide-react-native";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
+
 import { MAX_PROFILE_PHOTOS } from "../constants";
 import type { PhotoGridProps } from "../types";
 
 const PhotoGrid = ({ photos, uploading, onAddPhoto }: PhotoGridProps) => {
+  const { t } = useTranslation("profile");
   const { theme } = useUnistyles();
   const slots = Array.from({ length: MAX_PROFILE_PHOTOS }, (_, index) => photos[index]);
   return (
@@ -15,7 +18,7 @@ const PhotoGrid = ({ photos, uploading, onAddPhoto }: PhotoGridProps) => {
         if (photo)
           return (
             <Image
-              accessibilityLabel={`프로필 사진 ${index + 1}`}
+              accessibilityLabel={t("photos.label", { index: index + 1 })}
               cachePolicy="memory-disk"
               contentFit="cover"
               key={photo.uploadId}
@@ -26,7 +29,7 @@ const PhotoGrid = ({ photos, uploading, onAddPhoto }: PhotoGridProps) => {
         if (index === photos.length)
           return (
             <Pressable
-              accessibilityLabel="사진 추가"
+              accessibilityLabel={t("photos.add")}
               accessibilityRole="button"
               disabled={uploading}
               key="picker"

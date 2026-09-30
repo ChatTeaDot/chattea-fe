@@ -1,6 +1,7 @@
 import type { DehydratedState } from "@tanstack/react-query";
 
 const DEHYDRATED_GLOBAL = "window.__DEHYDRATED__";
+const LANGUAGE_GLOBAL = "window.__CHATTEA_LANG__";
 
 const isDehydratedState = (value: unknown): value is DehydratedState =>
   typeof value === "object" &&
@@ -16,5 +17,15 @@ export const dehydratedStateScript = (state: unknown): string => {
   return `<script>${DEHYDRATED_GLOBAL}=${serialized}</script>`;
 };
 
-export const injectDehydratedState = (tail: string, state: unknown): string =>
-  tail.replace("</body>", `${dehydratedStateScript(state)}</body>`);
+export const languageScript = (language: string): string =>
+  `<script>${LANGUAGE_GLOBAL}=${JSON.stringify(language)}</script>`;
+
+export const injectDehydratedState = (
+  tail: string,
+  state: unknown,
+  language?: string,
+): string =>
+  tail.replace(
+    "</body>",
+    `${language ? languageScript(language) : ""}${dehydratedStateScript(state)}</body>`,
+  );

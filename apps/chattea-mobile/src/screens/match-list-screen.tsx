@@ -6,18 +6,20 @@ import { StyleSheet } from "react-native-unistyles";
 
 import { useChatRooms } from "@/features/chat";
 import { NewMatchAvatar as NewMatchAvatarComponent } from "@/features/matches";
+import { useTranslation } from "@/i18n";
 import { AppButton, EmptyState, ErrorState, LoadingState, NativeScreen } from "@/shared/components";
 
 const NewMatchAvatar = memo(NewMatchAvatarComponent);
 NewMatchAvatar.displayName = "NewMatchAvatar";
 
 const MatchListScreen = () => {
+  const { t } = useTranslation("matches");
   const { rooms, openRoom } = useChatRooms();
   const fresh = (rooms.data?.chatRooms ?? []).filter((room) => !room.lastMessage);
   return (
     <NativeScreen>
       <ScrollView contentContainerStyle={styles.body}>
-        <Text style={styles.sectionTitle}>새로 매치된 사람</Text>
+        <Text style={styles.sectionTitle}>{t("list.sectionTitle")}</Text>
         {rooms.loading ? (
           <LoadingState />
         ) : rooms.error ? (
@@ -33,14 +35,11 @@ const MatchListScreen = () => {
             ))}
           </ScrollView>
         ) : (
-          <EmptyState
-            title="아직 새로 매치된 사람이 없어요"
-            body="서로 관심이 닿으면 여기에 보여드릴게요."
-          />
+          <EmptyState title={t("list.emptyTitle")} body={t("list.emptyBody")} />
         )}
       </ScrollView>
       <SafeAreaView edges={["bottom"]} style={styles.cta}>
-        <AppButton onPress={() => router.push("/rooms")} title="채팅 시작" />
+        <AppButton onPress={() => router.push("/rooms")} title={t("list.startChat")} />
       </SafeAreaView>
     </NativeScreen>
   );

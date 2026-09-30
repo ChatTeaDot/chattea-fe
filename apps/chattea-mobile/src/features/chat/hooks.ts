@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Alert, AppState } from "react-native";
 
 import { ME_QUERY, type MeData } from "@/features/profile";
+import i18n from "@/i18n";
 import { apolloClient, getGraphQLAuthorizationHeaders } from "@/shared/graphql";
 import { apiBase } from "@/shared/graphql/constants";
 import { getInstallId } from "@/shared/graphql/utils";
@@ -236,18 +237,24 @@ export const useChatRoom = () => {
   };
 
   const reportMessage = (messageId: string) => {
-    Alert.alert("이 메시지를 신고할까요?", "운영팀이 내용을 확인해요.", [
-      { text: "취소", style: "cancel" },
-      {
-        text: "신고하기",
-        style: "destructive",
-        onPress: () => {
-          void report({ variables: { input: { messageId, reason: "사용자 신고" } } })
-            .then(() => Alert.alert("신고를 접수했어요", "확인 후 필요한 조치를 할게요."))
-            .catch(showActionError);
+    Alert.alert(
+      i18n.t("message.reportTitle", { ns: "chat" }),
+      i18n.t("report.confirmBody"),
+      [
+        { text: i18n.t("actions.cancel"), style: "cancel" },
+        {
+          text: i18n.t("actions.report"),
+          style: "destructive",
+          onPress: () => {
+            void report({ variables: { input: { messageId, reason: "사용자 신고" } } })
+              .then(() =>
+                Alert.alert(i18n.t("report.receivedTitle"), i18n.t("report.receivedBody")),
+              )
+              .catch(showActionError);
+          },
         },
-      },
-    ]);
+      ],
+    );
   };
   const currentUserId = me.data?.me.id;
   const roomName = roomsQuery.data?.chatRooms.find((room) => room.id === roomId)?.name;

@@ -1,0 +1,67 @@
+{
+  "fields": {
+    "name": "Name",
+    "birthDate": "Date of birth",
+    "birthDateHint": "YYYY-MM-DD",
+    "region": "Region",
+    "interestedIn": "Interested in",
+    "intro": "About me",
+    "introHint": "Up to 60 characters",
+    "introLabel": "About me (60 chars)",
+    "introPlaceholder": "Tell your story briefly",
+    "introPlaceholderEditor": "I visit exhibitions on weekends…"
+  },
+  "gender": {
+    "male": "Men",
+    "female": "Women",
+    "everyone": "Everyone"
+  },
+  "photos": {
+    "guide": "Please upload at least 1 photo. You can add up to 2 more.",
+    "count": "Photos {{count}}/{{max}}",
+    "label": "Profile photo {{index}}",
+    "deleteMain": "Delete main photo",
+    "delete": "Delete photo",
+    "uploading": "Uploading photo",
+    "add": "Add photo",
+    "limitReached": "You can add up to {{max}} photos"
+  },
+  "actions": {
+    "save": "Save",
+    "complete": "Complete profile",
+    "saveShort": "Save"
+  },
+  "attributes": {
+    "height": "Height",
+    "job": "Job",
+    "mbti": "MBTI"
+  },
+  "plan": {
+    "view": "View my plan"
+  },
+  "errors": {
+    "incompleteTitle": "Please fill in your whole profile",
+    "incompleteBody": "Check photos, name, birth date, region, intro, and who you're interested in.",
+    "uploadPendingTitle": "Photo upload is being prepared",
+    "uploadPendingBody": "You'll be able to upload photos once secure photo storage is set up."
+  },
+  "regions": {
+    "서울": "Seoul",
+    "부산": "Busan",
+    "대구": "Daegu",
+    "인천": "Incheon",
+    "광주": "Gwangju",
+    "대전": "Daejeon",
+    "울산": "Ulsan",
+    "세종": "Sejong",
+    "경기": "Gyeonggi",
+    "강원": "Gangwon",
+    "충북": "Chungbuk",
+    "충남": "Chungnam",
+    "전북": "Jeonbuk",
+    "전남": "Jeonnam",
+    "경북": "Gyeongbuk",
+    "경남": "Gyeongnam",
+    "제주": "Jeju"
+  }
+}

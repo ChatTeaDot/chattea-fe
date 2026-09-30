@@ -4,11 +4,13 @@ import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
 import { NativeTextInput } from "@/shared/components";
 
 import type { CommentInputBarProps } from "../types";
 
 const CommentInputBar = ({ disabled, onChangeBody, onSubmit, value }: CommentInputBarProps) => {
+  const { t } = useTranslation("community");
   const { theme } = useUnistyles();
   return (
     <KeyboardStickyView>
@@ -16,12 +18,12 @@ const CommentInputBar = ({ disabled, onChangeBody, onSubmit, value }: CommentInp
         <View style={styles.bar}>
           <NativeTextInput
             onChangeText={onChangeBody}
-            placeholder="댓글 입력…"
+            placeholder={t("comments.placeholder")}
             style={styles.input}
             value={value}
           />
           <Pressable
-            accessibilityLabel="댓글 등록"
+            accessibilityLabel={t("comments.submit")}
             accessibilityRole="button"
             accessibilityState={{ disabled }}
             disabled={disabled}

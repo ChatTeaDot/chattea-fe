@@ -1,0 +1,25 @@
+{
+  "rooms": {
+    "emptyTitle": "아직 시작한 대화가 없어요",
+    "emptyBody": "서로 관심이 닿으면 여기에서 대화를 이어갈 수 있어요.",
+    "openUnread": "읽지 않은 대화 열기",
+    "fallbackTitle": "대화",
+    "previewFallback": "첫 인사를 건네 보세요."
+  },
+  "room": {
+    "emptyTitle": "첫 인사를 기다리고 있어요",
+    "emptyBody": "짧고 편안한 인사부터 건네 보세요.",
+    "options": "대화 옵션"
+  },
+  "composer": {
+    "inputLabel": "메시지 입력",
+    "placeholder": "메시지 입력…",
+    "send": "메시지 보내기"
+  },
+  "message": {
+    "read": "읽음",
+    "reportLabel": "메시지 신고",
+    "report": "신고",
+    "reportTitle": "이 메시지를 신고할까요?"
+  }
+}

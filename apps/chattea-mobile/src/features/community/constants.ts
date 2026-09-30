@@ -1,4 +1,4 @@
-export const COMMUNITY_CATEGORIES = ["연애", "일상", "질문"] as const;
+export const COMMUNITY_CATEGORIES = ["dating", "daily", "question"] as const;
 
 export const COMMUNITY_TITLE_MAX_LENGTH = 80;
 

@@ -1,3 +1,5 @@
+import i18n from "@/i18n";
+
 import type { BackendBillingState } from "../api";
 import {
   BILLING_PRODUCT_IDS,
@@ -108,7 +110,7 @@ export const createRevenueCatLifecycle = (input: RevenueCatLifecycleInput) => {
   let reconciliationTask: Promise<void> | null = null;
   let cancelReconciliationRetry: (() => void) | null = null;
   let state: RevenueCatState = {
-    message: "로그인 후 결제 정보를 확인할 수 있어요.",
+    message: i18n.t("errors.loginRequired", { ns: "billing" }),
     status: "disabled",
   };
 
@@ -228,7 +230,7 @@ export const createRevenueCatLifecycle = (input: RevenueCatLifecycleInput) => {
     activeUserId = null;
     if (!userId) {
       emit({
-        message: "로그인 후 결제 정보를 확인할 수 있어요.",
+        message: i18n.t("errors.loginRequired", { ns: "billing" }),
         status: "disabled",
       });
       return Promise.resolve();
@@ -240,7 +242,7 @@ export const createRevenueCatLifecycle = (input: RevenueCatLifecycleInput) => {
       if (!apiKey) {
         if (requestGeneration === generation) {
           emit({
-            message: "이 빌드에는 App Store 결제가 설정되지 않았어요.",
+            message: i18n.t("errors.notConfigured", { ns: "billing" }),
             status: "disabled",
           });
         }
@@ -272,7 +274,7 @@ export const createRevenueCatLifecycle = (input: RevenueCatLifecycleInput) => {
         if (requestGeneration === generation) {
           activeUserId = null;
           emit({
-            message: "스토어 결제 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.",
+            message: i18n.t("errors.loadFailed", { ns: "billing" }),
             status: "error",
           });
         }
@@ -348,7 +350,7 @@ export const createRevenueCatLifecycle = (input: RevenueCatLifecycleInput) => {
     invalidateReconciliation();
     activeUserId = null;
     emit({
-      message: "로그인 후 결제 정보를 확인할 수 있어요.",
+      message: i18n.t("errors.loginRequired", { ns: "billing" }),
       status: "disabled",
     });
     return enqueue(async () => {

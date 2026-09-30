@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 
+import i18n from "@/i18n";
 import { useSession } from "@/providers";
 
 import type { Gender, SignupProfileInput } from "./api";
@@ -60,7 +61,7 @@ export const useKakaoLogin = () => {
       );
       router.push("/signup");
     } catch {
-      Alert.alert("카카오 로그인을 완료하지 못했어요");
+      Alert.alert(i18n.t("login.kakaoFailed", { ns: "auth" }));
     }
   };
 
@@ -99,7 +100,7 @@ export const useSignup = () => {
         return;
       }
       if (!gender) {
-        Alert.alert("성별을 선택해주세요");
+        Alert.alert(i18n.t("signup.genderRequired", { ns: "auth" }));
         return;
       }
 
@@ -120,7 +121,10 @@ export const useSignup = () => {
       await setSession(result.session);
       router.replace("/matches");
     } catch {
-      Alert.alert("가입을 완료하지 못했어요", "입력한 내용을 확인한 뒤 다시 시도해주세요.");
+      Alert.alert(
+        i18n.t("signup.failedTitle", { ns: "auth" }),
+        i18n.t("signup.failedBody", { ns: "auth" }),
+      );
     }
   };
 

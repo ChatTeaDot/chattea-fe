@@ -5,6 +5,7 @@ import { Alert } from "react-native";
 
 import { useRevenueCat } from "@/features/billing";
 import { usePushNotifications } from "@/features/notifications";
+import i18n from "@/i18n";
 import { performInstallationLogout, useSession } from "@/providers";
 import { apolloClient, revokeGraphQLSession } from "@/shared/graphql";
 import { formatDate, showActionError } from "@/shared/lib";
@@ -41,12 +42,12 @@ export const useSettings = () => {
   };
   const deleteAccount = () => {
     Alert.alert(
-      "정말 탈퇴할까요?",
-      "지금 바로 계정이 숨겨지고 로그아웃돼요. 14일 안에 다시 로그인하면 복구할 수 있어요.",
+      i18n.t("delete.confirmTitle", { ns: "settings" }),
+      i18n.t("delete.confirmBody", { ns: "settings" }),
       [
-        { text: "취소", style: "cancel" },
+        { text: i18n.t("actions.cancel"), style: "cancel" },
         {
-          text: "탈퇴하기",
+          text: i18n.t("delete.action", { ns: "settings" }),
           style: "destructive",
           onPress: () => {
             void requestDeletion()
@@ -65,8 +66,11 @@ export const useSettings = () => {
                 if (cleanupError) showActionError();
                 if (scheduledFor)
                   Alert.alert(
-                    "탈퇴를 예약했어요",
-                    `${formatDate(scheduledFor)}까지 다시 로그인하면 계정을 복구할 수 있어요.`,
+                    i18n.t("delete.scheduledTitle", { ns: "settings" }),
+                    i18n.t("delete.scheduledBody", {
+                      ns: "settings",
+                      date: formatDate(scheduledFor),
+                    }),
                   );
               })
               .catch(showActionError);

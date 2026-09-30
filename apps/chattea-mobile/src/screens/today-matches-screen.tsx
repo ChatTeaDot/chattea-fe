@@ -7,6 +7,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 import { MatchActionBar, SwipeCard, useTodayMatches } from "@/features/matches";
+import { useTranslation } from "@/i18n";
 import {
   EmptyState,
   ErrorState,
@@ -17,11 +18,12 @@ import {
 import type { AppTheme } from "@/theme";
 
 const AndroidHeaderActions = () => {
+  const { t } = useTranslation("matches");
   const { theme } = useUnistyles() as { theme: AppTheme };
   return (
     <View style={styles.headerActions}>
       <Pressable
-        accessibilityLabel="새 매치"
+        accessibilityLabel={t("today.newMatches")}
         accessibilityRole="button"
         hitSlop={8}
         onPress={() => router.push("/matches/list")}
@@ -29,7 +31,7 @@ const AndroidHeaderActions = () => {
         <Sparkles color={theme.colors.text} size={22} />
       </Pressable>
       <Pressable
-        accessibilityLabel="알림"
+        accessibilityLabel={t("today.notifications")}
         accessibilityRole="button"
         hitSlop={8}
         onPress={() => router.push("/notifications")}
@@ -41,6 +43,7 @@ const AndroidHeaderActions = () => {
 };
 
 const TodayMatchesScreen = () => {
+  const { t } = useTranslation("matches");
   const { candidates, candidate, actionPending, act, undoLast } = useTodayMatches();
   const candidatesLoading = candidates.loading;
   const candidatesError = candidates.error;
@@ -77,12 +80,9 @@ const TodayMatchesScreen = () => {
             />
           ) : (
             <View style={styles.placeholder}>
-              <EmptyState
-                title="오늘의 인연을 모두 살펴봤어요"
-                body="다음 추천이 준비되면 알려드릴게요."
-              />
+              <EmptyState title={t("today.emptyTitle")} body={t("today.emptyBody")} />
               <NativeButton
-                label="다시 불러오기"
+                label={t("common:actions.reload")}
                 onPress={() => void refetchCandidates()}
                 fullWidth
               />
@@ -104,10 +104,10 @@ const TodayMatchesScreen = () => {
       {process.env.EXPO_OS === "ios" ? (
         <Stack.Toolbar placement="right">
           <Stack.Toolbar.Button icon="sparkles" onPress={() => router.push("/matches/list")}>
-            <Stack.Toolbar.Label>새 매치</Stack.Toolbar.Label>
+            <Stack.Toolbar.Label>{t("today.newMatches")}</Stack.Toolbar.Label>
           </Stack.Toolbar.Button>
           <Stack.Toolbar.Button icon="bell" onPress={() => router.push("/notifications")}>
-            <Stack.Toolbar.Label>알림</Stack.Toolbar.Label>
+            <Stack.Toolbar.Label>{t("today.notifications")}</Stack.Toolbar.Label>
           </Stack.Toolbar.Button>
         </Stack.Toolbar>
       ) : null}

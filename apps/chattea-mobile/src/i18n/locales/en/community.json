@@ -1,0 +1,26 @@
+{
+  "categories": {
+    "dating": "Dating",
+    "daily": "Daily",
+    "question": "Q&A"
+  },
+  "post": {
+    "notFoundTitle": "Post not found",
+    "notFoundBody": "Head back to the list and check out other stories.",
+    "reportTitle": "Report this post?",
+    "moreOptions": "More options"
+  },
+  "comments": {
+    "title": "Comments {{count}}",
+    "emptyTitle": "No comments yet",
+    "emptyBody": "Feel free to leave the first comment.",
+    "placeholder": "Write a comment…",
+    "submit": "Post comment",
+    "reportTitle": "Report this comment?"
+  },
+  "form": {
+    "titlePlaceholder": "Title",
+    "bodyPlaceholder": "Posts are anonymous. Write freely…",
+    "submit": "Post"
+  }
+}

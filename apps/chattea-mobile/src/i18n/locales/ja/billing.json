@@ -1,0 +1,37 @@
+{
+  "notice": "毎月自動更新 · いつでも解約可能",
+  "reconciling": "ストアでの購入をアカウントに反映しています。",
+  "subscribe": "{{plan}}に登録する",
+  "restore": "以前の購入を復元",
+  "plans": {
+    "free": {
+      "description": "基本マッチング · 1日のいいね制限",
+      "price": "₩0"
+    },
+    "basic": {
+      "description": "いいね増量 · やり直し · 広告非表示",
+      "price": "₩4,900"
+    },
+    "gold": {
+      "description": "いいね閲覧拡張 · 高度なフィルター · AI要約",
+      "price": "₩9,900"
+    },
+    "black": {
+      "description": "Black限定レコメンド · 既読確認 · 強力なブースト",
+      "price": "₩24,900"
+    }
+  },
+  "purchasePending": {
+    "title": "購入を確認しています",
+    "body": "ストアの処理が完了すると、特典が自動で反映されます。"
+  },
+  "restoreRequested": {
+    "title": "復元をリクエストしました",
+    "body": "復元された特典をアカウントで再確認します。"
+  },
+  "errors": {
+    "loginRequired": "ログイン後に決済情報を確認できます。",
+    "notConfigured": "このビルドにはApp Store決済が設定されていません。",
+    "loadFailed": "ストアの決済情報を読み込めませんでした。しばらくしてからもう一度お試しください。"
+  }
+}

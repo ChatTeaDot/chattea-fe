@@ -1,0 +1,16 @@
+{
+  "title": "Community",
+  "write": "Write a post",
+  "signedOut": {
+    "title": "Sign in required",
+    "body": "Sign in from the app to read the stories."
+  },
+  "loadError": {
+    "title": "Couldn't load the list"
+  },
+  "empty": {
+    "title": "No posts yet",
+    "body": "Share the first story."
+  },
+  "commentCount": "{{count}} comments"
+}

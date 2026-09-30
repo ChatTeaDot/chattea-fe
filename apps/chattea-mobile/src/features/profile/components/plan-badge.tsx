@@ -3,15 +3,18 @@ import { Crown } from "lucide-react-native";
 import { Pressable, Text } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
+
 import { PLAN_BADGE_LABELS } from "../constants";
 import type { PlanBadgeProps } from "../types";
 
 const PlanBadge = ({ planId }: PlanBadgeProps) => {
+  const { t } = useTranslation("profile");
   const { theme } = useUnistyles();
   if (!planId || planId === "free") return null;
   return (
     <Pressable
-      accessibilityLabel="내 플랜 보기"
+      accessibilityLabel={t("plan.view")}
       accessibilityRole="button"
       onPress={() => router.push("/premium")}
       style={({ pressed }) => [styles.badge, pressed && styles.badgePressed]}

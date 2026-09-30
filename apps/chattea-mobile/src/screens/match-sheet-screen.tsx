@@ -4,12 +4,14 @@ import { StyleSheet } from "react-native-unistyles";
 
 import { MatchPairAvatars } from "@/features/matches";
 import { useCurrentUser } from "@/features/profile";
+import { useTranslation } from "@/i18n";
 import { AppButton } from "@/shared/components";
 import { useRouteParam } from "@/shared/hooks";
 
 const MatchSheetScreen = () => {
+  const { t } = useTranslation("matches");
   const roomId = useRouteParam("room-id");
-  const name = useRouteParam("name") ?? "상대";
+  const name = useRouteParam("name") ?? t("sheet.partnerFallback");
   const photo = useRouteParam("photo");
   const me = useCurrentUser();
   const startChat = () => {
@@ -18,16 +20,16 @@ const MatchSheetScreen = () => {
   };
   return (
     <View style={styles.sheet}>
-      <Text style={styles.title}>매치됐어요!</Text>
-      <Text style={styles.sub}>{name}님도 회원님을 좋아해요</Text>
+      <Text style={styles.title}>{t("sheet.title")}</Text>
+      <Text style={styles.sub}>{t("sheet.subtitle", { name })}</Text>
       <MatchPairAvatars candidatePhoto={photo} myPhoto={me.data?.me.photos[0]?.url} />
-      <AppButton onPress={startChat} title="채팅하기" />
+      <AppButton onPress={startChat} title={t("sheet.startChat")} />
       <Pressable
         accessibilityRole="button"
         onPress={() => router.back()}
         style={({ pressed }) => [styles.later, pressed && styles.laterPressed]}
       >
-        <Text style={styles.laterText}>나중에</Text>
+        <Text style={styles.laterText}>{t("sheet.later")}</Text>
       </Pressable>
     </View>
   );
