@@ -1,0 +1,66 @@
+{
+  "appName": "ChatTea",
+  "actions": {
+    "cancel": "Cancel",
+    "done": "Done",
+    "retry": "Try again",
+    "reload": "Reload",
+    "save": "Save",
+    "report": "Report",
+    "later": "Later"
+  },
+  "nav": {
+    "home": "ChatTea",
+    "newMatches": "New matches",
+    "likes": "Liked you",
+    "chat": "Chat",
+    "rooms": "Chats",
+    "community": "Community",
+    "writePost": "New post",
+    "createProfile": "Create profile",
+    "completeProfile": "Complete profile",
+    "editProfile": "Edit profile",
+    "settings": "Settings",
+    "notifications": "Notifications",
+    "plans": "Plans",
+    "profile": "Profile",
+    "myInfo": "My info"
+  },
+  "tabs": {
+    "matches": "Matches",
+    "likes": "Likes",
+    "rooms": "Chats",
+    "community": "Community",
+    "profile": "Me"
+  },
+  "states": {
+    "preparing": "Getting ChatTea ready.",
+    "connectionError": "Couldn't connect. Check your network and try again.",
+    "loadingTitle": "Loading",
+    "loadingMessage": "Just a moment.",
+    "loadingInline": "Hang on, loading content.",
+    "emptyTitle": "Nothing to show yet",
+    "emptyMessage": "We'll let you know here when there's news.",
+    "errorTitle": "Couldn't load content",
+    "errorMessage": "Check your connection and try again.",
+    "errorBody": "Please try again in a moment."
+  },
+  "errors": {
+    "actionFailedTitle": "Something went wrong",
+    "actionFailedBody": "Please try again in a moment."
+  },
+  "report": {
+    "confirmBody": "Our team will review the content.",
+    "receivedTitle": "Report received",
+    "receivedBody": "We'll take action after review."
+  },
+  "a11y": {
+    "moreOptions": "More options"
+  },
+  "dates": {
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
+  }
+}

@@ -67,10 +67,16 @@ export class EventSource {
       } else {
         const colon = line.indexOf(":");
         const field = colon === -1 ? line : line.slice(0, colon);
-        const value = colon === -1 ? "" : line.slice(colon + 1).startsWith(" ") ? line.slice(colon + 2) : line.slice(colon + 1);
+        const value =
+          colon === -1
+            ? ""
+            : line.slice(colon + 1).startsWith(" ")
+              ? line.slice(colon + 2)
+              : line.slice(colon + 1);
         if (field === "id") this.currentId = value;
         else if (field === "event") this.currentEvent = value;
-        else if (field === "data") this.currentData = this.currentData ? `${this.currentData}\n${value}` : value;
+        else if (field === "data")
+          this.currentData = this.currentData ? `${this.currentData}\n${value}` : value;
       }
     }
   }

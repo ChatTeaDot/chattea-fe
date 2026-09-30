@@ -1,0 +1,24 @@
+{
+  "sections": {
+    "notifications": "通知",
+    "account": "アカウント"
+  },
+  "rows": {
+    "matchAlerts": "新しいマッチの通知",
+    "messageAlerts": "メッセージ通知",
+    "blocked": "ブロック管理",
+    "subscription": "サブスクリプション管理",
+    "logout": "ログアウト"
+  },
+  "blocked": {
+    "title": "ブロック管理",
+    "body": "ブロックしたユーザーの管理は近日対応予定です。"
+  },
+  "delete": {
+    "action": "退会する",
+    "confirmTitle": "本当に退会しますか？",
+    "confirmBody": "今すぐアカウントが非表示になりログアウトされます。14日以内に再ログインすると復元できます。",
+    "scheduledTitle": "退会を予約しました",
+    "scheduledBody": "{{date}}までに再ログインするとアカウントを復元できます。"
+  }
+}

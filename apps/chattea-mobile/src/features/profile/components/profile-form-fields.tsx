@@ -1,6 +1,7 @@
 import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
 import {
   ContentPhoto,
   NativeButton,
@@ -23,6 +24,7 @@ import ChoiceButton from "./choice-button";
 import FormLabel from "./form-label";
 
 const ProfileFormFields = ({ user, completion }: ProfileFormFieldsProps) => {
+  const { t } = useTranslation("profile");
   const {
     userName,
     setUserName,
@@ -44,15 +46,19 @@ const ProfileFormFields = ({ user, completion }: ProfileFormFieldsProps) => {
   return (
     <NativeScreen>
       <NativeScroll>
-        <Text style={styles.guide}>
-          사진 1장은 꼭 올려 주세요. 추가 사진은 최대 2장까지 더 올릴 수 있어요.
-        </Text>
-        <SectionHeading title={`사진 ${photos.length}/3`} />
+        <Text style={styles.guide}>{t("photos.guide")}</Text>
+        <SectionHeading
+          title={t("photos.count", { count: photos.length, max: MAX_PROFILE_PHOTOS })}
+        />
         {photos.map((photo, index) => (
           <NativeCard key={photo.uploadId}>
-            <ContentPhoto height={144} label={`프로필 사진 ${index + 1}`} uri={photo.url} />
+            <ContentPhoto
+              height={144}
+              label={t("photos.label", { index: index + 1 })}
+              uri={photo.url}
+            />
             <NativeButton
-              label={index === 0 ? "대표 사진 삭제" : "사진 삭제"}
+              label={index === 0 ? t("photos.deleteMain") : t("photos.delete")}
               onPress={() =>
                 setPhotos((current) => current.filter((item) => item.uploadId !== photo.uploadId))
               }
@@ -63,72 +69,72 @@ const ProfileFormFields = ({ user, completion }: ProfileFormFieldsProps) => {
         ))}
         <NativeButton
           disabled={uploading || photos.length >= MAX_PROFILE_PHOTOS}
-          label={uploading ? "사진을 올리는 중" : "사진 추가"}
+          label={uploading ? t("photos.uploading") : t("photos.add")}
           onPress={() => void addPhoto()}
           tone="secondary"
           fullWidth
         />
-        <FormLabel label="이름" />
+        <FormLabel label={t("fields.name")} />
         <NativeTextInput
-          accessibilityLabel="이름"
+          accessibilityLabel={t("fields.name")}
           maxLength={PROFILE_NAME_MAX_LENGTH}
           onChangeText={setUserName}
-          placeholder="이름"
+          placeholder={t("fields.name")}
           style={styles.input}
           value={userName}
         />
-        <FormLabel label="생년월일" hint="YYYY-MM-DD" />
+        <FormLabel label={t("fields.birthDate")} hint={t("fields.birthDateHint")} />
         <NativeTextInput
-          accessibilityLabel="생년월일"
+          accessibilityLabel={t("fields.birthDate")}
           keyboardType="numbers-and-punctuation"
           onChangeText={setBirthDate}
           placeholder="1998-01-01"
           style={styles.input}
           value={birthDate}
         />
-        <FormLabel label="지역" />
+        <FormLabel label={t("fields.region")} />
         <View style={styles.choiceWrap}>
           {KOREAN_REGIONS.map((item) => (
             <ChoiceButton
               key={item}
-              label={item}
+              label={t(`regions.${item}`)}
               selected={region === item}
               onPress={() => setRegion(item)}
             />
           ))}
         </View>
-        <FormLabel label="관심 대상" />
+        <FormLabel label={t("fields.interestedIn")} />
         <View style={styles.choiceWrap}>
           <ChoiceButton
-            label="남성"
+            label={t("gender.male")}
             selected={interestedGender === "male"}
             onPress={() => setInterestedGender("male")}
           />
           <ChoiceButton
-            label="여성"
+            label={t("gender.female")}
             selected={interestedGender === "female"}
             onPress={() => setInterestedGender("female")}
           />
           <ChoiceButton
-            label="모두"
+            label={t("gender.everyone")}
             selected={interestedGender === "everyone"}
             onPress={() => setInterestedGender("everyone")}
           />
         </View>
-        <FormLabel label="소개" hint="60자 이내" />
+        <FormLabel label={t("fields.intro")} hint={t("fields.introHint")} />
         <NativeTextInput
-          accessibilityLabel="소개"
+          accessibilityLabel={t("fields.intro")}
           maxLength={PROFILE_INTRO_MAX_LENGTH}
           multiline
           onChangeText={setIntro}
-          placeholder="내 이야기를 짧게 들려주세요"
+          placeholder={t("fields.introPlaceholder")}
           style={[styles.input, styles.inputLarge]}
           textAlignVertical="top"
           value={intro}
         />
         <NativeButton
           disabled={updateState.loading}
-          label={completion ? "프로필 완성하기" : "저장하기"}
+          label={completion ? t("actions.complete") : t("actions.save")}
           onPress={() => void save()}
           fullWidth
         />

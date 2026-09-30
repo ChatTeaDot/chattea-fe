@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 import { CommunityPage, communityPostsQuery } from "@/pages/community";
+import { AppMantineProvider } from "@/shared/ui/mantine";
 
 const POST = {
   authorName: "모모",
@@ -16,7 +17,11 @@ const POST = {
 
 const renderPage = (client = new QueryClient()) =>
   renderToStaticMarkup(
-    createElement(QueryClientProvider, { client }, createElement(CommunityPage)),
+    createElement(
+      AppMantineProvider,
+      null,
+      createElement(QueryClientProvider, { client }, createElement(CommunityPage)),
+    ),
   );
 
 const primedClient = () => {

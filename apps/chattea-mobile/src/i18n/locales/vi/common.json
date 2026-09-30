@@ -1,0 +1,66 @@
+{
+  "appName": "ChatTea",
+  "actions": {
+    "cancel": "Hủy",
+    "done": "Xong",
+    "retry": "Thử lại",
+    "reload": "Tải lại",
+    "save": "Lưu",
+    "report": "Báo cáo",
+    "later": "Để sau"
+  },
+  "nav": {
+    "home": "ChatTea",
+    "newMatches": "Kết nối mới",
+    "likes": "Người thích bạn",
+    "chat": "Trò chuyện",
+    "rooms": "Tin nhắn",
+    "community": "Cộng đồng",
+    "writePost": "Viết bài",
+    "createProfile": "Tạo hồ sơ",
+    "completeProfile": "Hoàn thiện hồ sơ",
+    "editProfile": "Chỉnh sửa hồ sơ",
+    "settings": "Cài đặt",
+    "notifications": "Thông báo",
+    "plans": "Gói",
+    "profile": "Hồ sơ",
+    "myInfo": "Thông tin của tôi"
+  },
+  "tabs": {
+    "matches": "Kết nối",
+    "likes": "Lượt thích",
+    "rooms": "Tin nhắn",
+    "community": "Cộng đồng",
+    "profile": "Tôi"
+  },
+  "states": {
+    "preparing": "Đang chuẩn bị ChatTea.",
+    "connectionError": "Không thể kết nối. Vui lòng kiểm tra mạng.",
+    "loadingTitle": "Đang tải",
+    "loadingMessage": "Vui lòng chờ một chút.",
+    "loadingInline": "Chờ chút nhé. Đang tải nội dung.",
+    "emptyTitle": "Chưa có nội dung để hiển thị",
+    "emptyMessage": "Chúng tôi sẽ thông báo tại đây khi có tin mới.",
+    "errorTitle": "Không thể tải nội dung",
+    "errorMessage": "Kiểm tra kết nối rồi thử lại.",
+    "errorBody": "Vui lòng thử lại sau một lát."
+  },
+  "errors": {
+    "actionFailedTitle": "Không thể xử lý",
+    "actionFailedBody": "Vui lòng thử lại sau một lát."
+  },
+  "report": {
+    "confirmBody": "Đội ngũ quản trị sẽ kiểm tra nội dung.",
+    "receivedTitle": "Đã tiếp nhận báo cáo",
+    "receivedBody": "Chúng tôi sẽ xử lý sau khi kiểm tra."
+  },
+  "a11y": {
+    "moreOptions": "Xem thêm"
+  },
+  "dates": {
+    "justNow": "Vừa xong",
+    "minutesAgo": "{{count}} phút trước",
+    "hoursAgo": "{{count}} giờ trước",
+    "daysAgo": "{{count}} ngày trước"
+  }
+}

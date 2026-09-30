@@ -3,9 +3,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 
 import { CandidateDetailBody, useCandidateDetail } from "@/features/matches";
+import { useTranslation } from "@/i18n";
 import { AppButton, EmptyState, ErrorState, LoadingState, NativeScreen } from "@/shared/components";
 
 const CandidateDetailScreen = () => {
+  const { t } = useTranslation("matches");
   const { candidate, error, likePending, loading, sendLike } = useCandidateDetail();
   return (
     <NativeScreen>
@@ -19,14 +21,15 @@ const CandidateDetailScreen = () => {
             <CandidateDetailBody candidate={candidate} />
           </ScrollView>
           <SafeAreaView edges={["bottom"]} style={styles.cta}>
-            <AppButton disabled={likePending} onPress={() => void sendLike()} title="좋아요 ♥" />
+            <AppButton
+              disabled={likePending}
+              onPress={() => void sendLike()}
+              title={t("actions.likeCta")}
+            />
           </SafeAreaView>
         </>
       ) : (
-        <EmptyState
-          title="프로필을 찾지 못했어요"
-          body="이미 지나간 인연이에요. 오늘의 추천을 살펴봐 주세요."
-        />
+        <EmptyState title={t("candidate.notFoundTitle")} body={t("candidate.notFoundBody")} />
       )}
     </NativeScreen>
   );

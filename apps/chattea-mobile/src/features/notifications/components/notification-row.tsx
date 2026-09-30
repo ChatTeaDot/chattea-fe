@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
 import { MetaText, NativeCard } from "@/shared/components";
 import { formatRelativeDate } from "@/shared/lib";
 
@@ -17,6 +18,7 @@ const NotificationRow = ({
   title,
   type,
 }: NotificationRowProps) => {
+  const { t } = useTranslation("notifications");
   const visit = useCallback(
     () => onVisit({ body, createdAt, id, readAt, route, title, type }),
     [body, createdAt, id, onVisit, readAt, route, title, type],
@@ -25,7 +27,7 @@ const NotificationRow = ({
     <Pressable accessibilityRole="link" onPress={visit} style={styles.pressableCard}>
       <NativeCard>
         <View style={styles.postMeta}>
-          <MetaText>{readAt ? "확인함" : "새 알림"}</MetaText>
+          <MetaText>{readAt ? t("row.read") : t("row.unread")}</MetaText>
           <MetaText>{formatRelativeDate(createdAt)}</MetaText>
         </View>
         <Text style={styles.postTitle}>{title}</Text>

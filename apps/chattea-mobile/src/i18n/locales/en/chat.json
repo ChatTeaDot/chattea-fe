@@ -1,0 +1,25 @@
+{
+  "rooms": {
+    "emptyTitle": "No conversations yet",
+    "emptyBody": "When interest is mutual, you can keep talking here.",
+    "openUnread": "Open unread chat",
+    "fallbackTitle": "Chat",
+    "previewFallback": "Say hello first."
+  },
+  "room": {
+    "emptyTitle": "Waiting for the first hello",
+    "emptyBody": "Start with a short, relaxed greeting.",
+    "options": "Chat options"
+  },
+  "composer": {
+    "inputLabel": "Message input",
+    "placeholder": "Type a message…",
+    "send": "Send message"
+  },
+  "message": {
+    "read": "Read",
+    "reportLabel": "Report message",
+    "report": "Report",
+    "reportTitle": "Report this message?"
+  }
+}

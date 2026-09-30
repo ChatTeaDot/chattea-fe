@@ -1,0 +1,25 @@
+{
+  "rooms": {
+    "emptyTitle": "まだ始まった会話がありません",
+    "emptyBody": "お互いの関心がつながると、ここで会話を続けられます。",
+    "openUnread": "未読の会話を開く",
+    "fallbackTitle": "トーク",
+    "previewFallback": "まず挨拶してみましょう。"
+  },
+  "room": {
+    "emptyTitle": "最初の挨拶を待っています",
+    "emptyBody": "短く気軽な挨拶から始めてみましょう。",
+    "options": "会話オプション"
+  },
+  "composer": {
+    "inputLabel": "メッセージ入力",
+    "placeholder": "メッセージを入力…",
+    "send": "メッセージを送信"
+  },
+  "message": {
+    "read": "既読",
+    "reportLabel": "メッセージを報告",
+    "report": "報告",
+    "reportTitle": "このメッセージを報告しますか？"
+  }
+}

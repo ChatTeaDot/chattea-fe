@@ -27,6 +27,7 @@ export type CommentRowProps = {
 export type PostDetailCardProps = { post: CommunityPost };
 
 export type ChipRowProps<ItemT extends string> = {
+  formatLabel?: (item: ItemT) => string;
   items: readonly ItemT[];
   onSelect: (item: ItemT) => void;
   selected: ItemT;

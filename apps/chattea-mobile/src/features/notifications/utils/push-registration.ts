@@ -1,3 +1,5 @@
+import i18n from "@/i18n";
+
 import type { DevicePushToken } from "../api";
 import type {
   PushRegistrationLifecycleInput,
@@ -51,7 +53,7 @@ export const createPushRegistrationLifecycle = (input: PushRegistrationLifecycle
   const reportFailure = (error: unknown, requestGeneration: number): never => {
     if (requestGeneration === generation) {
       emit({
-        message: "원격 알림 등록을 완료하지 못했어요. 연결되면 다시 시도할게요.",
+        message: i18n.t("errors.registerFailed", { ns: "notifications" }),
         status: "error",
       });
     }
@@ -114,7 +116,7 @@ export const createPushRegistrationLifecycle = (input: PushRegistrationLifecycle
     if (requestGeneration !== generation || !activeUserId) return;
     if (!permission.granted) {
       emit({
-        message: "기기 설정에서 알림 권한을 허용하면 원격 알림을 받을 수 있어요.",
+        message: i18n.t("errors.permissionDenied", { ns: "notifications" }),
         status: "denied",
       });
       return;
@@ -131,12 +133,12 @@ export const createPushRegistrationLifecycle = (input: PushRegistrationLifecycle
     const projectId = input.projectId;
     activeUserId = userId;
     if (!userId) {
-      emit({ message: "로그인 후 원격 알림을 설정할 수 있어요.", status: "disabled" });
+      emit({ message: i18n.t("errors.loginRequired", { ns: "notifications" }), status: "disabled" });
       return Promise.resolve();
     }
     if (!projectId || !nativePlatform) {
       emit({
-        message: "이 빌드에는 원격 알림 프로젝트가 설정되지 않았어요.",
+        message: i18n.t("errors.notConfigured", { ns: "notifications" }),
         status: "disabled",
       });
       return Promise.resolve();
@@ -188,7 +190,7 @@ export const createPushRegistrationLifecycle = (input: PushRegistrationLifecycle
   const stop = (): void => {
     ++generation;
     activeUserId = null;
-    emit({ message: "로그인 후 원격 알림을 설정할 수 있어요.", status: "disabled" });
+    emit({ message: i18n.t("errors.loginRequired", { ns: "notifications" }), status: "disabled" });
   };
 
   const unregisterInstallation = (): Promise<void> => {
@@ -197,7 +199,7 @@ export const createPushRegistrationLifecycle = (input: PushRegistrationLifecycle
     return enqueue(async () => {
       const current = await load();
       if (!current.currentToken && !current.pendingToken && !current.unregisterPending) {
-        emit({ message: "로그인 후 원격 알림을 설정할 수 있어요.", status: "disabled" });
+        emit({ message: i18n.t("errors.loginRequired", { ns: "notifications" }), status: "disabled" });
         return;
       }
       await save({ ...current, unregisterPending: true });
@@ -205,10 +207,10 @@ export const createPushRegistrationLifecycle = (input: PushRegistrationLifecycle
         const unregistered = await input.backend.unregister();
         if (!unregistered) throw new Error("PUSH_TOKEN_UNREGISTER_FAILED");
         await save(emptyStoredState());
-        emit({ message: "로그인 후 원격 알림을 설정할 수 있어요.", status: "disabled" });
+        emit({ message: i18n.t("errors.loginRequired", { ns: "notifications" }), status: "disabled" });
       } catch (error) {
         emit({
-          message: "이 기기의 알림 등록을 해제하지 못했어요. 다시 로그아웃해 주세요.",
+          message: i18n.t("errors.unregisterFailed", { ns: "notifications" }),
           status: "error",
         });
         throw error;
@@ -220,7 +222,7 @@ export const createPushRegistrationLifecycle = (input: PushRegistrationLifecycle
     ++generation;
     activeUserId = null;
     await save(emptyStoredState());
-    emit({ message: "로그인 후 원격 알림을 설정할 수 있어요.", status: "disabled" });
+    emit({ message: i18n.t("errors.loginRequired", { ns: "notifications" }), status: "disabled" });
   };
 
   return { clearLocal, retry, rotate, start, stop, unregisterInstallation };

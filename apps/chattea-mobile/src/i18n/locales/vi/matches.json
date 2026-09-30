@@ -1,0 +1,59 @@
+{
+  "today": {
+    "emptyTitle": "Bạn đã xem hết gợi ý hôm nay",
+    "emptyBody": "Chúng tôi sẽ thông báo khi có gợi ý mới.",
+    "newMatches": "Kết nối mới",
+    "notifications": "Thông báo"
+  },
+  "actions": {
+    "skip": "Bỏ qua lần này",
+    "like": "Gửi lượt thích",
+    "undo": "Hoàn tác",
+    "likeCta": "Thích ♥"
+  },
+  "list": {
+    "sectionTitle": "Người vừa kết nối",
+    "emptyTitle": "Chưa có kết nối mới nào",
+    "emptyBody": "Khi cả hai cùng quan tâm, họ sẽ xuất hiện ở đây.",
+    "startChat": "Bắt đầu trò chuyện",
+    "chatA11y": "Trò chuyện với {{name}}"
+  },
+  "sheet": {
+    "title": "Đã kết nối!",
+    "subtitle": "{{name}} cũng thích bạn",
+    "startChat": "Trò chuyện",
+    "later": "Để sau",
+    "partnerFallback": "Đối phương",
+    "matchPhotoA11y": "Ảnh của người kết nối",
+    "myPhotoA11y": "Ảnh của tôi"
+  },
+  "likes": {
+    "errorTitle": "Không thể tải lượt thích",
+    "emptyTitle": "Chưa có ai thích bạn",
+    "emptyBody": "Hãy gửi lượt thích đầu tiên trong gợi ý hôm nay.",
+    "revealCta": "Xem là ai",
+    "locked": "Xem từ gói Basic",
+    "sendInterestA11y": "Gửi lượt thích cho {{name}}",
+    "photoA11y": "Ảnh của {{name}}"
+  },
+  "candidate": {
+    "notFoundTitle": "Không tìm thấy hồ sơ",
+    "notFoundBody": "Duyên này đã qua rồi. Hãy xem gợi ý hôm nay nhé.",
+    "photoA11y": "Ảnh {{index}} của {{name}}",
+    "mainPhotoA11y": "Ảnh chính của {{name}}",
+    "bioFallback": "Rất vui được gặp. Mình muốn trò chuyện cùng bạn."
+  },
+  "errors": {
+    "profileRequiredTitle": "Hãy hoàn thiện hồ sơ trước",
+    "profileRequiredBody": "Thêm ảnh và thông tin cơ bản để nhận gợi ý kết nối.",
+    "likeLimitTitle": "Bạn đã dùng hết lượt thích hôm nay",
+    "likeLimitBody": "Quay lại vào ngày mai hoặc kiểm tra gói của bạn.",
+    "passRequiredTitle": "Cần có vé sử dụng",
+    "passRequiredBody": "Kiểm tra vé cần thiết trong mục gói và vật phẩm.",
+    "viewPasses": "Xem vé",
+    "nothingToUndoTitle": "Không có lựa chọn để hoàn tác",
+    "nothingToUndoBody": "Hãy xem những người mới nhé.",
+    "boostStartedTitle": "Đã bật boost",
+    "boostStartedBody": "Bạn sẽ được hiển thị với nhiều người hơn đến {{time}}."
+  }
+}

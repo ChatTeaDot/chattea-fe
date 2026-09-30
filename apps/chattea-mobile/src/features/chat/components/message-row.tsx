@@ -3,11 +3,13 @@ import { useCallback } from "react";
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
 import { formatRelativeDate } from "@/shared/lib";
 
 import type { MessageRowProps } from "../types";
 
 const MessageRow = ({ createdAt, id, mine, onReport, showReadStatus, text }: MessageRowProps) => {
+  const { t } = useTranslation("chat");
   const { theme } = useUnistyles();
   const report = useCallback(() => onReport(id), [id, onReport]);
   return (
@@ -17,7 +19,7 @@ const MessageRow = ({ createdAt, id, mine, onReport, showReadStatus, text }: Mes
       </View>
       {mine && showReadStatus ? (
         <View style={styles.messageMeta}>
-          <Text style={styles.metaText}>읽음</Text>
+          <Text style={styles.metaText}>{t("message.read")}</Text>
           <CheckCheck color={theme.colors.muted} size={16} strokeWidth={1.5} />
         </View>
       ) : null}
@@ -25,12 +27,12 @@ const MessageRow = ({ createdAt, id, mine, onReport, showReadStatus, text }: Mes
         <View style={styles.messageMeta}>
           <Text style={styles.metaText}>{formatRelativeDate(createdAt)}</Text>
           <Pressable
-            accessibilityLabel="메시지 신고"
+            accessibilityLabel={t("message.reportLabel")}
             accessibilityRole="button"
             hitSlop={8}
             onPress={report}
           >
-            <Text style={styles.metaAction}>신고</Text>
+            <Text style={styles.metaAction}>{t("message.report")}</Text>
           </Pressable>
         </View>
       ) : null}

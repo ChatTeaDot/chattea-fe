@@ -1,0 +1,37 @@
+{
+  "notice": "Tự động gia hạn hàng tháng · Hủy bất cứ lúc nào",
+  "reconciling": "Đang cập nhật giao dịch mua vào tài khoản của bạn.",
+  "subscribe": "Đăng ký {{plan}}",
+  "restore": "Khôi phục giao dịch mua",
+  "plans": {
+    "free": {
+      "description": "Kết nối cơ bản · Giới hạn lượt thích mỗi ngày",
+      "price": "₩0"
+    },
+    "basic": {
+      "description": "Thêm lượt thích · Hoàn tác · Bỏ quảng cáo",
+      "price": "₩4.900"
+    },
+    "gold": {
+      "description": "Xem thêm lượt thích · Bộ lọc nâng cao · Tóm tắt AI",
+      "price": "₩9.900"
+    },
+    "black": {
+      "description": "Gợi ý dành riêng cho Black · Xác nhận đã đọc · Boost mạnh",
+      "price": "₩24.900"
+    }
+  },
+  "purchasePending": {
+    "title": "Đang xác nhận giao dịch mua",
+    "body": "Quyền lợi sẽ tự động được áp dụng khi cửa hàng xử lý xong."
+  },
+  "restoreRequested": {
+    "title": "Đã gửi yêu cầu khôi phục",
+    "body": "Chúng tôi sẽ kiểm tra lại quyền lợi đã khôi phục trên tài khoản của bạn."
+  },
+  "errors": {
+    "loginRequired": "Đăng nhập để xem thông tin thanh toán.",
+    "notConfigured": "Bản dựng này chưa thiết lập thanh toán App Store.",
+    "loadFailed": "Không thể tải thông tin thanh toán. Vui lòng thử lại sau một lát."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "sections": {
+    "notifications": "Notifications",
+    "account": "Account"
+  },
+  "rows": {
+    "matchAlerts": "New match alerts",
+    "messageAlerts": "Message alerts",
+    "blocked": "Blocked users",
+    "subscription": "Manage subscription",
+    "logout": "Sign out"
+  },
+  "blocked": {
+    "title": "Blocked users",
+    "body": "Managing blocked users will be supported soon."
+  },
+  "delete": {
+    "action": "Delete account",
+    "confirmTitle": "Delete your account?",
+    "confirmBody": "Your account will be hidden and signed out right away. Sign back in within 14 days to restore it.",
+    "scheduledTitle": "Deletion scheduled",
+    "scheduledBody": "Sign back in before {{date}} to restore your account."
+  }
+}

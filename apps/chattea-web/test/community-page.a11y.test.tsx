@@ -2,12 +2,15 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, render, screen } from "@testing-library/react";
 import { createElement } from "react";
-import { configureAxe } from "vitest-axe";
-import * as axeMatchers from "vitest-axe/matchers";
-import type { AxeMatchers } from "vitest-axe/matchers";
+import { I18nextProvider } from "react-i18next";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { configureAxe } from "vitest-axe";
+import type { AxeMatchers } from "vitest-axe/matchers";
+import * as axeMatchers from "vitest-axe/matchers";
 
+import { createI18n } from "@/i18n";
 import { CommunityPage, communityPostsQuery } from "@/pages/community";
+import { AppMantineProvider } from "@/shared/ui/mantine";
 
 declare module "vitest" {
   interface Assertion<T> extends AxeMatchers {}
@@ -15,6 +18,21 @@ declare module "vitest" {
 }
 
 expect.extend(axeMatchers);
+
+// jsdom lacks matchMedia; Mantine's color-scheme manager calls it on render.
+if (typeof window !== "undefined" && !window.matchMedia) {
+  window.matchMedia = (query: string) =>
+    ({
+      addEventListener: () => {},
+      addListener: () => {},
+      dispatchEvent: () => false,
+      matches: false,
+      media: query,
+      onchange: null,
+      removeEventListener: () => {},
+      removeListener: () => {},
+    }) as MediaQueryList;
+}
 
 const axe = configureAxe({
   rules: { "color-contrast": { enabled: false } },
@@ -29,8 +47,20 @@ const POST = {
   title: "첫 글",
 };
 
+// Fixed ko instance keeps assertions deterministic — the default browser
+// instance resolves asynchronously through the language detector.
 const renderPage = (client = new QueryClient()) =>
-  render(createElement(QueryClientProvider, { client }, createElement(CommunityPage)));
+  render(
+    createElement(
+      AppMantineProvider,
+      null,
+      createElement(
+        I18nextProvider,
+        { i18n: createI18n("ko") },
+        createElement(QueryClientProvider, { client }, createElement(CommunityPage)),
+      ),
+    ),
+  );
 
 const primedClient = () => {
   const client = new QueryClient();

@@ -8,9 +8,11 @@ import {
   PlanCard,
   usePremiumBilling,
 } from "@/features/billing";
+import { useTranslation } from "@/i18n";
 import { AppButton, BottomCta, NativeScreen } from "@/shared/components";
 
 const PremiumScreen = () => {
+  const { t } = useTranslation("billing");
   const {
     products,
     revenueCat,
@@ -47,7 +49,11 @@ const PremiumScreen = () => {
       >
         {PLAN_CARDS.map((card) => (
           <PlanCard
-            card={card}
+            card={{
+              ...card,
+              description: t(`plans.${card.planId}.description`),
+              fallbackPrice: t(`plans.${card.planId}.price`),
+            }}
             disabled={pending}
             key={card.planId}
             onPress={() => setSelectedPlanId(card.planId)}
@@ -59,18 +65,18 @@ const PremiumScreen = () => {
             selected={card.planId === selectedPlanId}
           />
         ))}
-        <Text style={styles.notice}>매달 자동 갱신 · 언제든 해지</Text>
+        <Text style={styles.notice}>{t("notice")}</Text>
         {revenueCat.state.status === "disabled" || revenueCat.state.status === "error" ? (
           <Text style={styles.notice}>{revenueCat.state.message}</Text>
         ) : reconciliationPending ? (
-          <Text style={styles.notice}>스토어 구매를 서버 계정에 반영하고 있어요.</Text>
+          <Text style={styles.notice}>{t("reconciling")}</Text>
         ) : null}
       </ScrollView>
       <BottomCta>
         <AppButton
           disabled={subscribeDisabled}
           onPress={() => selectedProduct && void purchase(selectedProduct)}
-          title={`${selected.name} 구독하기`}
+          title={t("subscribe", { plan: selected.name })}
         />
         <Pressable
           accessibilityRole="button"
@@ -78,7 +84,7 @@ const PremiumScreen = () => {
           onPress={() => void restore()}
           style={({ pressed }) => [styles.restore, pressed && styles.restorePressed]}
         >
-          <Text style={styles.restoreText}>이전 구매 복원</Text>
+          <Text style={styles.restoreText}>{t("restore")}</Text>
         </Pressable>
       </BottomCta>
     </NativeScreen>

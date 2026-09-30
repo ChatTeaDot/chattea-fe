@@ -6,7 +6,7 @@
 
 ```
 apps/chattea-web  (remote, 이름: chattea_web)
-  exposes ./CommunityApp -> src/pages/community/ui/community-page.tsx
+  exposes ./CommunityApp -> src/pages/community/ui/community-app.tsx
   dev:    pnpm --filter chattea-web dev   # Fastify + Vite middleware, :3000
   build:  pnpm --filter chattea-web build # dist/remoteEntry.js + index.html
 
@@ -16,7 +16,7 @@ apps/shell        (host, 이름: chattea_shell)
 ```
 
 - `/community` 경로에서 shell이 `chattea_web/CommunityApp`을 `React.lazy`로 로드한다. 로드 실패 시 error boundary fallback이 렌더된다.
-- shell은 `QueryClientProvider`를 소유한다. remote는 provider를 가져오지 않고 context를 공유한다.
+- shell은 `QueryClientProvider`를 소유한다. remote는 provider를 가져오지 않고 context를 공유한다. `MantineProvider`는 shell에 없으므로 remote가 `community-app.tsx`에서 자체 provider로 감싼다.
 - remote의 `/api/graphql` 요청은 shell dev server가 `VITE_CHATTEA_WEB_URL`로 프록시한다(`server.proxy["/api"]`).
 
 ## remote entry URL

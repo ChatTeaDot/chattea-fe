@@ -4,17 +4,19 @@ import { Lock } from "lucide-react-native";
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
 import type { AppTheme } from "@/theme";
 
 import { LIKE_GRID_CELL_HEIGHT } from "../constants";
 import type { LikeGridCellProps } from "../types";
 
 const LikeGridCell = ({ disabled, id, locked, name, onPress, photoUrl }: LikeGridCellProps) => {
+  const { t } = useTranslation("matches");
   const { theme } = useUnistyles() as { theme: AppTheme };
   const handlePress = () => onPress(id);
   return (
     <Pressable
-      accessibilityLabel={locked ? "Basic부터 확인" : `${name}님에게 관심 보내기`}
+      accessibilityLabel={locked ? t("likes.locked") : t("likes.sendInterestA11y", { name })}
       accessibilityRole="button"
       disabled={!locked && disabled}
       onPress={handlePress}
@@ -22,7 +24,7 @@ const LikeGridCell = ({ disabled, id, locked, name, onPress, photoUrl }: LikeGri
     >
       {photoUrl && !locked ? (
         <Image
-          accessibilityLabel={`${name}님의 사진`}
+          accessibilityLabel={t("likes.photoA11y", { name })}
           cachePolicy="memory-disk"
           contentFit="cover"
           recyclingKey={id}
@@ -36,7 +38,7 @@ const LikeGridCell = ({ disabled, id, locked, name, onPress, photoUrl }: LikeGri
       {locked ? (
         <BlurView intensity={24} style={styles.veil} tint="light">
           <Lock color={theme.colors.primaryText} size={20} />
-          <Text style={styles.veilText}>Basic부터 확인</Text>
+          <Text style={styles.veilText}>{t("likes.locked")}</Text>
         </BlurView>
       ) : null}
     </Pressable>

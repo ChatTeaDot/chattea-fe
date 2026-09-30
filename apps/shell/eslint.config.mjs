@@ -1,23 +1,28 @@
-import tsParser from "@typescript-eslint/parser";
+import expo from "eslint-config-expo/flat.js";
 import jsxA11y from "eslint-plugin-jsx-a11y";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
 
 export default [
+  ...expo,
+  jsxA11y.flatConfigs.recommended,
   {
-    ignores: ["dist/**", "node_modules/**"],
+    ignores: ["dist/**", "node_modules/**", "@mf-types/**"],
   },
   {
-    files: ["**/*.{ts,tsx}"],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: {
-        ecmaFeatures: { jsx: true },
-      },
-    },
     plugins: {
-      "jsx-a11y": jsxA11y,
+      "simple-import-sort": simpleImportSort,
     },
     rules: {
-      ...jsxA11y.flatConfigs.recommended.rules,
+      "import/no-unresolved": ["error", { ignore: ["^chattea_web/"] }],
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "FunctionDeclaration",
+          message: "Use arrow function expressions",
+        },
+      ],
+      "simple-import-sort/exports": "error",
+      "simple-import-sort/imports": "error",
     },
   },
 ];

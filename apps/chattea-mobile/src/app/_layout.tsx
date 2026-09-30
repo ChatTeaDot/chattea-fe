@@ -4,6 +4,7 @@ import { Platform } from "react-native";
 import { useReducedMotion } from "react-native-reanimated";
 import { useUnistyles } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
 import {
   markStartupMilestone,
   NativeIntegrationsProvider,
@@ -14,6 +15,7 @@ import {
 import type { AppTheme } from "@/theme";
 
 const ThemedStack = () => {
+  const { t } = useTranslation();
   const { theme } = useUnistyles() as { theme: AppTheme };
   const reducedMotion = useReducedMotion();
   return (
@@ -30,25 +32,28 @@ const ThemedStack = () => {
     >
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="signup" options={{ title: "프로필 만들기" }} />
-      <Stack.Screen name="room/[room-id]" options={{ title: "대화", gestureEnabled: true }} />
+      <Stack.Screen name="signup" options={{ title: t("nav.createProfile") }} />
+      <Stack.Screen
+        name="room/[room-id]"
+        options={{ title: t("nav.chat"), gestureEnabled: true }}
+      />
       <Stack.Screen
         name="profile-completion"
-        options={{ presentation: "formSheet", title: "프로필 완성" }}
+        options={{ presentation: "formSheet", title: t("nav.completeProfile") }}
       />
       <Stack.Screen
         name="profile/edit"
-        options={{ presentation: "formSheet", title: "프로필 편집" }}
+        options={{ presentation: "formSheet", title: t("nav.editProfile") }}
       />
-      <Stack.Screen name="settings" options={{ title: "설정" }} />
-      <Stack.Screen name="notifications" options={{ title: "알림" }} />
-      <Stack.Screen name="premium" options={{ title: "플랜" }} />
+      <Stack.Screen name="settings" options={{ title: t("nav.settings") }} />
+      <Stack.Screen name="notifications" options={{ title: t("nav.notifications") }} />
+      <Stack.Screen name="premium" options={{ title: t("nav.plans") }} />
       <Stack.Screen
         name="community/new"
-        options={{ presentation: "formSheet", title: "글 쓰기" }}
+        options={{ presentation: "formSheet", title: t("nav.writePost") }}
       />
-      <Stack.Screen name="community/[post-id]" options={{ title: "커뮤니티" }} />
-      <Stack.Screen name="rooms/[room-id]" options={{ title: "대화" }} />
+      <Stack.Screen name="community/[post-id]" options={{ title: t("nav.community") }} />
+      <Stack.Screen name="rooms/[room-id]" options={{ title: t("nav.chat") }} />
       <Stack.Screen name="candidate/[candidate-id]" options={{ title: "" }} />
       <Stack.Screen
         name="match-sheet"
