@@ -1,0 +1,59 @@
+{
+  "today": {
+    "emptyTitle": "今日のお相手をすべて見ました",
+    "emptyBody": "次のレコメンドが準備できたらお知らせします。",
+    "newMatches": "新しいマッチ",
+    "notifications": "通知"
+  },
+  "actions": {
+    "skip": "今回はパス",
+    "like": "いいねを送る",
+    "undo": "やり直す",
+    "likeCta": "いいね ♥"
+  },
+  "list": {
+    "sectionTitle": "新しくマッチした人",
+    "emptyTitle": "まだ新しくマッチした人がいません",
+    "emptyBody": "お互いの関心がつながるとここに表示します。",
+    "startChat": "チャットを開始",
+    "chatA11y": "{{name}}さんとチャットする"
+  },
+  "sheet": {
+    "title": "マッチしました！",
+    "subtitle": "{{name}}さんもあなたにいいねしています",
+    "startChat": "チャットする",
+    "later": "あとで",
+    "partnerFallback": "お相手",
+    "matchPhotoA11y": "マッチしたお相手の写真",
+    "myPhotoA11y": "自分の写真"
+  },
+  "likes": {
+    "errorTitle": "いいねを読み込めませんでした",
+    "emptyTitle": "まだ届いたいいねがありません",
+    "emptyBody": "今日のお相手から先に気持ちを伝えてみましょう。",
+    "revealCta": "誰かを確認する",
+    "locked": "Basicから確認可能",
+    "sendInterestA11y": "{{name}}さんにいいねを送る",
+    "photoA11y": "{{name}}さんの写真"
+  },
+  "candidate": {
+    "notFoundTitle": "プロフィールが見つかりませんでした",
+    "notFoundBody": "すでに過ぎたご縁です。今日のレコメンドを見てみてください。",
+    "photoA11y": "{{name}}さんの写真 {{index}}",
+    "mainPhotoA11y": "{{name}}さんのメイン写真",
+    "bioFallback": "はじめまして。お話ししてみたいです。"
+  },
+  "errors": {
+    "profileRequiredTitle": "先にプロフィールを完成させてください",
+    "profileRequiredBody": "写真と基本情報を入力するとお相手をご紹介します。",
+    "likeLimitTitle": "今日のいいねをすべて使いました",
+    "likeLimitBody": "明日また送るか、プランを確認してみてください。",
+    "passRequiredTitle": "利用券が必要です",
+    "passRequiredBody": "サブスクリプションとアイテムで必要な利用券を確認してください。",
+    "viewPasses": "利用券を見る",
+    "nothingToUndoTitle": "やり直せる選択がありません",
+    "nothingToUndoBody": "新しいお相手を見てみてください。",
+    "boostStartedTitle": "ブーストを開始しました",
+    "boostStartedBody": "{{time}}までより多くの人に表示されます。"
+  }
+}

@@ -1,12 +1,12 @@
 import "@mantine/core/styles.css";
 
+import { HydrationBoundary, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
+import { I18nextProvider } from "react-i18next";
 
-import { HydrationBoundary, QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
+import { createClientI18n } from "@/i18n";
 import { CommunityPage } from "@/pages/community";
-import { AppMantineProvider } from "@/shared/ui/mantine";
 import {
   ANALYTICS_EVENT,
   ANALYTICS_SCREEN,
@@ -14,6 +14,7 @@ import {
   initDatadogRum,
   track,
 } from "@/shared/analytics";
+import { AppMantineProvider } from "@/shared/ui/mantine";
 
 import { reportVitals } from "./report-vitals";
 
@@ -24,6 +25,9 @@ if (!root) {
 }
 
 const queryClient = new QueryClient();
+// Reuse the language resolved during SSR so the hydrated markup matches;
+// when absent (module federation / direct load) detect from the browser.
+const i18n = createClientI18n(window.__CHATTEA_LANG__);
 
 initDatadogRum();
 initAnalytics();
@@ -37,11 +41,13 @@ hydrateRoot(
   root,
   <StrictMode>
     <AppMantineProvider>
-      <QueryClientProvider client={queryClient}>
-        <HydrationBoundary state={window.__DEHYDRATED__}>
-          <CommunityPage />
-        </HydrationBoundary>
-      </QueryClientProvider>
+      <I18nextProvider i18n={i18n}>
+        <QueryClientProvider client={queryClient}>
+          <HydrationBoundary state={window.__DEHYDRATED__}>
+            <CommunityPage />
+          </HydrationBoundary>
+        </QueryClientProvider>
+      </I18nextProvider>
     </AppMantineProvider>
   </StrictMode>,
 );

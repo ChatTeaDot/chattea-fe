@@ -3,9 +3,11 @@ import { Settings } from "lucide-react-native";
 import { Pressable } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
 import { ProfileScreen } from "@/screens";
 
 const ProfileRoute = () => {
+  const { t } = useTranslation();
   const { theme } = useUnistyles();
   return (
     <>
@@ -13,7 +15,7 @@ const ProfileRoute = () => {
         options={{
           headerRight: () => (
             <Pressable
-              accessibilityLabel="설정"
+              accessibilityLabel={t("nav.settings")}
               accessibilityRole="button"
               hitSlop={12}
               onPress={() => router.push("/settings")}
@@ -21,7 +23,7 @@ const ProfileRoute = () => {
               <Settings color={theme.colors.text} size={20} strokeWidth={1.75} />
             </Pressable>
           ),
-          title: "내 정보",
+          title: t("nav.myInfo"),
         }}
       />
       <ProfileScreen />

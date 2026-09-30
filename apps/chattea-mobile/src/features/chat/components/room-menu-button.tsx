@@ -2,13 +2,16 @@ import { EllipsisVertical } from "lucide-react-native";
 import { Pressable } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
+
 import type { RoomMenuButtonProps } from "../types";
 
 const RoomMenuButton = ({ onPress }: RoomMenuButtonProps) => {
+  const { t } = useTranslation("chat");
   const { theme } = useUnistyles();
   return (
     <Pressable
-      accessibilityLabel="대화 옵션"
+      accessibilityLabel={t("room.options")}
       accessibilityRole="button"
       onPress={onPress}
       style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}

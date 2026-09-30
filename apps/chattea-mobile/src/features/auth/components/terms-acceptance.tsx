@@ -1,11 +1,13 @@
 import { Pressable, Text } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
 import type { AppTheme } from "@/theme";
 
 import type { TermsAcceptanceProps } from "../types";
 
 const TermsAcceptance = ({ accepted, onChange }: TermsAcceptanceProps) => {
+  const { t } = useTranslation("auth");
   return (
     <Pressable
       accessibilityRole="checkbox"
@@ -14,7 +16,7 @@ const TermsAcceptance = ({ accepted, onChange }: TermsAcceptanceProps) => {
       style={({ pressed }) => [styles.row, pressed && styles.pressed]}
     >
       <Text style={[styles.box, accepted && styles.boxChecked]} />
-      <Text style={styles.label}>이용약관·개인정보 동의 (필수)</Text>
+      <Text style={styles.label}>{t("terms.label")}</Text>
     </Pressable>
   );
 };

@@ -1,0 +1,24 @@
+{
+  "sections": {
+    "notifications": "Thông báo",
+    "account": "Tài khoản"
+  },
+  "rows": {
+    "matchAlerts": "Thông báo kết nối mới",
+    "messageAlerts": "Thông báo tin nhắn",
+    "blocked": "Quản lý chặn",
+    "subscription": "Quản lý gói",
+    "logout": "Đăng xuất"
+  },
+  "blocked": {
+    "title": "Quản lý chặn",
+    "body": "Quản lý người dùng bị chặn sẽ sớm được hỗ trợ."
+  },
+  "delete": {
+    "action": "Xóa tài khoản",
+    "confirmTitle": "Xóa tài khoản?",
+    "confirmBody": "Tài khoản sẽ bị ẩn và đăng xuất ngay. Đăng nhập lại trong 14 ngày để khôi phục.",
+    "scheduledTitle": "Đã lên lịch xóa",
+    "scheduledBody": "Đăng nhập lại trước {{date}} để khôi phục tài khoản."
+  }
+}

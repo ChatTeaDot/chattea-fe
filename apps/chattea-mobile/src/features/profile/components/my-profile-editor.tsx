@@ -3,6 +3,7 @@ import { ChevronRight } from "lucide-react-native";
 import { ScrollView, Text, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
 import { AppButton, BottomCta, ListRow, NativeScreen, NativeTextInput } from "@/shared/components";
 
 import { PROFILE_ATTRIBUTE_ROWS, PROFILE_INTRO_MAX_LENGTH } from "../constants";
@@ -12,6 +13,7 @@ import PhotoGrid from "./photo-grid";
 import PlanBadge from "./plan-badge";
 
 const MyProfileEditor = ({ user, planId }: MyProfileEditorProps) => {
+  const { t } = useTranslation("profile");
   const { theme } = useUnistyles();
   const { intro, setIntro, photos, uploading, addPhoto, save, updateState } =
     useMyProfileEditor(user);
@@ -28,30 +30,34 @@ const MyProfileEditor = ({ user, planId }: MyProfileEditorProps) => {
         <PhotoGrid photos={photos} uploading={uploading} onAddPhoto={() => void addPhoto()} />
         <PlanBadge planId={planId} />
         <View style={styles.fieldGroup}>
-          <Text style={styles.fieldLabel}>소개 (60자)</Text>
+          <Text style={styles.fieldLabel}>{t("fields.introLabel")}</Text>
           <NativeTextInput
-            accessibilityLabel="소개"
+            accessibilityLabel={t("fields.intro")}
             maxLength={PROFILE_INTRO_MAX_LENGTH}
             onChangeText={setIntro}
-            placeholder="주말엔 전시 보러 다녀요…"
+            placeholder={t("fields.introPlaceholderEditor")}
             style={styles.field}
             value={intro}
           />
         </View>
         <View>
-          {PROFILE_ATTRIBUTE_ROWS.map((title, index) => (
+          {PROFILE_ATTRIBUTE_ROWS.map((key, index) => (
             <ListRow
-              key={title}
+              key={key}
               last={index === PROFILE_ATTRIBUTE_ROWS.length - 1}
               onPress={() => router.push("/profile/edit")}
               side={<ChevronRight color={theme.colors.muted} size={20} strokeWidth={1.75} />}
-              title={title}
+              title={t(`attributes.${key}`)}
             />
           ))}
         </View>
       </ScrollView>
       <BottomCta>
-        <AppButton disabled={updateState.loading} onPress={() => void save()} title="저장" />
+        <AppButton
+          disabled={updateState.loading}
+          onPress={() => void save()}
+          title={t("actions.saveShort")}
+        />
       </BottomCta>
     </NativeScreen>
   );

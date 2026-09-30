@@ -1,4 +1,4 @@
-import { createTheme, MantineProvider, type MantineColorsTuple } from "@mantine/core";
+import { createTheme, type MantineColorsTuple,MantineProvider } from "@mantine/core";
 import type { ReactNode } from "react";
 
 import { brandPink, colors, webFontStack } from "./tokens";

@@ -1,0 +1,18 @@
+{
+  "emptyTitle": "No new notifications",
+  "emptyBody": "We'll let you know here about likes, matches, messages, and comments.",
+  "row": {
+    "read": "Read",
+    "unread": "New"
+  },
+  "channel": {
+    "default": "Default notifications"
+  },
+  "errors": {
+    "loginRequired": "Sign in to set up push notifications.",
+    "notConfigured": "This build doesn't have a push project set up.",
+    "registerFailed": "Couldn't finish push registration. We'll retry when connected.",
+    "permissionDenied": "Allow notifications in device settings to get push alerts.",
+    "unregisterFailed": "Couldn't unregister this device. Please sign out again."
+  }
+}

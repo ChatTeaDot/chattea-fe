@@ -1,0 +1,16 @@
+{
+  "title": "Cộng đồng",
+  "write": "Viết bài",
+  "signedOut": {
+    "title": "Cần đăng nhập",
+    "body": "Đăng nhập trong ứng dụng để đọc các câu chuyện."
+  },
+  "loadError": {
+    "title": "Không tải được danh sách"
+  },
+  "empty": {
+    "title": "Chưa có bài viết nào",
+    "body": "Hãy chia sẻ câu chuyện đầu tiên."
+  },
+  "commentCount": "{{count}} bình luận"
+}

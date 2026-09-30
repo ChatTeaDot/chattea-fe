@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
 
 import { CONSUMABLE_BALANCE_QUERY, type ConsumableBalance } from "@/features/billing";
+import i18n from "@/i18n";
 import { useRouteParam } from "@/shared/hooks";
 import { formatTime, runExclusiveAction } from "@/shared/lib";
 
@@ -68,7 +69,10 @@ const performUndo = async (
   try {
     const response = await undo();
     if (!response.data?.undoLastMatchAction.reverted) {
-      Alert.alert("되돌릴 선택이 없어요", "새로운 인연을 살펴봐 주세요.");
+      Alert.alert(
+        i18n.t("errors.nothingToUndoTitle", { ns: "matches" }),
+        i18n.t("errors.nothingToUndoBody", { ns: "matches" }),
+      );
       return;
     }
     await refresh();
@@ -93,8 +97,11 @@ const performBoostActivation = async (
       return;
     }
     Alert.alert(
-      "부스트를 시작했어요",
-      `${formatTime(activation.activeUntil)}까지 더 많은 사람에게 보여드릴게요.`,
+      i18n.t("errors.boostStartedTitle", { ns: "matches" }),
+      i18n.t("errors.boostStartedBody", {
+        ns: "matches",
+        time: formatTime(activation.activeUntil),
+      }),
     );
   } catch (error) {
     showMatchActionError(error);

@@ -1,0 +1,67 @@
+{
+  "fields": {
+    "name": "Tên",
+    "birthDate": "Ngày sinh",
+    "birthDateHint": "YYYY-MM-DD",
+    "region": "Khu vực",
+    "interestedIn": "Quan tâm đến",
+    "intro": "Giới thiệu",
+    "introHint": "Tối đa 60 ký tự",
+    "introLabel": "Giới thiệu (60 ký tự)",
+    "introPlaceholder": "Chia sẻ ngắn gọn về bạn",
+    "introPlaceholderEditor": "Cuối tuần mình hay đi xem triển lãm…"
+  },
+  "gender": {
+    "male": "Nam",
+    "female": "Nữ",
+    "everyone": "Tất cả"
+  },
+  "photos": {
+    "guide": "Vui lòng tải lên ít nhất 1 ảnh. Bạn có thể thêm tối đa 2 ảnh nữa.",
+    "count": "Ảnh {{count}}/{{max}}",
+    "label": "Ảnh hồ sơ {{index}}",
+    "deleteMain": "Xóa ảnh chính",
+    "delete": "Xóa ảnh",
+    "uploading": "Đang tải ảnh lên",
+    "add": "Thêm ảnh",
+    "limitReached": "Bạn có thể thêm tối đa {{max}} ảnh"
+  },
+  "actions": {
+    "save": "Lưu",
+    "complete": "Hoàn thiện hồ sơ",
+    "saveShort": "Lưu"
+  },
+  "attributes": {
+    "height": "Chiều cao",
+    "job": "Nghề nghiệp",
+    "mbti": "MBTI"
+  },
+  "plan": {
+    "view": "Xem gói của tôi"
+  },
+  "errors": {
+    "incompleteTitle": "Vui lòng điền đầy đủ hồ sơ",
+    "incompleteBody": "Kiểm tra ảnh, tên, ngày sinh, khu vực, giới thiệu và đối tượng quan tâm.",
+    "uploadPendingTitle": "Đang chuẩn bị tính năng tải ảnh",
+    "uploadPendingBody": "Bạn có thể tải ảnh lên khi kho lưu trữ an toàn được thiết lập."
+  },
+  "regions": {
+    "서울": "Seoul",
+    "부산": "Busan",
+    "대구": "Daegu",
+    "인천": "Incheon",
+    "광주": "Gwangju",
+    "대전": "Daejeon",
+    "울산": "Ulsan",
+    "세종": "Sejong",
+    "경기": "Gyeonggi",
+    "강원": "Gangwon",
+    "충북": "Chungbuk",
+    "충남": "Chungnam",
+    "전북": "Jeonbuk",
+    "전남": "Jeonnam",
+    "경북": "Gyeongbuk",
+    "경남": "Gyeongnam",
+    "제주": "Jeju"
+  }
+}

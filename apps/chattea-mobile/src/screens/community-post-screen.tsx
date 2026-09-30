@@ -12,6 +12,7 @@ import {
   updateCommunityCommentDraft,
   useCommunityPost,
 } from "@/features/community";
+import { useTranslation } from "@/i18n";
 import {
   EmptyState,
   ErrorState,
@@ -26,6 +27,7 @@ CommentRow.displayName = "CommentRow";
 const keyExtractor = (item: CommunityComment) => item.id;
 
 const CommunityPostScreen = () => {
+  const { t } = useTranslation("community");
   const {
     posts,
     comments,
@@ -56,14 +58,14 @@ const CommunityPostScreen = () => {
   ) : comments.error ? (
     <ErrorState />
   ) : (
-    <EmptyState title="아직 댓글이 없어요" body="첫 댓글을 편하게 남겨 보세요." />
+    <EmptyState title={t("comments.emptyTitle")} body={t("comments.emptyBody")} />
   );
 
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Pressable
-          accessibilityLabel="더 보기"
+          accessibilityLabel={t("post.moreOptions")}
           accessibilityRole="button"
           hitSlop={8}
           onPress={reportPost}
@@ -73,7 +75,7 @@ const CommunityPostScreen = () => {
         </Pressable>
       ),
     });
-  }, [navigation, reportPost, theme]);
+  }, [navigation, reportPost, t, theme]);
 
   return (
     <NativeScreen>
@@ -86,13 +88,14 @@ const CommunityPostScreen = () => {
           <View>
             {posts.loading ? <LoadingState /> : null}
             {!posts.loading && !post ? (
-              <EmptyState
-                title="글을 찾을 수 없어요"
-                body="목록으로 돌아가 다른 이야기를 확인해 보세요."
-              />
+              <EmptyState title={t("post.notFoundTitle")} body={t("post.notFoundBody")} />
             ) : null}
             {post ? <PostDetailCard post={post} /> : null}
-            {post ? <Text style={styles.commentTitle}>댓글 {post.commentCount}</Text> : null}
+            {post ? (
+              <Text style={styles.commentTitle}>
+                {t("comments.title", { count: post.commentCount })}
+              </Text>
+            ) : null}
           </View>
         }
         ListHeaderComponentStyle={styles.listHeader}

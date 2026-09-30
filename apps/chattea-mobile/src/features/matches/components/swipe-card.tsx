@@ -11,6 +11,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { StyleSheet } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
+
 import {
   SWIPE_DISTANCE,
   SWIPE_EXIT_DURATION_MS,
@@ -21,6 +23,7 @@ import {
 import type { SwipeCardProps } from "../types";
 
 const SwipeCard = ({ candidate, disabled, onPress, onSwipe }: SwipeCardProps) => {
+  const { t } = useTranslation("matches");
   const { width } = useWindowDimensions();
   const offset = useSharedValue(0);
   const photo = candidate.photos[0]?.url;
@@ -68,7 +71,7 @@ const SwipeCard = ({ candidate, disabled, onPress, onSwipe }: SwipeCardProps) =>
       <Animated.View style={[styles.card, cardStyle]}>
         {photo ? (
           <Image
-            accessibilityLabel={`${candidate.userName}님의 대표 사진`}
+            accessibilityLabel={t("candidate.mainPhotoA11y", { name: candidate.userName })}
             cachePolicy="memory-disk"
             contentFit="cover"
             onLoad={(event) => {
@@ -88,7 +91,9 @@ const SwipeCard = ({ candidate, disabled, onPress, onSwipe }: SwipeCardProps) =>
           <Text style={styles.name}>
             {candidate.userName} {candidate.age}
           </Text>
-          <Text style={styles.sub}>{candidate.region}</Text>
+          <Text style={styles.sub}>
+            {t(`profile:regions.${candidate.region}`, { defaultValue: candidate.region })}
+          </Text>
         </View>
       </Animated.View>
     </GestureDetector>

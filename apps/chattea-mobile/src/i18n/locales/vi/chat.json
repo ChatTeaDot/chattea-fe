@@ -1,0 +1,25 @@
+{
+  "rooms": {
+    "emptyTitle": "Chưa có cuộc trò chuyện nào",
+    "emptyBody": "Khi cả hai cùng quan tâm, bạn có thể tiếp tục trò chuyện tại đây.",
+    "openUnread": "Mở cuộc trò chuyện chưa đọc",
+    "fallbackTitle": "Trò chuyện",
+    "previewFallback": "Hãy gửi lời chào đầu tiên."
+  },
+  "room": {
+    "emptyTitle": "Đang chờ lời chào đầu tiên",
+    "emptyBody": "Bắt đầu bằng một lời chào ngắn gọn và thoải mái.",
+    "options": "Tùy chọn trò chuyện"
+  },
+  "composer": {
+    "inputLabel": "Nhập tin nhắn",
+    "placeholder": "Nhập tin nhắn…",
+    "send": "Gửi tin nhắn"
+  },
+  "message": {
+    "read": "Đã đọc",
+    "reportLabel": "Báo cáo tin nhắn",
+    "report": "Báo cáo",
+    "reportTitle": "Báo cáo tin nhắn này?"
+  }
+}

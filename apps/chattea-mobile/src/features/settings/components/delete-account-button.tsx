@@ -1,19 +1,22 @@
 import { Pressable, Text } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
+
 import type { DeleteAccountButtonProps } from "../types";
 
 const DeleteAccountButton = ({ disabled, onPress }: DeleteAccountButtonProps) => {
+  const { t } = useTranslation("settings");
   return (
     <Pressable
-      accessibilityLabel="탈퇴하기"
+      accessibilityLabel={t("delete.action")}
       accessibilityRole="button"
       accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => [styles.button, (pressed || disabled) && styles.buttonPressed]}
     >
-      <Text style={styles.buttonText}>탈퇴하기</Text>
+      <Text style={styles.buttonText}>{t("delete.action")}</Text>
     </Pressable>
   );
 };

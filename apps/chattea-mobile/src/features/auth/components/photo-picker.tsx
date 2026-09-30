@@ -3,15 +3,17 @@ import { ImagePlus } from "lucide-react-native";
 import { Pressable } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
 import type { AppTheme } from "@/theme";
 
 import type { PhotoPickerProps } from "../types";
 
 const PhotoPicker = ({ onPress, uri }: PhotoPickerProps) => {
+  const { t } = useTranslation("auth");
   const { theme } = useUnistyles() as { theme: AppTheme };
   return (
     <Pressable
-      accessibilityLabel="프로필 사진 선택"
+      accessibilityLabel={t("signup.photoPicker")}
       accessibilityRole="button"
       onPress={onPress}
       style={({ pressed }) => [styles.picker, pressed && styles.pressed]}

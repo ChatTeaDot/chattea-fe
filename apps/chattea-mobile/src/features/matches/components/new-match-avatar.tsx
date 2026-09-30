@@ -1,13 +1,16 @@
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
+
 import type { NewMatchAvatarProps } from "../types";
 
 const NewMatchAvatar = ({ id, name, onPress }: NewMatchAvatarProps) => {
+  const { t } = useTranslation("matches");
   const handlePress = () => onPress(id);
   return (
     <Pressable
-      accessibilityLabel={`${name}님과 대화하기`}
+      accessibilityLabel={t("list.chatA11y", { name })}
       accessibilityRole="button"
       onPress={handlePress}
       style={({ pressed }) => [styles.item, pressed && styles.pressed]}

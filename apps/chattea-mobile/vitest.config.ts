@@ -38,6 +38,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
+      "expo-localization": path.resolve(__dirname, "test/mocks/expo-localization.ts"),
     },
   },
 });

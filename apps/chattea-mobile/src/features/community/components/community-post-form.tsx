@@ -4,6 +4,7 @@ import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
 import { NativeTextInput } from "@/shared/components";
 
 import {
@@ -17,20 +18,26 @@ import { updateCommunityPostDraft } from "../utils";
 import ChipRow from "./chip-row";
 
 const CommunityPostForm = () => {
+  const { t } = useTranslation("community");
   const { draft, setDraft, submit, state } = useCommunityPostDraft();
   const [category, setCategory] = useState<CommunityCategory>(COMMUNITY_CATEGORIES[0]);
   const disabled = !draft.title.trim() || !draft.body.trim() || state.loading;
 
   return (
     <View style={styles.container}>
-      <ChipRow items={COMMUNITY_CATEGORIES} onSelect={setCategory} selected={category} />
+      <ChipRow
+        formatLabel={(item) => t(`categories.${item}`)}
+        items={COMMUNITY_CATEGORIES}
+        onSelect={setCategory}
+        selected={category}
+      />
       <View style={styles.fields}>
         <NativeTextInput
           maxLength={COMMUNITY_TITLE_MAX_LENGTH}
           onChangeText={(title) =>
             setDraft((current) => updateCommunityPostDraft(current, { title }))
           }
-          placeholder="제목"
+          placeholder={t("form.titlePlaceholder")}
           style={styles.field}
           value={draft.title}
         />
@@ -40,7 +47,7 @@ const CommunityPostForm = () => {
           onChangeText={(body) =>
             setDraft((current) => updateCommunityPostDraft(current, { body }))
           }
-          placeholder="익명으로 올라가요. 편하게 써요…"
+          placeholder={t("form.bodyPlaceholder")}
           style={[styles.field, styles.area]}
           textAlignVertical="top"
           value={draft.body}
@@ -55,7 +62,7 @@ const CommunityPostForm = () => {
             onPress={() => void submit()}
             style={({ pressed }) => [styles.cta, (pressed || disabled) && styles.ctaDisabled]}
           >
-            <Text style={styles.ctaText}>등록</Text>
+            <Text style={styles.ctaText}>{t("form.submit")}</Text>
           </Pressable>
         </SafeAreaView>
       </KeyboardStickyView>

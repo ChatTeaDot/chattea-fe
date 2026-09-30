@@ -14,10 +14,12 @@ import {
   TermsAcceptance,
   useSignup,
 } from "@/features/auth";
+import { useTranslation } from "@/i18n";
 import { ContentState, Screen } from "@/shared/components";
 import type { AppTheme } from "@/theme";
 
 const SignupScreen = () => {
+  const { t } = useTranslation("auth");
   const {
     continuation,
     kakaoToken,
@@ -41,7 +43,7 @@ const SignupScreen = () => {
   if (continuation === undefined) {
     return (
       <Screen includeTopInset={false}>
-        <ContentState kind="loading" title="가입 정보를 확인하고 있어요" />
+        <ContentState kind="loading" title={t("signup.checking")} />
       </Screen>
     );
   }
@@ -61,24 +63,29 @@ const SignupScreen = () => {
         <View style={styles.photoRow}>
           <PhotoPicker onPress={() => void pickPhoto()} uri={photoUri} />
         </View>
-        <Text style={styles.hint}>프로필 사진</Text>
+        <Text style={styles.hint}>{t("signup.photoHint")}</Text>
         <View style={styles.fields}>
           <AuthField
-            label="닉네임"
+            label={t("signup.nicknameLabel")}
             maxLength={SIGNUP_NAME_MAX_LENGTH}
             onChangeText={setUserName}
-            placeholder="채티에서 쓸 이름"
+            placeholder={t("signup.nicknamePlaceholder")}
             value={userName}
           />
           <GenderField onChange={setGender} value={gender} />
           <AuthField
             keyboardType="number-pad"
-            label="키"
+            label={t("signup.heightLabel")}
             onChangeText={setHeightCm}
-            placeholder="키 (cm)"
+            placeholder={t("signup.heightPlaceholder")}
             value={heightCm}
           />
-          <AuthField label="직업" onChangeText={setJob} placeholder="직업" value={job} />
+          <AuthField
+            label={t("signup.jobLabel")}
+            onChangeText={setJob}
+            placeholder={t("signup.jobPlaceholder")}
+            value={job}
+          />
           <AuthField
             autoCapitalize="characters"
             label="MBTI"
@@ -97,7 +104,7 @@ const SignupScreen = () => {
           disabled={!userName.trim() || !gender || !termsAccepted || pending}
           loading={pending}
           onPress={() => void submit()}
-          title="가입 완료"
+          title={t("signup.submit")}
         />
       </BottomCta>
     </View>

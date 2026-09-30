@@ -1,0 +1,26 @@
+{
+  "categories": {
+    "dating": "Hẹn hò",
+    "daily": "Đời thường",
+    "question": "Hỏi đáp"
+  },
+  "post": {
+    "notFoundTitle": "Không tìm thấy bài viết",
+    "notFoundBody": "Quay lại danh sách để xem các câu chuyện khác.",
+    "reportTitle": "Báo cáo bài viết này?",
+    "moreOptions": "Xem thêm"
+  },
+  "comments": {
+    "title": "Bình luận {{count}}",
+    "emptyTitle": "Chưa có bình luận nào",
+    "emptyBody": "Hãy thoải mái để lại bình luận đầu tiên.",
+    "placeholder": "Nhập bình luận…",
+    "submit": "Đăng bình luận",
+    "reportTitle": "Báo cáo bình luận này?"
+  },
+  "form": {
+    "titlePlaceholder": "Tiêu đề",
+    "bodyPlaceholder": "Bài viết được đăng ẩn danh. Cứ thoải mái viết…",
+    "submit": "Đăng"
+  }
+}
