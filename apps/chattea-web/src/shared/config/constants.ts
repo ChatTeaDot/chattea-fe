@@ -1,5 +1,7 @@
 export const WEB_DEV_PORT = 3000;
 
+export const WEB_DEV_ORIGIN = `http://localhost:${WEB_DEV_PORT}`;
+
 export const COMMUNITY_PATH = "/community";
 
 export const VITALS_PATH = "/vitals";
