@@ -4,6 +4,13 @@ import { hydrateRoot } from "react-dom/client";
 import { HydrationBoundary, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { CommunityPage } from "@/pages/community";
+import {
+  ANALYTICS_EVENT,
+  ANALYTICS_SCREEN,
+  initAnalytics,
+  initDatadogRum,
+  track,
+} from "@/shared/analytics";
 
 import { reportVitals } from "./report-vitals";
 
@@ -15,6 +22,12 @@ if (!root) {
 
 const queryClient = new QueryClient();
 
+initDatadogRum();
+initAnalytics();
+track(ANALYTICS_EVENT.webviewEnter, {
+  screen: ANALYTICS_SCREEN.community,
+  source: "webview",
+});
 reportVitals();
 
 hydrateRoot(

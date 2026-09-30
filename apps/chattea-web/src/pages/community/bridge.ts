@@ -1,3 +1,4 @@
+import { ANALYTICS_EVENT, ANALYTICS_SCREEN, track } from "@/shared/analytics";
 import {
   COMMUNITY_AUTH_FAILED_EVENT,
   COMMUNITY_AUTH_REFRESH_MESSAGE_TYPE,
@@ -14,10 +15,22 @@ export const navigateToNative = (path: string) => {
   );
 };
 
-export const openPost = (postId: string) =>
+export const openPost = (postId: string) => {
+  track(ANALYTICS_EVENT.postView, {
+    screen: ANALYTICS_SCREEN.community,
+    source: "post_list",
+    postId,
+  });
   navigateToNative(`${COMMUNITY_POST_PATH_PREFIX}${postId}`);
+};
 
-export const openWrite = () => navigateToNative(COMMUNITY_NEW_PATH);
+export const openWrite = () => {
+  track(ANALYTICS_EVENT.postCreate, {
+    screen: ANALYTICS_SCREEN.community,
+    source: "write_fab",
+  });
+  navigateToNative(COMMUNITY_NEW_PATH);
+};
 
 let pendingRefresh: Promise<boolean> | null = null;
 

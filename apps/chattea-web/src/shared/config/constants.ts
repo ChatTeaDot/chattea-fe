@@ -8,6 +8,18 @@ export const VITAL_METRIC_NAMES = ["LCP", "FCP", "INP", "CLS", "TTFB"] as const;
 
 export const API_GRAPHQL_PATH = "/api/graphql";
 
+export const TRACE_FORWARD_HEADERS = [
+  "traceparent",
+  "tracestate",
+  "x-datadog-trace-id",
+  "x-datadog-parent-id",
+  "x-datadog-sampling-priority",
+  "x-datadog-origin",
+  "x-b3-traceid",
+  "x-b3-spanid",
+  "x-b3-sampled",
+] as const;
+
 export const COMMUNITY_NAVIGATE_MESSAGE_TYPE = "chattea.community.navigate";
 
 export const COMMUNITY_AUTH_REFRESH_MESSAGE_TYPE = "chattea.community.auth-refresh";

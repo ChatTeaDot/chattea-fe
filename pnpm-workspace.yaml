@@ -5,6 +5,7 @@ packages:
 allowBuilds:
   "@datadog/mobile-react-native": true
   "@sentry/cli": true
+  core-js: false
   esbuild: true
   return-fetch: true
   unrs-resolver: true
@@ -12,11 +13,6 @@ auditConfig:
   ignoreGhsas:
     - GHSA-w3rx-r6r6-pgpr
     - GHSA-5p2g-fcmc-qvqq
-
-peerDependencyRules:
-  allowedVersions:
-    react-native-reanimated: "*"
-    react-native-safe-area-context: "*"
 
 dedupePeerDependents: true
 
@@ -31,3 +27,8 @@ overrides:
   "nanoid@<3.3.18": 3.3.18
   "postcss@<=8.5.22": 8.5.23
   "shell-quote@<=1.8.4": 1.10.0
+
+peerDependencyRules:
+  allowedVersions:
+    react-native-reanimated: "*"
+    react-native-safe-area-context: "*"
