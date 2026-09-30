@@ -5,9 +5,11 @@ import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 import { useNotificationPreferences } from "@/features/notifications";
 import { DeleteAccountButton, useSettings } from "@/features/settings";
+import { useTranslation } from "@/i18n";
 import { AppButton, BottomCta, ListRow, ListSectionTitle, NativeScreen } from "@/shared/components";
 
 const SettingsScreen = () => {
+  const { t } = useTranslation("settings");
   const { theme } = useUnistyles();
   const { logoutPending, logOut, deleteAccount, state } = useSettings();
   const { preferences, setPreference } = useNotificationPreferences();
@@ -21,50 +23,50 @@ const SettingsScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         <View>
-          <ListSectionTitle title="알림" />
+          <ListSectionTitle title={t("sections.notifications")} />
           <ListRow
             icon={<Bell color={theme.colors.text} size={20} strokeWidth={1.75} />}
             side={
               <Switch
-                accessibilityLabel="새 매치 알림"
+                accessibilityLabel={t("rows.matchAlerts")}
                 onValueChange={(value) => setPreference("match", value)}
                 trackColor={{ false: theme.colors.surfaceSoft, true: theme.colors.accent }}
                 value={preferences.match}
               />
             }
-            title="새 매치 알림"
+            title={t("rows.matchAlerts")}
           />
           <ListRow
             icon={<MessageCircle color={theme.colors.text} size={20} strokeWidth={1.75} />}
             side={
               <Switch
-                accessibilityLabel="메시지 알림"
+                accessibilityLabel={t("rows.messageAlerts")}
                 onValueChange={(value) => setPreference("message", value)}
                 trackColor={{ false: theme.colors.surfaceSoft, true: theme.colors.accent }}
                 value={preferences.message}
               />
             }
-            title="메시지 알림"
+            title={t("rows.messageAlerts")}
           />
         </View>
         <View>
-          <ListSectionTitle title="계정" />
+          <ListSectionTitle title={t("sections.account")} />
           <ListRow
             icon={<Ban color={theme.colors.text} size={20} strokeWidth={1.75} />}
-            onPress={() => Alert.alert("차단 관리", "차단한 사용자 관리는 곧 지원할 예정이에요.")}
+            onPress={() => Alert.alert(t("blocked.title"), t("blocked.body"))}
             side={chevron}
-            title="차단 관리"
+            title={t("rows.blocked")}
           />
           <ListRow
             icon={<Crown color={theme.colors.text} size={20} strokeWidth={1.75} />}
             onPress={() => router.push("/premium")}
             side={chevron}
-            title="구독 관리"
+            title={t("rows.subscription")}
           />
           <ListRow
             icon={<LogOut color={theme.colors.text} size={20} strokeWidth={1.75} />}
             onPress={() => void logOut()}
-            title="로그아웃"
+            title={t("rows.logout")}
           />
           <View style={styles.dangerRow}>
             <DeleteAccountButton
@@ -75,7 +77,7 @@ const SettingsScreen = () => {
         </View>
       </ScrollView>
       <BottomCta>
-        <AppButton onPress={() => router.back()} title="완료" />
+        <AppButton onPress={() => router.back()} title={t("common:actions.done")} />
       </BottomCta>
     </NativeScreen>
   );

@@ -11,6 +11,7 @@ import {
   useLikes,
   VEIL_PLACEHOLDER_COUNT,
 } from "@/features/matches";
+import { useTranslation } from "@/i18n";
 import {
   AppButton,
   EmptyState,
@@ -30,6 +31,7 @@ const VEIL_IDS = Array.from({ length: VEIL_PLACEHOLDER_COUNT }, (_, index) => `v
 const keyExtractor = (item: { id: string }) => item.id;
 
 const LikesScreen = () => {
+  const { t } = useTranslation("matches");
   const { likes, likeState, sendInterest, refetchLikes } = useLikes();
   const errorKind = likes.error ? getLikesErrorKind(likes.error) : undefined;
   const locked = errorKind === "entitlement";
@@ -52,12 +54,16 @@ const LikesScreen = () => {
     <LoadingState />
   ) : errorKind === "retryable" ? (
     <NativeCard>
-      <Text style={styles.title}>좋아요를 불러오지 못했어요</Text>
-      <MetaText>잠시 후 다시 시도해 주세요.</MetaText>
-      <NativeButton label="다시 시도" onPress={() => void refetchLikes()} fullWidth />
+      <Text style={styles.title}>{t("likes.errorTitle")}</Text>
+      <MetaText>{t("common:states.errorBody")}</MetaText>
+      <NativeButton
+        label={t("common:actions.retry")}
+        onPress={() => void refetchLikes()}
+        fullWidth
+      />
     </NativeCard>
   ) : (
-    <EmptyState title="아직 받은 관심이 없어요" body="오늘의 인연에서 먼저 마음을 전해 보세요." />
+    <EmptyState title={t("likes.emptyTitle")} body={t("likes.emptyBody")} />
   );
 
   return (
@@ -74,7 +80,7 @@ const LikesScreen = () => {
       />
       {locked ? (
         <SafeAreaView edges={["bottom"]} style={styles.cta}>
-          <AppButton onPress={openPremium} title="누군지 확인하기" />
+          <AppButton onPress={openPremium} title={t("likes.revealCta")} />
         </SafeAreaView>
       ) : null}
     </NativeScreen>

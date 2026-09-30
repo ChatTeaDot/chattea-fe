@@ -8,6 +8,7 @@ import {
   type RoomsData,
   useChatRooms,
 } from "@/features/chat";
+import { useTranslation } from "@/i18n";
 import {
   AppButton,
   EmptyState,
@@ -23,6 +24,7 @@ RoomRow.displayName = "RoomRow";
 const keyExtractor = (item: RoomsData["chatRooms"][number]) => item.id;
 
 const RoomsScreen = () => {
+  const { t } = useTranslation("chat");
   const { rooms, openRoom, prefetchRoom } = useChatRooms();
   const roomList = rooms.data?.chatRooms ?? [];
   const firstUnreadId = roomList.find((room) => room.unreadCount > 0)?.id;
@@ -41,10 +43,7 @@ const RoomsScreen = () => {
   ) : rooms.error ? (
     <ErrorState />
   ) : (
-    <EmptyState
-      title="아직 시작한 대화가 없어요"
-      body="서로 관심이 닿으면 여기에서 대화를 이어갈 수 있어요."
-    />
+    <EmptyState title={t("rooms.emptyTitle")} body={t("rooms.emptyBody")} />
   );
 
   return (
@@ -61,7 +60,7 @@ const RoomsScreen = () => {
         <AppButton
           disabled={!firstUnreadId}
           onPress={() => firstUnreadId && openRoom(firstUnreadId)}
-          title="읽지 않은 대화 열기"
+          title={t("rooms.openUnread")}
         />
       </View>
     </NativeScreen>

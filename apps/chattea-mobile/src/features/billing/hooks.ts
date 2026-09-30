@@ -2,6 +2,7 @@ import { useQuery } from "@apollo/client/react";
 import { createContext, useContext, useMemo, useState } from "react";
 import { Alert } from "react-native";
 
+import i18n from "@/i18n";
 import { showActionError } from "@/shared/lib";
 
 import {
@@ -49,7 +50,10 @@ export const usePremiumBilling = () => {
     try {
       const result = await revenueCat.purchase(product.id);
       if (result === "purchased") {
-        Alert.alert("구매를 확인하고 있어요", "스토어 처리가 끝나면 혜택이 자동으로 반영돼요.");
+        Alert.alert(
+          i18n.t("purchasePending.title", { ns: "billing" }),
+          i18n.t("purchasePending.body", { ns: "billing" }),
+        );
       }
     } catch {
       showActionError();
@@ -62,7 +66,10 @@ export const usePremiumBilling = () => {
     try {
       const result = await revenueCat.restore();
       if (result === "restored") {
-        Alert.alert("구매 복원을 요청했어요", "복원된 혜택을 계정에서 다시 확인할게요.");
+        Alert.alert(
+          i18n.t("restoreRequested.title", { ns: "billing" }),
+          i18n.t("restoreRequested.body", { ns: "billing" }),
+        );
       }
     } catch {
       showActionError();

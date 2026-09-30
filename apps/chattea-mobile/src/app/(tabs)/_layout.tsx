@@ -1,9 +1,11 @@
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { useUnistyles } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
 import type { AppTheme } from "@/theme";
 
 const TabsLayout = () => {
+  const { t } = useTranslation();
   const { theme } = useUnistyles() as { theme: AppTheme };
 
   return (
@@ -16,21 +18,21 @@ const TabsLayout = () => {
       tintColor={theme.colors.accent}
     >
       <NativeTabs.Trigger name="matches">
-        <NativeTabs.Trigger.Label>매칭</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t("tabs.matches")}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           md={{ default: "home", selected: "home" }}
           sf={{ default: "house", selected: "house.fill" }}
         />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="likes">
-        <NativeTabs.Trigger.Label>좋아요</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t("tabs.likes")}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           md={{ default: "favorite_border", selected: "favorite" }}
           sf={{ default: "heart", selected: "heart.fill" }}
         />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="rooms">
-        <NativeTabs.Trigger.Label>채팅</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t("tabs.rooms")}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           sf={{
             default: "message",
@@ -40,14 +42,14 @@ const TabsLayout = () => {
         />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="community">
-        <NativeTabs.Trigger.Label>커뮤니티</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t("tabs.community")}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           md={{ default: "groups", selected: "groups" }}
           sf={{ default: "person.2", selected: "person.2.fill" }}
         />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="profile">
-        <NativeTabs.Trigger.Label>내 정보</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t("tabs.profile")}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           md={{ default: "account_circle", selected: "account_circle" }}
           sf={{ default: "person.crop.circle", selected: "person.crop.circle.fill" }}

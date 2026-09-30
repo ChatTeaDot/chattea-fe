@@ -1,12 +1,11 @@
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
+
 import type { Gender } from "../api";
 
-const OPTIONS: { label: string; value: Gender }[] = [
-  { label: "남성", value: "male" },
-  { label: "여성", value: "female" },
-];
+const OPTIONS: Gender[] = ["male", "female"];
 
 const GenderField = ({
   onChange,
@@ -15,18 +14,19 @@ const GenderField = ({
   onChange: (value: Gender) => void;
   value?: Gender;
 }) => {
+  const { t } = useTranslation("auth");
   return (
     <View style={styles.wrap}>
-      <Text style={styles.label}>성별</Text>
+      <Text style={styles.label}>{t("gender.label")}</Text>
       <View style={styles.row}>
         {OPTIONS.map((option) => {
-          const active = option.value === value;
+          const active = option === value;
           return (
             <Pressable
               accessibilityRole="button"
               accessibilityState={{ selected: active }}
-              key={option.value}
-              onPress={() => onChange(option.value)}
+              key={option}
+              onPress={() => onChange(option)}
               style={({ pressed }) => [
                 styles.chip,
                 active && styles.chipSelected,
@@ -34,7 +34,7 @@ const GenderField = ({
               ]}
             >
               <Text style={[styles.chipText, active && styles.chipTextSelected]}>
-                {option.label}
+                {t(`gender.${option}`)}
               </Text>
             </Pressable>
           );

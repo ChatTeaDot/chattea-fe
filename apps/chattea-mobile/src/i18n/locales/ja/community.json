@@ -1,0 +1,26 @@
+{
+  "categories": {
+    "dating": "恋愛",
+    "daily": "日常",
+    "question": "質問"
+  },
+  "post": {
+    "notFoundTitle": "投稿が見つかりません",
+    "notFoundBody": "一覧に戻って他の投稿を確認してみてください。",
+    "reportTitle": "この投稿を報告しますか？",
+    "moreOptions": "その他のオプション"
+  },
+  "comments": {
+    "title": "コメント {{count}}",
+    "emptyTitle": "まだコメントがありません",
+    "emptyBody": "気軽に最初のコメントを残してみてください。",
+    "placeholder": "コメントを入力…",
+    "submit": "コメントを投稿",
+    "reportTitle": "このコメントを報告しますか？"
+  },
+  "form": {
+    "titlePlaceholder": "タイトル",
+    "bodyPlaceholder": "匿名で投稿されます。気軽に書いてください…",
+    "submit": "投稿"
+  }
+}

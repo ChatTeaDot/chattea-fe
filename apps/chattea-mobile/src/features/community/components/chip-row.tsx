@@ -3,7 +3,12 @@ import { StyleSheet } from "react-native-unistyles";
 
 import type { ChipRowProps } from "../types";
 
-const ChipRow = <ItemT extends string>({ items, onSelect, selected }: ChipRowProps<ItemT>) => {
+const ChipRow = <ItemT extends string>({
+  formatLabel = (item) => item,
+  items,
+  onSelect,
+  selected,
+}: ChipRowProps<ItemT>) => {
   return (
     <View style={styles.row}>
       {items.map((item) => {
@@ -20,7 +25,9 @@ const ChipRow = <ItemT extends string>({ items, onSelect, selected }: ChipRowPro
               pressed && styles.chipPressed,
             ]}
           >
-            <Text style={[styles.chipText, active && styles.chipTextSelected]}>{item}</Text>
+            <Text style={[styles.chipText, active && styles.chipTextSelected]}>
+              {formatLabel(item)}
+            </Text>
           </Pressable>
         );
       })}

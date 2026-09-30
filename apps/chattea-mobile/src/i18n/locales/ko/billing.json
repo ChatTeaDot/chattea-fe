@@ -1,0 +1,37 @@
+{
+  "notice": "매달 자동 갱신 · 언제든 해지",
+  "reconciling": "스토어 구매를 서버 계정에 반영하고 있어요.",
+  "subscribe": "{{plan}} 구독하기",
+  "restore": "이전 구매 복원",
+  "plans": {
+    "free": {
+      "description": "기본 매칭 · 하루 좋아요 제한",
+      "price": "0원"
+    },
+    "basic": {
+      "description": "좋아요 증가 · 되돌리기 · 광고 제거",
+      "price": "4,900원"
+    },
+    "gold": {
+      "description": "좋아요 보기 확장 · 고급 필터 · AI 요약",
+      "price": "9,900원"
+    },
+    "black": {
+      "description": "Black 전용 추천 · 읽음 확인 · 강한 부스트",
+      "price": "24,900원"
+    }
+  },
+  "purchasePending": {
+    "title": "구매를 확인하고 있어요",
+    "body": "스토어 처리가 끝나면 혜택이 자동으로 반영돼요."
+  },
+  "restoreRequested": {
+    "title": "구매 복원을 요청했어요",
+    "body": "복원된 혜택을 계정에서 다시 확인할게요."
+  },
+  "errors": {
+    "loginRequired": "로그인 후 결제 정보를 확인할 수 있어요.",
+    "notConfigured": "이 빌드에는 App Store 결제가 설정되지 않았어요.",
+    "loadFailed": "스토어 결제 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요."
+  }
+}

@@ -1,5 +1,6 @@
 import type { RevenueCatState } from "@/features/billing";
 import type { PushRegistrationState } from "@/features/notifications";
+import i18n from "@/i18n";
 
 export const PUBLIC_ROOTS = new Set(["index", "signup"]);
 
@@ -22,11 +23,11 @@ export const datadogClientToken = process.env.EXPO_PUBLIC_DATADOG_CLIENT_TOKEN;
 export const datadogRumApplicationId = process.env.EXPO_PUBLIC_DATADOG_RUM_APPLICATION_ID;
 
 export const INITIAL_BILLING_STATE: RevenueCatState = {
-  message: "로그인 후 결제 정보를 확인할 수 있어요.",
+  message: i18n.t("errors.loginRequired", { ns: "billing" }),
   status: "disabled",
 };
 
 export const INITIAL_PUSH_STATE: PushRegistrationState = {
-  message: "로그인 후 원격 알림을 설정할 수 있어요.",
+  message: i18n.t("errors.loginRequired", { ns: "notifications" }),
   status: "disabled",
 };

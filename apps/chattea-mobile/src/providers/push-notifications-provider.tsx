@@ -13,6 +13,7 @@ import {
   useNotificationNavigation,
 } from "@/features/notifications";
 import { type PushRegistrationState } from "@/features/notifications";
+import i18n from "@/i18n";
 
 import { useAuthenticatedUserId } from "./authenticated-user";
 import { INITIAL_PUSH_STATE } from "./constants";
@@ -53,7 +54,7 @@ const PushNotificationsProvider = ({ children }: PropsWithChildren) => {
         prepareAndroidChannel: async () => {
           await Notifications.setNotificationChannelAsync("default", {
             importance: Notifications.AndroidImportance.MAX,
-            name: "기본 알림",
+            name: i18n.t("channel.default", { ns: "notifications" }),
             sound: "default",
           });
         },

@@ -15,6 +15,7 @@ import {
   updateChatMessageDraft,
   useChatRoom,
 } from "@/features/chat";
+import { useTranslation } from "@/i18n";
 import {
   EmptyState,
   ErrorState,
@@ -29,6 +30,7 @@ MessageRow.displayName = "MessageRow";
 const keyExtractor = (item: ChatMessage) => item.id;
 
 const RoomScreen = () => {
+  const { t } = useTranslation("chat");
   const insets = useSafeAreaInsets();
   const {
     messages,
@@ -78,7 +80,7 @@ const RoomScreen = () => {
   ) : messages.error ? (
     <ErrorState />
   ) : (
-    <EmptyState title="첫 인사를 기다리고 있어요" body="짧고 편안한 인사부터 건네 보세요." />
+    <EmptyState title={t("room.emptyTitle")} body={t("room.emptyBody")} />
   );
 
   return (
@@ -86,7 +88,7 @@ const RoomScreen = () => {
       <Stack.Screen
         options={{
           headerRight,
-          title: roomName ?? "대화",
+          title: roomName ?? t("rooms.fallbackTitle"),
         }}
       />
       <NativeList
