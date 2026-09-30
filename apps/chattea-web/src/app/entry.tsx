@@ -1,9 +1,12 @@
+import "@mantine/core/styles.css";
+
 import { StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
 
 import { HydrationBoundary, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { CommunityPage } from "@/pages/community";
+import { AppMantineProvider } from "@/shared/ui/mantine";
 import {
   ANALYTICS_EVENT,
   ANALYTICS_SCREEN,
@@ -33,10 +36,12 @@ reportVitals();
 hydrateRoot(
   root,
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <HydrationBoundary state={window.__DEHYDRATED__}>
-        <CommunityPage />
-      </HydrationBoundary>
-    </QueryClientProvider>
+    <AppMantineProvider>
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={window.__DEHYDRATED__}>
+          <CommunityPage />
+        </HydrationBoundary>
+      </QueryClientProvider>
+    </AppMantineProvider>
   </StrictMode>,
 );

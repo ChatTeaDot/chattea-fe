@@ -3,6 +3,7 @@ import type { Writable } from "node:stream";
 import { dehydrate, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { CommunityPage } from "@/pages/community";
+import { AppMantineProvider } from "@/shared/ui/mantine";
 
 import { primeCommunityPosts } from "./ssr/prime-community-posts";
 import { streamReact } from "./ssr/stream-react";
@@ -22,9 +23,11 @@ export const renderApp = async (
   const state = dehydrate(queryClient);
 
   await streamReact(
-    <QueryClientProvider client={queryClient}>
-      <CommunityPage />
-    </QueryClientProvider>,
+    <AppMantineProvider>
+      <QueryClientProvider client={queryClient}>
+        <CommunityPage />
+      </QueryClientProvider>
+    </AppMantineProvider>,
     writable,
     { end: false, onShellReady },
   );

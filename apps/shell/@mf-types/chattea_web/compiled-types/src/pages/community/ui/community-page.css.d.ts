@@ -1,4 +1,5 @@
 export declare const page: string;
+export declare const srOnly: string;
 export declare const list: string;
 export declare const rowButton: string;
 export declare const rowBody: string;

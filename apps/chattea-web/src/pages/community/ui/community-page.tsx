@@ -1,4 +1,5 @@
 import { Suspense, useEffect } from "react";
+import { ActionIcon, Button, Loader } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { ANALYTICS_EVENT, ANALYTICS_SCREEN, track } from "@/shared/analytics";
@@ -25,6 +26,7 @@ const signedOut = () => typeof window !== "undefined" && !hasAuthToken();
 
 const LoadingState = () => (
   <div className={stateWrap} role="status">
+    <Loader size="sm" />
     <span className={stateBody}>불러오는 중…</span>
   </div>
 );
@@ -58,7 +60,7 @@ const CommunityPage = () => {
         fallback={(reset) => (
           <div className={stateWrap} role="alert">
             <span className={stateTitle}>목록을 불러오지 못했어요</span>
-            <button
+            <Button
               className={retryButton}
               onClick={() => {
                 void queryClient.resetQueries({
@@ -66,10 +68,10 @@ const CommunityPage = () => {
                 });
                 reset();
               }}
-              type="button"
+              variant="filled"
             >
               다시 시도
-            </button>
+            </Button>
           </div>
         )}
       >
@@ -84,9 +86,9 @@ const CommunityPage = () => {
     <main className={page}>
       <h1 className={srOnly}>커뮤니티</h1>
       {content}
-      <button aria-label="글쓰기" className={writeFab} onClick={openWrite} type="button">
+      <ActionIcon aria-label="글쓰기" className={writeFab} onClick={openWrite} variant="filled">
         +
-      </button>
+      </ActionIcon>
     </main>
   );
 };
