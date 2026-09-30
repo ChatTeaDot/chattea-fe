@@ -6,9 +6,13 @@ const N = 5;
 const browser = await chromium.launch();
 const rows = [];
 for (let i = 0; i < N; i++) {
-  const ctx = await browser.newContext({ extraHTTPHeaders: { authorization: "Bearer test-token" } });
+  const ctx = await browser.newContext({
+    extraHTTPHeaders: { authorization: "Bearer test-token" },
+  });
   const page = await ctx.newPage();
-  await page.addInitScript(() => { window.__CHATTEA_AUTH__ = { authorization: "Bearer test-token" }; });
+  await page.addInitScript(() => {
+    window.__CHATTEA_AUTH__ = { authorization: "Bearer test-token" };
+  });
   let gqlRequests = 0;
   page.on("request", (r) => {
     if (r.url().includes("/api/graphql")) gqlRequests += 1;
@@ -35,7 +39,13 @@ for (let i = 0; i < N; i++) {
 await browser.close();
 const med = (a) => a.slice().sort((x, y) => x - y)[Math.floor(a.length / 2)];
 console.table(rows);
-console.log("median firstContent:", med(rows.map((r) => r.firstContentMs)),
-  "| median fcp:", med(rows.map((r) => r.fcp)),
-  "| median lcp:", med(rows.map((r) => r.lcp)),
-  "| gql requests:", rows.map((r) => r.gqlRequests).join(","));
+console.log(
+  "median firstContent:",
+  med(rows.map((r) => r.firstContentMs)),
+  "| median fcp:",
+  med(rows.map((r) => r.fcp)),
+  "| median lcp:",
+  med(rows.map((r) => r.lcp)),
+  "| gql requests:",
+  rows.map((r) => r.gqlRequests).join(","),
+);
