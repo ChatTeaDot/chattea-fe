@@ -1,6 +1,7 @@
 import { Suspense, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { useTranslation } from "@/i18n";
 import { ANALYTICS_EVENT, ANALYTICS_SCREEN, track } from "@/shared/analytics";
 import { ErrorBoundary } from "@/shared/lib";
 
@@ -23,13 +24,17 @@ const hasAuthToken = () =>
 
 const signedOut = () => typeof window !== "undefined" && !hasAuthToken();
 
-const LoadingState = () => (
-  <div className={stateWrap} role="status">
-    <span className={stateBody}>불러오는 중…</span>
-  </div>
-);
+const LoadingState = () => {
+  const { t } = useTranslation();
+  return (
+    <div className={stateWrap} role="status">
+      <span className={stateBody}>{t("states.loading")}</span>
+    </div>
+  );
+};
 
 const CommunityPage = () => {
+  const { t } = useTranslation("community");
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -43,8 +48,8 @@ const CommunityPage = () => {
   if (signedOut()) {
     content = (
       <div className={stateWrap}>
-        <span className={stateTitle}>로그인이 필요해요</span>
-        <span className={stateBody}>앱에서 로그인하면 이야기를 볼 수 있어요.</span>
+        <span className={stateTitle}>{t("signedOut.title")}</span>
+        <span className={stateBody}>{t("signedOut.body")}</span>
       </div>
     );
   } else if (
@@ -57,7 +62,7 @@ const CommunityPage = () => {
       <ErrorBoundary
         fallback={(reset) => (
           <div className={stateWrap} role="alert">
-            <span className={stateTitle}>목록을 불러오지 못했어요</span>
+            <span className={stateTitle}>{t("loadError.title")}</span>
             <button
               className={retryButton}
               onClick={() => {
@@ -68,7 +73,7 @@ const CommunityPage = () => {
               }}
               type="button"
             >
-              다시 시도
+              {t("common:actions.retry")}
             </button>
           </div>
         )}
@@ -82,9 +87,9 @@ const CommunityPage = () => {
 
   return (
     <main className={page}>
-      <h1 className={srOnly}>커뮤니티</h1>
+      <h1 className={srOnly}>{t("title")}</h1>
       {content}
-      <button aria-label="글쓰기" className={writeFab} onClick={openWrite} type="button">
+      <button aria-label={t("write")} className={writeFab} onClick={openWrite} type="button">
         +
       </button>
     </main>
