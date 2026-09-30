@@ -5,6 +5,7 @@ ios
 android
 .omo
 dist
+storybook-static
 coverage
 npm-debug.log*
 .env

@@ -4,7 +4,6 @@ import { formatRelativeDate } from "@/shared/lib";
 
 import { openPost } from "../bridge";
 import type { CommunityPost } from "../types";
-
 import { rowBody, rowButton, rowSub, rowTitle } from "./community-page.css";
 
 type PostRowProps = { post: CommunityPost };

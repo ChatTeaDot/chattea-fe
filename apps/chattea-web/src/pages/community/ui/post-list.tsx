@@ -1,7 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { communityPostsQuery } from "../api";
-
 import { list, stateBody, stateTitle, stateWrap } from "./community-page.css";
 import PostRow from "./post-row";
 
