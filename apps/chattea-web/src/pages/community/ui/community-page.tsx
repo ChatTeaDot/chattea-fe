@@ -1,6 +1,7 @@
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { ANALYTICS_EVENT, ANALYTICS_SCREEN, track } from "@/shared/analytics";
 import { ErrorBoundary } from "@/shared/lib";
 
 import { openWrite } from "../bridge";
@@ -9,6 +10,7 @@ import { COMMUNITY_POSTS_QUERY_KEY } from "../api";
 import {
   page,
   retryButton,
+  srOnly,
   stateBody,
   stateTitle,
   stateWrap,
@@ -22,13 +24,20 @@ const hasAuthToken = () =>
 const signedOut = () => typeof window !== "undefined" && !hasAuthToken();
 
 const LoadingState = () => (
-  <div className={stateWrap}>
+  <div className={stateWrap} role="status">
     <span className={stateBody}>불러오는 중…</span>
   </div>
 );
 
 const CommunityPage = () => {
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    track(ANALYTICS_EVENT.communityView, {
+      screen: ANALYTICS_SCREEN.community,
+      source: "webview",
+    });
+  }, []);
 
   let content;
   if (signedOut()) {
@@ -47,7 +56,7 @@ const CommunityPage = () => {
     content = (
       <ErrorBoundary
         fallback={(reset) => (
-          <div className={stateWrap}>
+          <div className={stateWrap} role="alert">
             <span className={stateTitle}>목록을 불러오지 못했어요</span>
             <button
               className={retryButton}
@@ -73,6 +82,7 @@ const CommunityPage = () => {
 
   return (
     <main className={page}>
+      <h1 className={srOnly}>커뮤니티</h1>
       {content}
       <button aria-label="글쓰기" className={writeFab} onClick={openWrite} type="button">
         +
