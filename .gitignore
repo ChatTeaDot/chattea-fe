@@ -13,3 +13,6 @@ npm-debug.log*
 
 # e2e maestro
 apps/chattea-mobile/maestro/output/
+
+# lighthouse reports
+apps/chattea-web/.lighthouse/

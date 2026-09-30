@@ -1,10 +1,21 @@
 import expo from "eslint-config-expo/flat.js";
+import reactNativeA11y from "eslint-plugin-react-native-a11y";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 
 export default [
   ...expo,
   {
     ignores: [".expo/**", "dist/**", "ios/**", "android/**", ".rnstorybook/storybook.requires.ts"],
+  },
+  {
+    files: ["**/*.{ts,tsx}"],
+    plugins: {
+      "react-native-a11y": reactNativeA11y,
+    },
+    rules: {
+      ...reactNativeA11y.configs.all.rules,
+      "react-native-a11y/has-accessibility-hint": "off",
+    },
   },
   {
     plugins: {

@@ -1,10 +1,12 @@
 import expo from "eslint-config-expo/flat.js";
+import jsxA11y from "eslint-plugin-jsx-a11y";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 
 export default [
   ...expo,
+  jsxA11y.flatConfigs.recommended,
   {
-    ignores: ["dist/**", "@mf-types/**"],
+    ignores: ["dist/**", "node_modules/**", "@mf-types/**"],
   },
   {
     plugins: {

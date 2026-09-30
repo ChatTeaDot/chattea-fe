@@ -32,3 +32,4 @@ peerDependencyRules:
   allowedVersions:
     react-native-reanimated: "*"
     react-native-safe-area-context: "*"
+    "eslint-plugin-react-native-a11y>eslint": "9"

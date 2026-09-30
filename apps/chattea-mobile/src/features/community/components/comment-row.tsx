@@ -8,7 +8,12 @@ const CommentRow = ({ authorName, body, id, onReport }: CommentRowProps) => {
   const report = useCallback(() => onReport(id), [id, onReport]);
   return (
     <Pressable
+      accessibilityActions={[{ name: "longpress", label: "댓글 신고" }]}
+      accessibilityHint="길게 눌러 댓글을 신고할 수 있어요"
       delayLongPress={400}
+      onAccessibilityAction={(event) => {
+        if (event.nativeEvent.actionName === "longpress") report();
+      }}
       onLongPress={report}
       style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
     >

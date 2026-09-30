@@ -1,6 +1,6 @@
 import { ActionIcon, Button, Loader } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useSyncExternalStore } from "react";
 
 import { useTranslation } from "@/i18n";
 import { ANALYTICS_EVENT, ANALYTICS_SCREEN, track } from "@/shared/analytics";
@@ -34,9 +34,16 @@ const LoadingState = () => {
   );
 };
 
+const subscribe = () => () => {};
+
 const CommunityPage = () => {
   const { t } = useTranslation("community");
   const queryClient = useQueryClient();
+  const hydrated = useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  );
 
   useEffect(() => {
     track(ANALYTICS_EVENT.communityView, {
@@ -45,19 +52,18 @@ const CommunityPage = () => {
     });
   }, []);
 
+  const postsPrimed = queryClient.getQueryData(COMMUNITY_POSTS_QUERY_KEY) !== undefined;
+
   let content;
-  if (signedOut()) {
+  if (!hydrated && !postsPrimed) {
+    content = <LoadingState />;
+  } else if (hydrated && signedOut()) {
     content = (
       <div className={stateWrap}>
         <span className={stateTitle}>{t("signedOut.title")}</span>
         <span className={stateBody}>{t("signedOut.body")}</span>
       </div>
     );
-  } else if (
-    typeof window === "undefined" &&
-    queryClient.getQueryData(COMMUNITY_POSTS_QUERY_KEY) === undefined
-  ) {
-    content = <LoadingState />;
   } else {
     content = (
       <ErrorBoundary
