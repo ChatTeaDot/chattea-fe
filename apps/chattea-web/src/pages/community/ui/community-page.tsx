@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useSyncExternalStore } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { ANALYTICS_EVENT, ANALYTICS_SCREEN, track } from "@/shared/analytics";
@@ -29,8 +29,15 @@ const LoadingState = () => (
   </div>
 );
 
+const subscribe = () => () => {};
+
 const CommunityPage = () => {
   const queryClient = useQueryClient();
+  const hydrated = useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  );
 
   useEffect(() => {
     track(ANALYTICS_EVENT.communityView, {
@@ -39,19 +46,18 @@ const CommunityPage = () => {
     });
   }, []);
 
+  const postsPrimed = queryClient.getQueryData(COMMUNITY_POSTS_QUERY_KEY) !== undefined;
+
   let content;
-  if (signedOut()) {
+  if (!hydrated && !postsPrimed) {
+    content = <LoadingState />;
+  } else if (hydrated && signedOut()) {
     content = (
       <div className={stateWrap}>
         <span className={stateTitle}>로그인이 필요해요</span>
         <span className={stateBody}>앱에서 로그인하면 이야기를 볼 수 있어요.</span>
       </div>
     );
-  } else if (
-    typeof window === "undefined" &&
-    queryClient.getQueryData(COMMUNITY_POSTS_QUERY_KEY) === undefined
-  ) {
-    content = <LoadingState />;
   } else {
     content = (
       <ErrorBoundary
