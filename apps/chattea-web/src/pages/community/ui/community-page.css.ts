@@ -9,6 +9,18 @@ export const page = style({
   minHeight: "100vh",
 });
 
+export const srOnly = style({
+  border: 0,
+  clip: "rect(0 0 0 0)",
+  height: 1,
+  margin: -1,
+  overflow: "hidden",
+  padding: 0,
+  position: "absolute",
+  whiteSpace: "nowrap",
+  width: 1,
+});
+
 export const list = style({
   listStyle: "none",
   margin: 0,
@@ -28,6 +40,10 @@ export const rowButton = style({
   width: "100%",
   ":active": {
     backgroundColor: "#F5F5F7",
+  },
+  ":focus-visible": {
+    outline: "2px solid #EC4899",
+    outlineOffset: 2,
   },
 });
 
@@ -83,6 +99,10 @@ export const retryButton = style({
   height: 44,
   marginTop: 8,
   padding: "0 20px",
+  ":focus-visible": {
+    outline: "2px solid #EC4899",
+    outlineOffset: 3,
+  },
 });
 
 export const writeFab = style({
@@ -104,4 +124,8 @@ export const writeFab = style({
   right: 16,
   width: 56,
   zIndex: 100,
+  ":focus-visible": {
+    outline: "2px solid #EC4899",
+    outlineOffset: 3,
+  },
 });
