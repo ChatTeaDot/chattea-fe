@@ -1,3 +1,5 @@
+import "@mantine/core/styles.css";
+
 import { HydrationBoundary, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
@@ -12,6 +14,7 @@ import {
   initDatadogRum,
   track,
 } from "@/shared/analytics";
+import { AppMantineProvider } from "@/shared/ui/mantine";
 
 import { reportVitals } from "./report-vitals";
 
@@ -37,12 +40,14 @@ reportVitals();
 hydrateRoot(
   root,
   <StrictMode>
-    <I18nextProvider i18n={i18n}>
-      <QueryClientProvider client={queryClient}>
-        <HydrationBoundary state={window.__DEHYDRATED__}>
-          <CommunityPage />
-        </HydrationBoundary>
-      </QueryClientProvider>
-    </I18nextProvider>
+    <AppMantineProvider>
+      <I18nextProvider i18n={i18n}>
+        <QueryClientProvider client={queryClient}>
+          <HydrationBoundary state={window.__DEHYDRATED__}>
+            <CommunityPage />
+          </HydrationBoundary>
+        </QueryClientProvider>
+      </I18nextProvider>
+    </AppMantineProvider>
   </StrictMode>,
 );

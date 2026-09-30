@@ -15,7 +15,7 @@ const config = defineConfig({
       name: "chattea_web",
       filename: "remoteEntry.js",
       exposes: {
-        "./CommunityApp": "./src/pages/community/ui/community-page.tsx",
+        "./CommunityApp": "./src/pages/community/ui/community-app.tsx",
       },
       shared: {
         react: { singleton: true },

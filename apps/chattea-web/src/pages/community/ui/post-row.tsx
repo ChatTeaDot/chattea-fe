@@ -1,3 +1,4 @@
+import { UnstyledButton } from "@mantine/core";
 import { useCallback } from "react";
 
 import { useTranslation } from "@/i18n";
@@ -14,14 +15,14 @@ const PostRow = ({ post }: PostRowProps) => {
   const open = useCallback(() => openPost(post.id), [post.id]);
   return (
     <li>
-      <button className={rowButton} onClick={open} type="button">
+      <UnstyledButton className={rowButton} onClick={open}>
         <span className={rowBody}>
           <span className={rowTitle}>{post.title}</span>
           <span className={rowSub}>
             {`${post.authorName} · ${t("commentCount", { count: post.commentCount })} · ${formatRelativeDate(post.createdAt, i18n.language)}`}
           </span>
         </span>
-      </button>
+      </UnstyledButton>
     </li>
   );
 };

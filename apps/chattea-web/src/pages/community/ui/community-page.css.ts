@@ -1,11 +1,12 @@
 import { style } from "@vanilla-extract/css";
 
-const fontStack =
-  '"SF Pro Rounded", "Arial Rounded MT Bold", "Gowun Dodum", "Pretendard", sans-serif';
+import { brandPink, colors, webFontStack } from "@/shared/ui/tokens";
+
+const brand = brandPink[5];
 
 export const page = style({
-  backgroundColor: "#FFFFFF",
-  fontFamily: fontStack,
+  backgroundColor: colors.surface,
+  fontFamily: webFontStack,
   minHeight: "100vh",
 });
 
@@ -30,19 +31,19 @@ export const list = style({
 export const rowButton = style({
   background: "none",
   border: "none",
-  borderBottom: "1px solid #E5E7EB",
+  borderBottom: `1px solid ${colors.border}`,
   cursor: "pointer",
   display: "block",
-  fontFamily: fontStack,
+  fontFamily: webFontStack,
   minHeight: 56,
   padding: "14px 16px",
   textAlign: "left",
   width: "100%",
   ":active": {
-    backgroundColor: "#F5F5F7",
+    backgroundColor: colors.pressedSurface,
   },
   ":focus-visible": {
-    outline: "2px solid #EC4899",
+    outline: `2px solid ${brand}`,
     outlineOffset: 2,
   },
 });
@@ -55,7 +56,7 @@ export const rowBody = style({
 });
 
 export const rowTitle = style({
-  color: "#111827",
+  color: colors.textPrimary,
   fontSize: 15,
   fontWeight: 600,
   overflow: "hidden",
@@ -64,7 +65,7 @@ export const rowTitle = style({
 });
 
 export const rowSub = style({
-  color: "#6B7280",
+  color: colors.textDimmed,
   fontSize: 13,
 });
 
@@ -77,45 +78,45 @@ export const stateWrap = style({
 });
 
 export const stateTitle = style({
-  color: "#111827",
+  color: colors.textPrimary,
   fontSize: 15,
   fontWeight: 600,
 });
 
 export const stateBody = style({
-  color: "#6B7280",
+  color: colors.textDimmed,
   fontSize: 14,
 });
 
 export const retryButton = style({
-  backgroundColor: "#EC4899",
+  backgroundColor: brand,
   border: "none",
   borderRadius: 9999,
-  color: "#FFFFFF",
+  color: colors.surface,
   cursor: "pointer",
-  fontFamily: fontStack,
+  fontFamily: webFontStack,
   fontSize: 15,
   fontWeight: 600,
   height: 44,
   marginTop: 8,
   padding: "0 20px",
   ":focus-visible": {
-    outline: "2px solid #EC4899",
+    outline: `2px solid ${brand}`,
     outlineOffset: 3,
   },
 });
 
 export const writeFab = style({
   alignItems: "center",
-  backgroundColor: "#EC4899",
+  backgroundColor: brand,
   border: "none",
   borderRadius: 9999,
   bottom: 24,
   boxShadow: "0 4px 12px rgba(0,0,0,.08)",
-  color: "#FFFFFF",
+  color: colors.surface,
   cursor: "pointer",
   display: "flex",
-  fontFamily: fontStack,
+  fontFamily: webFontStack,
   fontSize: 24,
   height: 56,
   justifyContent: "center",
@@ -125,7 +126,7 @@ export const writeFab = style({
   width: 56,
   zIndex: 100,
   ":focus-visible": {
-    outline: "2px solid #EC4899",
+    outline: `2px solid ${brand}`,
     outlineOffset: 3,
   },
 });

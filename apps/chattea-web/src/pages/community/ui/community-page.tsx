@@ -1,3 +1,4 @@
+import { ActionIcon, Button, Loader } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
 import { Suspense, useEffect } from "react";
 
@@ -27,6 +28,7 @@ const LoadingState = () => {
   const { t } = useTranslation();
   return (
     <div className={stateWrap} role="status">
+      <Loader size="sm" />
       <span className={stateBody}>{t("states.loading")}</span>
     </div>
   );
@@ -62,7 +64,7 @@ const CommunityPage = () => {
         fallback={(reset) => (
           <div className={stateWrap} role="alert">
             <span className={stateTitle}>{t("loadError.title")}</span>
-            <button
+            <Button
               className={retryButton}
               onClick={() => {
                 void queryClient.resetQueries({
@@ -70,10 +72,10 @@ const CommunityPage = () => {
                 });
                 reset();
               }}
-              type="button"
+              variant="filled"
             >
               {t("common:actions.retry")}
-            </button>
+            </Button>
           </div>
         )}
       >
@@ -88,9 +90,9 @@ const CommunityPage = () => {
     <main className={page}>
       <h1 className={srOnly}>{t("title")}</h1>
       {content}
-      <button aria-label={t("write")} className={writeFab} onClick={openWrite} type="button">
+      <ActionIcon aria-label={t("write")} className={writeFab} onClick={openWrite} variant="filled">
         +
-      </button>
+      </ActionIcon>
     </main>
   );
 };
