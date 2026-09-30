@@ -1,7 +1,7 @@
 import {
   DEFAULT_LANGUAGE,
-  type SupportedLanguage,
   SUPPORTED_LANGUAGES,
+  type SupportedLanguage,
 } from "@/i18n";
 import { resources } from "@/i18n/resources";
 

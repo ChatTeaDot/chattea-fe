@@ -7,9 +7,9 @@
     "dev": "tsx src/app/server.ts",
     "build": "vite build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "lint": "tsc -p tsconfig.json --noEmit",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "format": "eslint . --fix && prettier --write .",
+    "format:check": "eslint . && prettier --check .",
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
@@ -34,6 +34,9 @@
     "@types/react-dom": "~19.2.7",
     "@vanilla-extract/vite-plugin": "^5.2.6",
     "@vitejs/plugin-react": "^5.0.4",
+    "eslint": "^9.39.4",
+    "eslint-config-expo": "^56.0.4",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
     "prettier": "^3.5.3",
     "tsx": "^4.23.13",
     "typescript": "^6.0.3",

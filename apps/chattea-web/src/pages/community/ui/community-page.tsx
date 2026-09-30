@@ -1,13 +1,12 @@
-import { Suspense, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { Suspense, useEffect } from "react";
 
 import { useTranslation } from "@/i18n";
 import { ANALYTICS_EVENT, ANALYTICS_SCREEN, track } from "@/shared/analytics";
 import { ErrorBoundary } from "@/shared/lib";
 
-import { openWrite } from "../bridge";
 import { COMMUNITY_POSTS_QUERY_KEY } from "../api";
-
+import { openWrite } from "../bridge";
 import {
   page,
   retryButton,

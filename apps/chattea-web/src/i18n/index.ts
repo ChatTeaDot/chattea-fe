@@ -82,7 +82,7 @@ export const createClientI18n = (language?: string): I18nInstance => {
 // entry points without a provider (module federation remote, unit tests).
 const i18n = typeof window === "undefined" ? createI18n() : createClientI18n();
 
-export { useTranslation } from "react-i18next";
-export { DEFAULT_LANGUAGE, INTL_LOCALES, NAMESPACES, SUPPORTED_LANGUAGES } from "./resources";
 export type { Namespace, SupportedLanguage } from "./resources";
+export { DEFAULT_LANGUAGE, INTL_LOCALES, NAMESPACES, SUPPORTED_LANGUAGES } from "./resources";
+export { useTranslation } from "react-i18next";
 export default i18n;
