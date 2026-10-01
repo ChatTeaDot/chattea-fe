@@ -33,3 +33,5 @@ peerDependencyRules:
     react-native-reanimated: "*"
     react-native-safe-area-context: "*"
     "eslint-plugin-react-native-a11y>eslint": "9"
+    "vite-plugin-rnw>typescript": "6"
+    "tsconfck>typescript": "6"

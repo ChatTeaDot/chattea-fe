@@ -31,6 +31,9 @@ export default defineConfig({
   define: {
     __DEV__: "true",
   },
+  test: {
+    setupFiles: ["./test/setup.ts"],
+  },
   esbuild: {
     jsx: "automatic",
   },
