@@ -79,6 +79,7 @@
     "eslint-config-expo": "^56.0.4",
     "eslint-plugin-react-native-a11y": "^3.5.1",
     "eslint-plugin-simple-import-sort": "^13.0.0",
+    "expo-modules-core": "56.0.26",
     "prettier": "^3.5.3",
     "react-dom": "^19.2.3",
     "react-test-renderer": "19.2.3",
