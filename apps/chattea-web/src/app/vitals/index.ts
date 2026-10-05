@@ -1,2 +1,2 @@
-export * from "./vitals-store";
 export * from "./vitals-routes";
+export * from "./vitals-store";

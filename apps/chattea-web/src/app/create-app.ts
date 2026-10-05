@@ -2,6 +2,7 @@ import type { Writable } from "node:stream";
 
 import fastify, { type FastifyInstance } from "fastify";
 
+import { resolveAcceptLanguage } from "@/i18n";
 import { COMMUNITY_PATH } from "@/shared/config/constants";
 
 import { registerGraphqlProxy } from "./graphql-proxy";
@@ -10,6 +11,7 @@ import { createVitalsStore, registerVitalsRoutes } from "./vitals";
 
 type RenderOptions = {
   authorization?: string;
+  language?: string;
   onShellReady?: () => void;
 };
 
@@ -24,7 +26,7 @@ export const createApp = async ({
 }: CreateAppOptions): Promise<FastifyInstance> => {
   const app = fastify();
   const template = await loadTemplate();
-  const [head, tail = ""] = template.split("<!--app-html-->");
+  const [head = "", tail = ""] = template.split("<!--app-html-->");
 
   app.get(COMMUNITY_PATH, async (request, reply) => {
     reply.hijack();
@@ -33,11 +35,13 @@ export const createApp = async ({
       "content-type": "text/html; charset=utf-8",
       trailer: "server-timing",
     });
-    reply.raw.write(head);
+    const language = resolveAcceptLanguage(request.headers["accept-language"]);
+    reply.raw.write(head.replace(/lang="[^"]*"/, `lang="${language}"`));
     let shellMs = 0;
     const authorization = request.headers.authorization;
     const ssrState = await render(reply.raw, {
       authorization: typeof authorization === "string" ? authorization : undefined,
+      language,
       onShellReady: () => {
         shellMs = performance.now() - startedAt;
       },
@@ -47,7 +51,7 @@ export const createApp = async ({
         "server-timing": `shell;dur=${shellMs.toFixed(1)}`,
       });
     }
-    reply.raw.end(injectDehydratedState(tail, ssrState));
+    reply.raw.end(injectDehydratedState(tail, ssrState, language));
   });
 
   registerGraphqlProxy(app);

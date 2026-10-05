@@ -1,18 +1,20 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-import { communityPostsQuery } from "../api";
+import { useTranslation } from "@/i18n";
 
+import { communityPostsQuery } from "../api";
 import { list, stateBody, stateTitle, stateWrap } from "./community-page.css";
 import PostRow from "./post-row";
 
 const PostList = () => {
+  const { t } = useTranslation("community");
   const { data: posts } = useSuspenseQuery(communityPostsQuery());
 
   if (posts.length === 0) {
     return (
-      <div className={stateWrap}>
-        <span className={stateTitle}>아직 글이 없어요</span>
-        <span className={stateBody}>첫 이야기를 남겨 보세요.</span>
+      <div className={stateWrap} role="status">
+        <span className={stateTitle}>{t("empty.title")}</span>
+        <span className={stateBody}>{t("empty.body")}</span>
       </div>
     );
   }

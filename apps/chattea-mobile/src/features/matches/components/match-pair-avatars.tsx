@@ -2,14 +2,17 @@ import { Image } from "expo-image";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
+
 import type { MatchPairAvatarsProps } from "../types";
 
 const MatchPairAvatars = ({ candidatePhoto, myPhoto }: MatchPairAvatarsProps) => {
+  const { t } = useTranslation("matches");
   return (
     <View style={styles.avatars}>
       {candidatePhoto ? (
         <Image
-          accessibilityLabel="매치된 상대의 사진"
+          accessibilityLabel={t("sheet.matchPhotoA11y")}
           cachePolicy="memory-disk"
           contentFit="cover"
           source={{ uri: candidatePhoto }}
@@ -21,7 +24,7 @@ const MatchPairAvatars = ({ candidatePhoto, myPhoto }: MatchPairAvatarsProps) =>
       )}
       {myPhoto ? (
         <Image
-          accessibilityLabel="내 사진"
+          accessibilityLabel={t("sheet.myPhotoA11y")}
           cachePolicy="memory-disk"
           contentFit="cover"
           source={{ uri: myPhoto }}

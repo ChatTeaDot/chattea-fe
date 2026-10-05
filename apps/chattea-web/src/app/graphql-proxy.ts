@@ -1,20 +1,21 @@
 import type { FastifyInstance } from "fastify";
 
-import { API_GRAPHQL_PATH } from "@/shared/config/constants";
+import { API_GRAPHQL_PATH, TRACE_FORWARD_HEADERS } from "@/shared/config/constants";
 
 import { graphqlEndpoint } from "./graphql-upstream";
 
 export const registerGraphqlProxy = (app: FastifyInstance) => {
   app.post(API_GRAPHQL_PATH, async (request, reply) => {
-    const authorization = request.headers.authorization;
+    const headers: Record<string, string> = { "content-type": "application/json" };
+    for (const name of ["authorization", ...TRACE_FORWARD_HEADERS]) {
+      const value = request.headers[name];
+      if (typeof value === "string") headers[name] = value;
+    }
     let response: Response;
     try {
       response = await fetch(graphqlEndpoint, {
         method: "POST",
-        headers: {
-          "content-type": "application/json",
-          ...(typeof authorization === "string" ? { authorization } : {}),
-        },
+        headers,
         body: JSON.stringify(request.body ?? {}),
       });
     } catch {

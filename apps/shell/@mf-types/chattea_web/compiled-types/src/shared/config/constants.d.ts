@@ -1,0 +1,14 @@
+export declare const WEB_DEV_PORT = 3000;
+export declare const WEB_DEV_ORIGIN = "http://localhost:3000";
+export declare const COMMUNITY_PATH = "/community";
+export declare const VITALS_PATH = "/vitals";
+export declare const VITAL_METRIC_NAMES: readonly ["LCP", "FCP", "INP", "CLS", "TTFB"];
+export declare const API_GRAPHQL_PATH = "/api/graphql";
+export declare const TRACE_FORWARD_HEADERS: readonly ["traceparent", "tracestate", "x-datadog-trace-id", "x-datadog-parent-id", "x-datadog-sampling-priority", "x-datadog-origin", "x-b3-traceid", "x-b3-spanid", "x-b3-sampled"];
+export declare const COMMUNITY_NAVIGATE_MESSAGE_TYPE = "chattea.community.navigate";
+export declare const COMMUNITY_AUTH_REFRESH_MESSAGE_TYPE = "chattea.community.auth-refresh";
+export declare const COMMUNITY_AUTH_REFRESHED_EVENT = "chattea:auth-refreshed";
+export declare const COMMUNITY_AUTH_FAILED_EVENT = "chattea:auth-failed";
+export declare const COMMUNITY_AUTH_REFRESH_TIMEOUT_MS = 10000;
+export declare const COMMUNITY_NEW_PATH = "/community/new";
+export declare const COMMUNITY_POST_PATH_PREFIX = "/community/";

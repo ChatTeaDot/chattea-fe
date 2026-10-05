@@ -3,12 +3,31 @@
 소개팅/매칭 앱 ChatTea의 클라이언트 모노레포(pnpm 워크스페이스).
 
 ```text
-apps/chattea-mobile   Expo 56 / React Native 앱 (iOS · Android)
-apps/chattea-web      Vite React — 네이티브 커뮤니티 탭의 WebView용 SSR 웹
+apps/chattea-mobile      Expo 56 / React Native 앱 (iOS · Android)
+apps/chattea-web         Vite React — 네이티브 커뮤니티 탭의 WebView용 SSR 웹
+packages/design-system   공용 UI 컴포넌트 + theme 토큰 (@chattea/design-system)
 ```
+
+## 실행
+
+```bash
+pnpm install          # 워크스페이스 의존성 설치
+
+pnpm dev              # 모바일 + 웹 dev 서버 동시 실행 (turbo)
+pnpm dev:mobile       # Expo만
+pnpm dev:web          # 커뮤니티 웹만
+
+pnpm lint             # turbo run lint — 변경 없으면 캐시 히트
+pnpm typecheck
+pnpm test             # vitest 전체
+pnpm build            # chattea-web vite build
+```
+
+태스크 파이프라인과 캐시 전략은 [docs/monorepo.md](docs/monorepo.md) 참조.
 
 ## 기술 스택
 
+- **모노레포**: pnpm workspace + Turborepo(태스크 그래프·로컬/CI 캐시)
 - **모바일**: Expo 56, Expo Router, React Native Unistyles, Apollo Client, react-native-reanimated, LegendList
 - **웹**: Vite, React, Fastify(`middlewareMode` 스트리밍 SSR), TanStack Query, vanilla-extract
 - **네이티브 연동**: Kakao 로그인 SDK, RevenueCat, expo-notifications, expo-secure-store

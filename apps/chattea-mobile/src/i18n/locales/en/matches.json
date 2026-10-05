@@ -1,0 +1,59 @@
+{
+  "today": {
+    "emptyTitle": "You've seen all of today's picks",
+    "emptyBody": "We'll let you know when the next batch is ready.",
+    "newMatches": "New matches",
+    "notifications": "Notifications"
+  },
+  "actions": {
+    "skip": "Pass this time",
+    "like": "Send interest",
+    "undo": "Undo",
+    "likeCta": "Like ♥"
+  },
+  "list": {
+    "sectionTitle": "Newly matched",
+    "emptyTitle": "No new matches yet",
+    "emptyBody": "We'll show them here when interest is mutual.",
+    "startChat": "Start chatting",
+    "chatA11y": "Chat with {{name}}"
+  },
+  "sheet": {
+    "title": "It's a match!",
+    "subtitle": "{{name}} likes you too",
+    "startChat": "Start chatting",
+    "later": "Later",
+    "partnerFallback": "Your match",
+    "matchPhotoA11y": "Photo of your match",
+    "myPhotoA11y": "My photo"
+  },
+  "likes": {
+    "errorTitle": "Couldn't load likes",
+    "emptyTitle": "No one has liked you yet",
+    "emptyBody": "Send the first interest from today's picks.",
+    "revealCta": "See who it is",
+    "locked": "Available from Basic",
+    "sendInterestA11y": "Send interest to {{name}}",
+    "photoA11y": "{{name}}'s photo"
+  },
+  "candidate": {
+    "notFoundTitle": "Couldn't find this profile",
+    "notFoundBody": "This connection has passed. Check today's picks.",
+    "photoA11y": "{{name}}'s photo {{index}}",
+    "mainPhotoA11y": "{{name}}'s main photo",
+    "bioFallback": "Hi there. I'd love to chat."
+  },
+  "errors": {
+    "profileRequiredTitle": "Complete your profile first",
+    "profileRequiredBody": "Add photos and basic info to get matches.",
+    "likeLimitTitle": "You've used all of today's interests",
+    "likeLimitBody": "Try again tomorrow or check your plan.",
+    "passRequiredTitle": "You need a pass",
+    "passRequiredBody": "Check required passes under subscriptions and items.",
+    "viewPasses": "View passes",
+    "nothingToUndoTitle": "Nothing to undo",
+    "nothingToUndoBody": "Check out new people.",
+    "boostStartedTitle": "Boost started",
+    "boostStartedBody": "We'll show you to more people until {{time}}."
+  }
+}

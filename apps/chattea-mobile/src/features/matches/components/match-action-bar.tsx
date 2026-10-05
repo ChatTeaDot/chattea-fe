@@ -2,32 +2,34 @@ import { Heart, Undo2, X } from "lucide-react-native";
 import { View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
 import type { AppTheme } from "@/theme";
 
 import type { MatchActionBarProps } from "../types";
 import RoundActionButton from "./round-action-button";
 
 const MatchActionBar = ({ disabled, onLike, onSkip, onUndo }: MatchActionBarProps) => {
+  const { t } = useTranslation("matches");
   const { theme } = useUnistyles() as { theme: AppTheme };
   return (
     <View style={styles.row}>
       <RoundActionButton
         disabled={disabled}
         icon={<X color={theme.colors.muted} size={24} strokeWidth={2} />}
-        label="이번엔 넘기기"
+        label={t("actions.skip")}
         onPress={onSkip}
       />
       <RoundActionButton
         disabled={disabled}
         icon={<Heart color={theme.colors.primaryText} fill={theme.colors.primaryText} size={28} />}
-        label="관심 보내기"
+        label={t("actions.like")}
         main
         onPress={onLike}
       />
       <RoundActionButton
         disabled={disabled}
         icon={<Undo2 color={theme.colors.muted} size={24} strokeWidth={2} />}
-        label="되돌리기"
+        label={t("actions.undo")}
         onPress={onUndo}
       />
     </View>

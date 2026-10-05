@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { ScrollView, Text, useWindowDimensions, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
 import type { AppTheme } from "@/theme";
 
 import type { CandidateDetailBodyProps } from "../types";
 
 const CandidateDetailBody = ({ candidate }: CandidateDetailBodyProps) => {
+  const { t } = useTranslation("matches");
   const { theme } = useUnistyles() as { theme: AppTheme };
   const { width } = useWindowDimensions();
   const [page, setPage] = useState(0);
@@ -37,7 +39,10 @@ const CandidateDetailBody = ({ candidate }: CandidateDetailBodyProps) => {
         {photos.map((photo, index) =>
           photo ? (
             <Image
-              accessibilityLabel={`${candidate.userName}님의 사진 ${index + 1}`}
+              accessibilityLabel={t("candidate.photoA11y", {
+                index: index + 1,
+                name: candidate.userName,
+              })}
               cachePolicy="memory-disk"
               contentFit="cover"
               key={photo.url}
@@ -73,8 +78,10 @@ const CandidateDetailBody = ({ candidate }: CandidateDetailBodyProps) => {
           </Text>
           {candidate.blackRecommended ? <BadgeCheck color={theme.colors.accent} size={20} /> : null}
         </View>
-        <Text style={styles.sub}>{candidate.region}</Text>
-        <Text style={styles.bio}>{candidate.intro || "반가워요. 이야기를 나눠 보고 싶어요."}</Text>
+        <Text style={styles.sub}>
+          {t(`profile:regions.${candidate.region}`, { defaultValue: candidate.region })}
+        </Text>
+        <Text style={styles.bio}>{candidate.intro || t("candidate.bioFallback")}</Text>
       </View>
     </View>
   );

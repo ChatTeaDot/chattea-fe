@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 import { CommunityPage, communityPostsQuery } from "@/pages/community";
+import { AppMantineProvider } from "@/shared/ui/mantine";
 
 const POST = {
   authorName: "모모",
@@ -16,7 +17,11 @@ const POST = {
 
 const renderPage = (client = new QueryClient()) =>
   renderToStaticMarkup(
-    createElement(QueryClientProvider, { client }, createElement(CommunityPage)),
+    createElement(
+      AppMantineProvider,
+      null,
+      createElement(QueryClientProvider, { client }, createElement(CommunityPage)),
+    ),
   );
 
 const primedClient = () => {
@@ -26,12 +31,13 @@ const primedClient = () => {
 };
 
 describe("CommunityPage", () => {
-  it("renders the sign-in state without injected auth", () => {
+  it("renders the loading shell on ssr regardless of client auth state", () => {
     vi.stubGlobal("window", {});
 
     const html = renderPage();
 
-    expect(html).toContain("로그인이 필요해요");
+    expect(html).toContain("불러오는 중");
+    expect(html).toContain('role="status"');
     expect(html).toContain("글쓰기");
 
     vi.unstubAllGlobals();
@@ -48,5 +54,16 @@ describe("CommunityPage", () => {
     const html = renderPage();
 
     expect(html).toContain("불러오는 중");
+    expect(html).toContain('role="status"');
+  });
+
+  it("exposes landmark, heading, and labelled controls", () => {
+    const html = renderPage(primedClient());
+
+    expect(html).toContain("<main");
+    expect(html).toContain("<h1");
+    expect(html).toContain('aria-label="글쓰기"');
+    expect(html).toContain("<button");
+    expect(html).toContain("<li>");
   });
 });

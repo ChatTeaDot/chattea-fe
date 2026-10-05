@@ -10,28 +10,48 @@
     "./theme/*": "./src/theme/*.ts",
     "./components": "./src/components/index.ts"
   },
+  "scripts": {
+    "dev": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build -o storybook-static",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "format": "eslint . --fix && prettier --write .",
+    "format:check": "eslint . && prettier --check .",
+    "test": "vitest run --passWithNoTests"
+  },
   "peerDependencies": {
+    "@legendapp/list": "*",
     "expo-image": "*",
     "expo-router": "*",
     "react": "*",
     "react-native": "*",
     "react-native-safe-area-context": "*",
-    "react-native-unistyles": "*",
-    "@legendapp/list": "*"
+    "react-native-unistyles": "*"
   },
   "devDependencies": {
     "@legendapp/list": "^3.2.0",
+    "@storybook/react-native": "10.0.0",
+    "@storybook/react-native-web-vite": "10.6.1",
     "@types/react": "~19.2.14",
+    "eslint": "^9.39.4",
+    "eslint-config-expo": "^56.0.4",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
+    "expo": "^56.0.22",
     "expo-image": "~56.0.13",
     "expo-router": "^56.2.21",
+    "prettier": "^3.8.4",
     "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "react-native": "^0.85.3",
+    "react-native-nitro-modules": "0.35.7",
+    "react-native-reanimated": "4.3.1",
     "react-native-safe-area-context": "^5.7.0",
     "react-native-unistyles": "^3.2.5",
-    "@storybook/react-native": "10.0.0",
-    "storybook": "^10.6.0",
-    "expo": "^56.0.22",
-    "react-native-nitro-modules": "0.35.7",
-    "react-native-reanimated": "4.3.1"
+    "react-native-web": "^0.21.3",
+    "storybook": "^10.6.1",
+    "typescript": "^6.0.3",
+    "vite": "^7.3.5",
+    "vitest": "^3.2.6"
   }
 }

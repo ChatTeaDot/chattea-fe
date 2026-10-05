@@ -1,0 +1,59 @@
+{
+  "today": {
+    "emptyTitle": "오늘의 인연을 모두 살펴봤어요",
+    "emptyBody": "다음 추천이 준비되면 알려드릴게요.",
+    "newMatches": "새 매치",
+    "notifications": "알림"
+  },
+  "actions": {
+    "skip": "이번엔 넘기기",
+    "like": "관심 보내기",
+    "undo": "되돌리기",
+    "likeCta": "좋아요 ♥"
+  },
+  "list": {
+    "sectionTitle": "새로 매치된 사람",
+    "emptyTitle": "아직 새로 매치된 사람이 없어요",
+    "emptyBody": "서로 관심이 닿으면 여기에 보여드릴게요.",
+    "startChat": "채팅 시작",
+    "chatA11y": "{{name}}님과 대화하기"
+  },
+  "sheet": {
+    "title": "매치됐어요!",
+    "subtitle": "{{name}}님도 회원님을 좋아해요",
+    "startChat": "채팅하기",
+    "later": "나중에",
+    "partnerFallback": "상대",
+    "matchPhotoA11y": "매치된 상대의 사진",
+    "myPhotoA11y": "내 사진"
+  },
+  "likes": {
+    "errorTitle": "좋아요를 불러오지 못했어요",
+    "emptyTitle": "아직 받은 관심이 없어요",
+    "emptyBody": "오늘의 인연에서 먼저 마음을 전해 보세요.",
+    "revealCta": "누군지 확인하기",
+    "locked": "Basic부터 확인",
+    "sendInterestA11y": "{{name}}님에게 관심 보내기",
+    "photoA11y": "{{name}}님의 사진"
+  },
+  "candidate": {
+    "notFoundTitle": "프로필을 찾지 못했어요",
+    "notFoundBody": "이미 지나간 인연이에요. 오늘의 추천을 살펴봐 주세요.",
+    "photoA11y": "{{name}}님의 사진 {{index}}",
+    "mainPhotoA11y": "{{name}}님의 대표 사진",
+    "bioFallback": "반가워요. 이야기를 나눠 보고 싶어요."
+  },
+  "errors": {
+    "profileRequiredTitle": "프로필을 먼저 완성해 주세요",
+    "profileRequiredBody": "사진과 기본 정보를 채우면 인연을 추천해 드릴게요.",
+    "likeLimitTitle": "오늘의 관심 보내기를 모두 사용했어요",
+    "likeLimitBody": "내일 다시 보내거나 플랜을 확인해 보세요.",
+    "passRequiredTitle": "이용권이 필요해요",
+    "passRequiredBody": "구독과 아이템에서 필요한 이용권을 확인해 보세요.",
+    "viewPasses": "이용권 보기",
+    "nothingToUndoTitle": "되돌릴 선택이 없어요",
+    "nothingToUndoBody": "새로운 인연을 살펴봐 주세요.",
+    "boostStartedTitle": "부스트를 시작했어요",
+    "boostStartedBody": "{{time}}까지 더 많은 사람에게 보여드릴게요."
+  }
+}

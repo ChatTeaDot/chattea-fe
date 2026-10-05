@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Alert } from "react-native";
 
 import { CURRENT_SUBSCRIPTION_QUERY, type CurrentSubscription } from "@/features/billing";
+import i18n from "@/i18n";
 
 import {
   type CurrentUser,
@@ -37,7 +38,7 @@ const useProfilePhotoList = (user: CurrentUser) => {
 
   const addPhoto = async () => {
     if (photos.length >= MAX_PROFILE_PHOTOS) {
-      Alert.alert(`사진은 최대 ${MAX_PROFILE_PHOTOS}장까지 추가할 수 있어요`);
+      Alert.alert(i18n.t("photos.limitReached", { ns: "profile", max: MAX_PROFILE_PHOTOS }));
       return;
     }
     setUploading(true);
@@ -98,8 +99,8 @@ export const useProfileForm = (user: CurrentUser, completion: boolean) => {
   const save = async () => {
     if (!userName.trim() || !birthDate.trim() || !region || !intro.trim() || photos.length === 0) {
       Alert.alert(
-        "프로필을 모두 채워 주세요",
-        "사진, 이름, 생년월일, 지역, 소개와 관심 대상을 확인해 주세요.",
+        i18n.t("errors.incompleteTitle", { ns: "profile" }),
+        i18n.t("errors.incompleteBody", { ns: "profile" }),
       );
       return;
     }

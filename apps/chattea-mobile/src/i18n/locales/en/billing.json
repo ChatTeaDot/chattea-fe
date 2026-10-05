@@ -1,0 +1,37 @@
+{
+  "notice": "Auto-renews monthly · Cancel anytime",
+  "reconciling": "Applying your store purchase to your account.",
+  "subscribe": "Subscribe to {{plan}}",
+  "restore": "Restore purchases",
+  "plans": {
+    "free": {
+      "description": "Basic matching · Daily like limit",
+      "price": "₩0"
+    },
+    "basic": {
+      "description": "More likes · Undo · No ads",
+      "price": "₩4,900"
+    },
+    "gold": {
+      "description": "Extended like viewing · Advanced filters · AI summary",
+      "price": "₩9,900"
+    },
+    "black": {
+      "description": "Black-only picks · Read receipts · Strong boost",
+      "price": "₩24,900"
+    }
+  },
+  "purchasePending": {
+    "title": "Confirming your purchase",
+    "body": "Benefits apply automatically once the store finishes processing."
+  },
+  "restoreRequested": {
+    "title": "Restore requested",
+    "body": "We'll re-check your restored benefits on your account."
+  },
+  "errors": {
+    "loginRequired": "Sign in to view billing info.",
+    "notConfigured": "App Store billing isn't set up on this build.",
+    "loadFailed": "Couldn't load store billing info. Please try again in a moment."
+  }
+}

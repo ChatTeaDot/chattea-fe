@@ -1,9 +1,11 @@
 node_modules
+.turbo
 .expo
 ios
 android
 .omo
 dist
+storybook-static
 coverage
 npm-debug.log*
 .env
@@ -11,3 +13,6 @@ npm-debug.log*
 
 # e2e maestro
 apps/chattea-mobile/maestro/output/
+
+# lighthouse reports
+apps/chattea-web/.lighthouse/

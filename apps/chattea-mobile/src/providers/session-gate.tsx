@@ -12,6 +12,7 @@ import {
 } from "@/features/notifications";
 import type { CurrentUser } from "@/features/profile";
 import { ME_QUERY } from "@/features/profile";
+import { useTranslation } from "@/i18n";
 
 import AuthenticatedUserProvider from "./authenticated-user";
 import { PUBLIC_ROOTS } from "./constants";
@@ -22,6 +23,7 @@ import { getNativeSessionDestination } from "./utils/session-routing";
 type MeData = { me: CurrentUser };
 
 const NativeSessionGate = ({ children }: PropsWithChildren) => {
+  const { t } = useTranslation();
   useProviderInitMetric("session-gate");
   const { hydrated, requestSessionTermination, session } = useSession();
   const segments = useSegments() as string[];
@@ -93,7 +95,7 @@ const NativeSessionGate = ({ children }: PropsWithChildren) => {
           {protectedContent}
         </View>
         <View accessibilityLiveRegion="polite" style={styles.terminationOverlay}>
-          <Text style={styles.loadingText}>채티를 준비하고 있어요.</Text>
+          <Text style={styles.loadingText}>{t("states.preparing")}</Text>
         </View>
       </View>
     );
@@ -102,7 +104,7 @@ const NativeSessionGate = ({ children }: PropsWithChildren) => {
   if (!hydrated || (session && user.loading && !user.data)) {
     return (
       <View style={styles.loading}>
-        <Text style={styles.loadingText}>채티를 준비하고 있어요.</Text>
+        <Text style={styles.loadingText}>{t("states.preparing")}</Text>
       </View>
     );
   }
@@ -110,13 +112,13 @@ const NativeSessionGate = ({ children }: PropsWithChildren) => {
   if (session && user.error && !user.data) {
     return (
       <View style={styles.loading}>
-        <Text style={styles.loadingText}>연결을 확인하지 못했어요. 네트워크를 확인해 주세요.</Text>
+        <Text style={styles.loadingText}>{t("states.connectionError")}</Text>
         <Pressable
           accessibilityRole="button"
           onPress={() => void user.refetch()}
           style={({ pressed }) => [styles.retryButton, pressed && styles.retryButtonPressed]}
         >
-          <Text style={styles.retryButtonText}>다시 시도</Text>
+          <Text style={styles.retryButtonText}>{t("actions.retry")}</Text>
         </Pressable>
       </View>
     );

@@ -2,21 +2,23 @@ import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 import { AuthActionButton, useKakaoLogin } from "@/features/auth";
+import { useTranslation } from "@/i18n";
 import type { AppTheme } from "@/theme";
 
 const LoginScreen = () => {
+  const { t } = useTranslation("auth");
   const { pending, submit } = useKakaoLogin();
   return (
     <View style={styles.root}>
       <View style={styles.hero}>
-        <Text style={styles.logo}>채티</Text>
+        <Text style={styles.logo}>{t("common:appName")}</Text>
       </View>
-      <Text style={styles.slogan}>인증된 사람들의 가벼운 만남</Text>
+      <Text style={styles.slogan}>{t("login.slogan")}</Text>
       <View style={styles.actions}>
         <AuthActionButton
           loading={pending}
           onPress={() => void submit()}
-          title="카카오로 시작"
+          title={t("login.kakaoCta")}
           variant="kakao"
         />
       </View>

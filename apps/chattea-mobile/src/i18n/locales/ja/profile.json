@@ -1,0 +1,67 @@
+{
+  "fields": {
+    "name": "名前",
+    "birthDate": "生年月日",
+    "birthDateHint": "YYYY-MM-DD",
+    "region": "地域",
+    "interestedIn": "興味のある相手",
+    "intro": "自己紹介",
+    "introHint": "60文字以内",
+    "introLabel": "自己紹介（60文字）",
+    "introPlaceholder": "あなたのことを短く教えてください",
+    "introPlaceholderEditor": "週末は展示会に行きます…"
+  },
+  "gender": {
+    "male": "男性",
+    "female": "女性",
+    "everyone": "全員"
+  },
+  "photos": {
+    "guide": "写真を1枚は必ずアップロードしてください。追加で最大2枚までアップロードできます。",
+    "count": "写真 {{count}}/{{max}}",
+    "label": "プロフィール写真 {{index}}",
+    "deleteMain": "メイン写真を削除",
+    "delete": "写真を削除",
+    "uploading": "写真をアップロード中",
+    "add": "写真を追加",
+    "limitReached": "写真は最大{{max}}枚まで追加できます"
+  },
+  "actions": {
+    "save": "保存する",
+    "complete": "プロフィールを完成させる",
+    "saveShort": "保存"
+  },
+  "attributes": {
+    "height": "身長",
+    "job": "職業",
+    "mbti": "MBTI"
+  },
+  "plan": {
+    "view": "マイプランを見る"
+  },
+  "errors": {
+    "incompleteTitle": "プロフィールをすべて入力してください",
+    "incompleteBody": "写真、名前、生年月日、地域、自己紹介、興味のある相手を確認してください。",
+    "uploadPendingTitle": "写真アップロードを準備中です",
+    "uploadPendingBody": "安全な写真ストレージの設定が完了すると写真をアップロードできます。"
+  },
+  "regions": {
+    "서울": "ソウル",
+    "부산": "釜山",
+    "대구": "大邱",
+    "인천": "仁川",
+    "광주": "光州",
+    "대전": "大田",
+    "울산": "蔚山",
+    "세종": "世宗",
+    "경기": "京畿",
+    "강원": "江原",
+    "충북": "忠北",
+    "충남": "忠南",
+    "전북": "全北",
+    "전남": "全南",
+    "경북": "慶北",
+    "경남": "慶南",
+    "제주": "済州"
+  }
+}

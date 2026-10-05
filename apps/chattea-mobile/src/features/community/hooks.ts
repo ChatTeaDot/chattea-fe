@@ -3,6 +3,7 @@ import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
 
+import i18n from "@/i18n";
 import { useRouteParam } from "@/shared/hooks";
 import { showActionError } from "@/shared/lib";
 
@@ -64,35 +65,47 @@ export const useCommunityPost = () => {
 
   const reportPost = useCallback(() => {
     if (!postId) return;
-    Alert.alert("이 글을 신고할까요?", "운영팀이 내용을 확인해요.", [
-      { text: "취소", style: "cancel" },
-      {
-        text: "신고하기",
-        style: "destructive",
-        onPress: () => {
-          void report({ variables: { input: { postId, reason: "사용자 신고" } } })
-            .then(() => Alert.alert("신고를 접수했어요", "확인 후 필요한 조치를 할게요."))
-            .catch(showActionError);
-        },
-      },
-    ]);
-  }, [postId, report]);
-  const reportCommentById = useCallback(
-    (commentId: string) => {
-      Alert.alert("이 댓글을 신고할까요?", "운영팀이 내용을 확인해요.", [
-        { text: "취소", style: "cancel" },
+    Alert.alert(
+      i18n.t("post.reportTitle", { ns: "community" }),
+      i18n.t("report.confirmBody"),
+      [
+        { text: i18n.t("actions.cancel"), style: "cancel" },
         {
-          text: "신고하기",
+          text: i18n.t("actions.report"),
           style: "destructive",
           onPress: () => {
-            void reportComment({
-              variables: { input: { commentId, reason: "사용자 신고" } },
-            })
-              .then(() => Alert.alert("신고를 접수했어요", "확인 후 필요한 조치를 할게요."))
+            void report({ variables: { input: { postId, reason: "사용자 신고" } } })
+              .then(() =>
+                Alert.alert(i18n.t("report.receivedTitle"), i18n.t("report.receivedBody")),
+              )
               .catch(showActionError);
           },
         },
-      ]);
+      ],
+    );
+  }, [postId, report]);
+  const reportCommentById = useCallback(
+    (commentId: string) => {
+      Alert.alert(
+        i18n.t("comments.reportTitle", { ns: "community" }),
+        i18n.t("report.confirmBody"),
+        [
+          { text: i18n.t("actions.cancel"), style: "cancel" },
+          {
+            text: i18n.t("actions.report"),
+            style: "destructive",
+            onPress: () => {
+              void reportComment({
+                variables: { input: { commentId, reason: "사용자 신고" } },
+              })
+                .then(() =>
+                  Alert.alert(i18n.t("report.receivedTitle"), i18n.t("report.receivedBody")),
+                )
+                .catch(showActionError);
+            },
+          },
+        ],
+      );
     },
     [reportComment],
   );

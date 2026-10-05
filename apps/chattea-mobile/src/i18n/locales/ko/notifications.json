@@ -1,0 +1,18 @@
+{
+  "emptyTitle": "새 알림이 없어요",
+  "emptyBody": "좋아요, 매치, 메시지와 댓글 소식을 여기에서 알려드릴게요.",
+  "row": {
+    "read": "확인함",
+    "unread": "새 알림"
+  },
+  "channel": {
+    "default": "기본 알림"
+  },
+  "errors": {
+    "loginRequired": "로그인 후 원격 알림을 설정할 수 있어요.",
+    "notConfigured": "이 빌드에는 원격 알림 프로젝트가 설정되지 않았어요.",
+    "registerFailed": "원격 알림 등록을 완료하지 못했어요. 연결되면 다시 시도할게요.",
+    "permissionDenied": "기기 설정에서 알림 권한을 허용하면 원격 알림을 받을 수 있어요.",
+    "unregisterFailed": "이 기기의 알림 등록을 해제하지 못했어요. 다시 로그아웃해 주세요."
+  }
+}

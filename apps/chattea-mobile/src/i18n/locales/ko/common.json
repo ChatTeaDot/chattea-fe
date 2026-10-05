@@ -1,0 +1,66 @@
+{
+  "appName": "채티",
+  "actions": {
+    "cancel": "취소",
+    "done": "완료",
+    "retry": "다시 시도",
+    "reload": "다시 불러오기",
+    "save": "저장",
+    "report": "신고하기",
+    "later": "나중에"
+  },
+  "nav": {
+    "home": "채티",
+    "newMatches": "새 매치",
+    "likes": "나를 좋아한 사람",
+    "chat": "대화",
+    "rooms": "채팅",
+    "community": "커뮤니티",
+    "writePost": "글쓰기",
+    "createProfile": "프로필 만들기",
+    "completeProfile": "프로필 완성",
+    "editProfile": "프로필 편집",
+    "settings": "설정",
+    "notifications": "알림",
+    "plans": "플랜",
+    "profile": "프로필",
+    "myInfo": "내 정보"
+  },
+  "tabs": {
+    "matches": "매칭",
+    "likes": "좋아요",
+    "rooms": "채팅",
+    "community": "커뮤니티",
+    "profile": "내 정보"
+  },
+  "states": {
+    "preparing": "채티를 준비하고 있어요.",
+    "connectionError": "연결을 확인하지 못했어요. 네트워크를 확인해 주세요.",
+    "loadingTitle": "불러오고 있어요",
+    "loadingMessage": "잠시만 기다려 주세요.",
+    "loadingInline": "잠시만요. 내용을 불러오고 있어요.",
+    "emptyTitle": "아직 보여드릴 내용이 없어요",
+    "emptyMessage": "새 소식이 생기면 이곳에서 알려드릴게요.",
+    "errorTitle": "내용을 불러오지 못했어요",
+    "errorMessage": "연결을 확인한 뒤 다시 시도해 주세요.",
+    "errorBody": "잠시 후 다시 시도해 주세요."
+  },
+  "errors": {
+    "actionFailedTitle": "처리하지 못했어요",
+    "actionFailedBody": "잠시 후 다시 시도해 주세요."
+  },
+  "report": {
+    "confirmBody": "운영팀이 내용을 확인해요.",
+    "receivedTitle": "신고를 접수했어요",
+    "receivedBody": "확인 후 필요한 조치를 할게요."
+  },
+  "a11y": {
+    "moreOptions": "더 보기"
+  },
+  "dates": {
+    "justNow": "방금",
+    "minutesAgo": "{{count}}분 전",
+    "hoursAgo": "{{count}}시간 전",
+    "daysAgo": "{{count}}일 전"
+  }
+}

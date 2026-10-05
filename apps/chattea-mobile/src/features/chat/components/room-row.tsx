@@ -1,9 +1,12 @@
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
+
 import type { RoomRowProps } from "../types";
 
 const RoomRow = ({ id, lastMessage, name, onOpen, onPressIn, unreadCount }: RoomRowProps) => {
+  const { t } = useTranslation("chat");
   const open = () => onOpen(id);
   const pressIn = () => onPressIn?.(id);
   return (
@@ -20,7 +23,7 @@ const RoomRow = ({ id, lastMessage, name, onOpen, onPressIn, unreadCount }: Room
           {name}
         </Text>
         <Text numberOfLines={1} style={styles.preview}>
-          {lastMessage ?? "첫 인사를 건네 보세요."}
+          {lastMessage ?? t("rooms.previewFallback")}
         </Text>
       </View>
       {unreadCount > 0 ? <Text style={styles.badge}>{unreadCount}</Text> : null}

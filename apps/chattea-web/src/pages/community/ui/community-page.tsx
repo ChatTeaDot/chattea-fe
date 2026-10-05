@@ -1,14 +1,17 @@
-import { Suspense } from "react";
+import { ActionIcon, Button, Loader } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
+import { Suspense, useEffect, useSyncExternalStore } from "react";
 
+import { useTranslation } from "@/i18n";
+import { ANALYTICS_EVENT, ANALYTICS_SCREEN, track } from "@/shared/analytics";
 import { ErrorBoundary } from "@/shared/lib";
 
-import { openWrite } from "../bridge";
 import { COMMUNITY_POSTS_QUERY_KEY } from "../api";
-
+import { openWrite } from "../bridge";
 import {
   page,
   retryButton,
+  srOnly,
   stateBody,
   stateTitle,
   stateWrap,
@@ -21,35 +24,53 @@ const hasAuthToken = () =>
 
 const signedOut = () => typeof window !== "undefined" && !hasAuthToken();
 
-const LoadingState = () => (
-  <div className={stateWrap}>
-    <span className={stateBody}>불러오는 중…</span>
-  </div>
-);
+const LoadingState = () => {
+  const { t } = useTranslation();
+  return (
+    <div className={stateWrap} role="status">
+      <Loader size="sm" />
+      <span className={stateBody}>{t("states.loading")}</span>
+    </div>
+  );
+};
+
+const subscribe = () => () => {};
 
 const CommunityPage = () => {
+  const { t } = useTranslation("community");
   const queryClient = useQueryClient();
+  const hydrated = useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  );
+
+  useEffect(() => {
+    track(ANALYTICS_EVENT.communityView, {
+      screen: ANALYTICS_SCREEN.community,
+      source: "webview",
+    });
+  }, []);
+
+  const postsPrimed = queryClient.getQueryData(COMMUNITY_POSTS_QUERY_KEY) !== undefined;
 
   let content;
-  if (signedOut()) {
+  if (!hydrated && !postsPrimed) {
+    content = <LoadingState />;
+  } else if (hydrated && signedOut()) {
     content = (
       <div className={stateWrap}>
-        <span className={stateTitle}>로그인이 필요해요</span>
-        <span className={stateBody}>앱에서 로그인하면 이야기를 볼 수 있어요.</span>
+        <span className={stateTitle}>{t("signedOut.title")}</span>
+        <span className={stateBody}>{t("signedOut.body")}</span>
       </div>
     );
-  } else if (
-    typeof window === "undefined" &&
-    queryClient.getQueryData(COMMUNITY_POSTS_QUERY_KEY) === undefined
-  ) {
-    content = <LoadingState />;
   } else {
     content = (
       <ErrorBoundary
         fallback={(reset) => (
-          <div className={stateWrap}>
-            <span className={stateTitle}>목록을 불러오지 못했어요</span>
-            <button
+          <div className={stateWrap} role="alert">
+            <span className={stateTitle}>{t("loadError.title")}</span>
+            <Button
               className={retryButton}
               onClick={() => {
                 void queryClient.resetQueries({
@@ -57,10 +78,10 @@ const CommunityPage = () => {
                 });
                 reset();
               }}
-              type="button"
+              variant="filled"
             >
-              다시 시도
-            </button>
+              {t("common:actions.retry")}
+            </Button>
           </div>
         )}
       >
@@ -73,10 +94,11 @@ const CommunityPage = () => {
 
   return (
     <main className={page}>
+      <h1 className={srOnly}>{t("title")}</h1>
       {content}
-      <button aria-label="글쓰기" className={writeFab} onClick={openWrite} type="button">
+      <ActionIcon aria-label={t("write")} className={writeFab} onClick={openWrite} variant="filled">
         +
-      </button>
+      </ActionIcon>
     </main>
   );
 };

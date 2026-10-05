@@ -14,12 +14,13 @@ const VIEWER_QUERY = gql`
 
 const createCountingLink = () => {
   let count = 0;
-  const link = new ApolloLink((_operation, _forward) =>
-    new Observable((observer) => {
-      count += 1;
-      observer.next({ data: { viewer: { id: "viewer-1" } } });
-      observer.complete();
-    }),
+  const link = new ApolloLink(
+    (_operation, _forward) =>
+      new Observable((observer) => {
+        count += 1;
+        observer.next({ data: { viewer: { id: "viewer-1" } } });
+        observer.complete();
+      }),
   );
   return { count: () => count, link };
 };

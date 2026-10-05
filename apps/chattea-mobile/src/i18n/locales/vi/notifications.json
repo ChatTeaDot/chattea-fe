@@ -1,0 +1,18 @@
+{
+  "emptyTitle": "Chưa có thông báo mới",
+  "emptyBody": "Chúng tôi sẽ thông báo tại đây về lượt thích, kết nối, tin nhắn và bình luận.",
+  "row": {
+    "read": "Đã xem",
+    "unread": "Mới"
+  },
+  "channel": {
+    "default": "Thông báo mặc định"
+  },
+  "errors": {
+    "loginRequired": "Đăng nhập để thiết lập thông báo đẩy.",
+    "notConfigured": "Bản dựng này chưa thiết lập dự án thông báo đẩy.",
+    "registerFailed": "Không thể hoàn tất đăng ký thông báo đẩy. Sẽ thử lại khi có kết nối.",
+    "permissionDenied": "Cho phép thông báo trong cài đặt thiết bị để nhận thông báo đẩy.",
+    "unregisterFailed": "Không thể hủy đăng ký thông báo trên thiết bị này. Vui lòng đăng xuất lại."
+  }
+}

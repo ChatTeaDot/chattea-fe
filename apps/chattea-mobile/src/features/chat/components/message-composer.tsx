@@ -2,6 +2,7 @@ import { Send } from "lucide-react-native";
 import { Pressable, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
+import { useTranslation } from "@/i18n";
 import { NativeTextInput } from "@/shared/components";
 
 import type { MessageComposerProps } from "../types";
@@ -13,20 +14,21 @@ const MessageComposer = ({
   onSend,
   value,
 }: MessageComposerProps) => {
+  const { t } = useTranslation("chat");
   const { theme } = useUnistyles();
   return (
     <View style={styles.pill}>
       <NativeTextInput
-        accessibilityLabel="메시지 입력"
+        accessibilityLabel={t("composer.inputLabel")}
         maxLength={maxLength}
         multiline
         onChangeText={onChangeText}
-        placeholder="메시지 입력…"
+        placeholder={t("composer.placeholder")}
         style={styles.input}
         value={value}
       />
       <Pressable
-        accessibilityLabel="메시지 보내기"
+        accessibilityLabel={t("composer.send")}
         accessibilityRole="button"
         accessibilityState={{ disabled }}
         disabled={disabled}
