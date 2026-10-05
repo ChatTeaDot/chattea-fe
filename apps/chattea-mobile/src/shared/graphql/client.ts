@@ -1,6 +1,10 @@
 import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, Observable } from "@apollo/client";
 import { SetContextLink } from "@apollo/client/link/context";
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
+import { getMainDefinition } from "@apollo/client/utilities";
 import { toByteArray } from "base64-js";
+import { Kind, OperationTypeNode } from "graphql";
+import { createClient } from "graphql-ws";
 
 import { endpoint } from "./constants";
 import { getInstallId } from "./utils";
@@ -242,6 +246,22 @@ export const refreshGraphQLSession = (): Promise<boolean> => refreshCurrentSessi
 let requestSeq = 0;
 const requestSession = Date.now().toString(36);
 
+const createSubscriptionLink = (): ApolloLink =>
+  new GraphQLWsLink(
+    createClient({
+      connectionParams: () => getGraphQLAuthorizationHeaders(),
+      url: endpoint.replace(/^http/, "ws"),
+    }),
+  );
+
+const isSubscriptionOperation = (operation: ApolloLink.Operation): boolean => {
+  const definition = getMainDefinition(operation.query);
+  return (
+    definition.kind === Kind.OPERATION_DEFINITION &&
+    definition.operation === OperationTypeNode.SUBSCRIPTION
+  );
+};
+
 const createTransportLink = (): ApolloLink => {
   const httpLink = new HttpLink({ credentials: "include", uri: endpoint });
   const authLink = new SetContextLink(async ({ headers }) => {
@@ -256,8 +276,9 @@ const createTransportLink = (): ApolloLink => {
       },
     };
   });
+  const httpChain = createSessionLifecycleLink().concat(authLink).concat(httpLink);
 
-  return createSessionLifecycleLink().concat(authLink).concat(httpLink);
+  return ApolloLink.split(isSubscriptionOperation, createSubscriptionLink(), httpChain);
 };
 
 export const createApolloClient = (link: ApolloLink = createTransportLink()) =>

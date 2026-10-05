@@ -45,6 +45,7 @@
     "expo-splash-screen": "~56.0.15",
     "expo-symbols": "56.0.7",
     "graphql": "^16.11.0",
+    "graphql-ws": "^6.3.0",
     "i18next": "^26.4.2",
     "lucide-react-native": "^1.46.0",
     "react": "^19.2.3",

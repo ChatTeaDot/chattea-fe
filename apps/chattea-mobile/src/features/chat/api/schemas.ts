@@ -18,3 +18,10 @@ export type ChatMessage = {
 export type RoomsData = { chatRooms: ChatRoom[] };
 
 export type MessagesData = { chatMessages: ChatMessage[] };
+
+export type ChatMessageEvent = {
+  type: string;
+  message: ChatMessage;
+};
+
+export type ChatEventData = { chatEvent: ChatMessageEvent };
