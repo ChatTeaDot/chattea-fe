@@ -4,7 +4,7 @@ import type { ChatMessage } from "../src/features/chat/api/schemas";
 import {
   createOptimisticChatMessage,
   dedupeChatMessages,
-  isChatPollingEnabled,
+  isChatLiveEnabled,
   mergeChatMessage,
   OPTIMISTIC_MESSAGE_ID_PREFIX,
 } from "../src/features/chat/utils/message-sync";
@@ -78,11 +78,11 @@ describe("native chat sync", () => {
     ]);
   });
 
-  it("enables polling only while the app is active and the screen is focused", () => {
-    expect(isChatPollingEnabled("active", true)).toBe(true);
-    expect(isChatPollingEnabled("active", false)).toBe(false);
-    expect(isChatPollingEnabled("background", true)).toBe(false);
-    expect(isChatPollingEnabled("inactive", true)).toBe(false);
+  it("enables live updates only while the app is active and the screen is focused", () => {
+    expect(isChatLiveEnabled("active", true)).toBe(true);
+    expect(isChatLiveEnabled("active", false)).toBe(false);
+    expect(isChatLiveEnabled("background", true)).toBe(false);
+    expect(isChatLiveEnabled("inactive", true)).toBe(false);
   });
 });
 

@@ -191,6 +191,7 @@ vi.mock("@apollo/client/react", () => ({
       refetch: mocks.queryRefetch,
     };
   },
+  useSubscription: () => ({ data: undefined, error: undefined, loading: false }),
 }));
 vi.mock("@/features/profile/api", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../src/features/profile/api")>()),

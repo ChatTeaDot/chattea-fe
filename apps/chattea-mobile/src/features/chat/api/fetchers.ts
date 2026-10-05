@@ -37,6 +37,22 @@ export const SEND_MESSAGE_MUTATION = gql`
   }
 `;
 
+export const CHAT_EVENT_SUBSCRIPTION = gql`
+  subscription NativeChatEvent($roomId: String!) {
+    chatEvent(roomId: $roomId) {
+      type
+      message {
+        id
+        roomId
+        senderUserId
+        text
+        idempotencyKey
+        createdAt
+      }
+    }
+  }
+`;
+
 export const MARK_ROOM_READ_MUTATION = gql`
   mutation NativeMarkRoomRead($input: MarkRoomReadInput!) {
     markChatRoomRead(input: $input)

@@ -16,6 +16,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@apollo/client/react", () => ({
   useMutation: () => [vi.fn().mockResolvedValue({ data: {} }), { loading: false }],
+  useSubscription: () => ({ data: undefined, error: undefined, loading: false }),
   useQuery: (query: unknown) => {
     if (query === mocks.meQuery) return { data: { me: { id: "me" } } };
     if (query === CHAT_ROOMS_QUERY) {

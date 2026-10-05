@@ -7,55 +7,36 @@ import { useChatRoom } from "../src/features/chat/hooks";
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 type HookValue = ReturnType<typeof useChatRoom>;
+type SubscriptionOptions = {
+  onData?: (options: { data: { data?: unknown } }) => void;
+  skip?: boolean;
+  variables?: { roomId?: string };
+};
 
-const mocks = vi.hoisted(() => {
-  class MockEventSource {
-    onclose?: () => void;
-    onerror?: () => void;
-    onmessage?: (event: { data: string; id?: string }) => void;
-    onopen?: () => void;
-
-    closed = false;
-    headers: Record<string, string> = {};
-    url = "";
-
-    constructor(url: string, options?: { headers?: Record<string, string> }) {
-      this.url = url;
-      this.headers = options?.headers ?? {};
-      mocks.eventSources.push(this);
-      mocks.eventSource = this;
-    }
-
-    close() {
-      if (this.closed) return;
-      this.closed = true;
-      this.onclose?.();
-    }
-  }
-
-  return {
-    appState: { current: "active", listeners: new Set<(state: string) => void>() },
-    eventSource: null as MockEventSource | null,
-    eventSources: [] as MockEventSource[],
-    focusCleanup: null as (() => void) | null,
-    hook: null as HookValue | null,
-    MockEventSource,
-    mutation: vi.fn(),
-    query: {
-      data: {
-        chatMessages: [] as { id: string }[],
-        chatRooms: [] as { id: string; name: string }[],
-        me: { id: "user-1" },
-      },
-      error: undefined,
-      loading: false,
-      refetch: vi.fn(async () => ({})),
-      startPolling: vi.fn(),
-      stopPolling: vi.fn(),
+const mocks = vi.hoisted(() => ({
+  appState: { current: "active", listeners: new Set<(state: string) => void>() },
+  focusCleanup: null as (() => void) | null,
+  hook: null as HookValue | null,
+  mutation: vi.fn(),
+  renderer: null as ReactTestRenderer | null,
+  subscription: {
+    data: undefined as unknown,
+    options: undefined as SubscriptionOptions | undefined,
+  },
+  query: {
+    data: {
+      chatMessages: [] as { id: string }[],
+      chatRooms: [] as { id: string; name: string }[],
+      me: { id: "user-1" },
     },
-    showActionError: vi.fn(),
-  };
-});
+    error: undefined,
+    loading: false,
+    refetch: vi.fn(async () => ({})),
+    startPolling: vi.fn(),
+    stopPolling: vi.fn(),
+  },
+  showActionError: vi.fn(),
+}));
 
 const setAppState = (state: string) => {
   mocks.appState.current = state;
@@ -65,6 +46,10 @@ const setAppState = (state: string) => {
 vi.mock("@apollo/client/react", () => ({
   useMutation: () => [mocks.mutation, { loading: false }],
   useQuery: () => mocks.query,
+  useSubscription: (_doc: unknown, options?: SubscriptionOptions) => {
+    mocks.subscription.options = options;
+    return { data: mocks.subscription.data, error: undefined, loading: false };
+  },
 }));
 
 vi.mock("expo-crypto", () => ({
@@ -121,18 +106,6 @@ vi.mock("@/shared/graphql", () => ({
   getGraphQLAuthorizationHeaders: () => ({}),
 }));
 
-vi.mock("@/shared/graphql/constants", () => ({
-  apiBase: "http://localhost:4000",
-}));
-
-vi.mock("@/shared/graphql/utils", () => ({
-  getInstallId: async () => "device-1",
-}));
-
-vi.mock("@/features/chat/utils/event-source", () => ({
-  EventSource: mocks.MockEventSource,
-}));
-
 const Probe = () => {
   const hook = useChatRoom();
   useEffect(() => {
@@ -147,6 +120,7 @@ const mount = () => {
     renderer = TestRenderer.create(createElement(Probe));
   });
   if (!renderer) throw new Error("MOUNT_FAILED");
+  mocks.renderer = renderer;
   return renderer;
 };
 
@@ -155,6 +129,12 @@ const blur = () =>
     mocks.focusCleanup?.();
     mocks.focusCleanup = null;
   });
+
+const emit = (event: { type: string; message: Record<string, unknown> }) => {
+  act(() => {
+    mocks.subscription.options?.onData?.({ data: { data: { chatEvent: event } } });
+  });
+};
 
 const send = async (text: string) => {
   act(() => {
@@ -170,13 +150,24 @@ const sendCall = () =>
     .map(([options]) => options as { optimisticResponse?: unknown; variables?: unknown })
     .find((options) => options.optimisticResponse !== undefined);
 
+const liveMessage = (partial: Record<string, unknown>) => ({
+  createdAt: "2026-09-22T00:00:02.000Z",
+  id: "live-1",
+  idempotencyKey: null,
+  roomId: "room-1",
+  senderUserId: "user-2",
+  text: "들려요",
+  ...partial,
+});
+
 beforeEach(() => {
   mocks.appState.current = "active";
   mocks.appState.listeners.clear();
   mocks.focusCleanup = null;
   mocks.hook = null;
-  mocks.eventSource = null;
-  mocks.eventSources.length = 0;
+  mocks.renderer = null;
+  mocks.subscription.data = undefined;
+  mocks.subscription.options = undefined;
   mocks.mutation.mockReset().mockResolvedValue({
     data: {
       sendChatMessage: {
@@ -196,58 +187,66 @@ beforeEach(() => {
   mocks.showActionError.mockReset();
 });
 
-describe("chat room realtime streaming", () => {
-  it("opens an SSE stream while focused and active", async () => {
+describe("chat room realtime subscription", () => {
+  it("subscribes to room events while focused and active", async () => {
     mount();
     await act(async () => undefined);
-    expect(mocks.eventSource?.url).toBe("http://localhost:4000/api/chat/room-1/stream");
-    expect(mocks.query.startPolling).not.toHaveBeenCalled();
+    expect(mocks.subscription.options?.skip).toBe(false);
+    expect(mocks.subscription.options?.variables?.roomId).toBe("room-1");
   });
 
-  it("does not start fallback polling until SSE opens and then disconnects", async () => {
+  it("skips the subscription when the app backgrounds", async () => {
     mount();
-    await act(async () => undefined);
-    expect(mocks.query.startPolling).not.toHaveBeenCalled();
-
-    await act(async () => mocks.eventSource?.onopen?.());
-    expect(mocks.query.stopPolling).toHaveBeenCalled();
-
-    await act(async () => mocks.eventSource?.onclose?.());
-    expect(mocks.query.startPolling).toHaveBeenCalledTimes(1);
-    expect(mocks.query.startPolling).toHaveBeenLastCalledWith(3_000);
-  });
-
-  it("stops SSE when the app backgrounds", async () => {
-    mount();
-    await act(async () => undefined);
     await act(async () => setAppState("background"));
-    expect(mocks.eventSource?.closed).toBe(true);
+    expect(mocks.subscription.options?.skip).toBe(true);
   });
 
-  it("stops SSE when the screen blurs", async () => {
+  it("skips the subscription when the screen blurs", async () => {
     mount();
     await act(async () => undefined);
-    await blur();
-    expect(mocks.eventSource?.closed).toBe(true);
+    blur();
+    expect(mocks.subscription.options?.skip).toBe(true);
   });
 
-  it("appends an incoming SSE message to the list and tracks the last event id", async () => {
+  it("appends an added event message to the list", async () => {
     mount();
     await act(async () => undefined);
-    await act(async () =>
-      mocks.eventSource?.onmessage?.({
-        data: JSON.stringify({
-          createdAt: "2026-09-22T00:00:02.000Z",
-          id: "sse-1",
-          idempotencyKey: null,
-          roomId: "room-1",
-          senderUserId: "user-2",
-          text: "들려요",
-        }),
-        id: "sse-1",
-      }),
-    );
-    expect(mocks.hook?.messageList.map((m) => m.id)).toEqual(["sse-1"]);
+    emit({ type: "added", message: liveMessage({}) });
+    expect(mocks.hook?.messageList.map((m) => m.id)).toEqual(["live-1"]);
+  });
+
+  it("replaces a message on an edited event", async () => {
+    mount();
+    await act(async () => undefined);
+    emit({ type: "added", message: liveMessage({}) });
+    emit({ type: "edited", message: liveMessage({ text: "수정됨" }) });
+    expect(mocks.hook?.messageList.map((m) => m.id)).toEqual(["live-1"]);
+    expect(mocks.hook?.messageList[0]?.text).toBe("수정됨");
+  });
+
+  it("removes a message on a deleted event", async () => {
+    mount();
+    await act(async () => undefined);
+    emit({ type: "added", message: liveMessage({}) });
+    emit({ type: "deleted", message: liveMessage({}) });
+    expect(mocks.hook?.messageList).toEqual([]);
+  });
+
+  it("ignores events from another room", async () => {
+    mount();
+    await act(async () => undefined);
+    emit({ type: "added", message: liveMessage({ roomId: "room-2" }) });
+    expect(mocks.hook?.messageList).toEqual([]);
+  });
+
+  it("refetches to fill gaps after returning to the foreground", async () => {
+    mount();
+    await act(async () => undefined);
+    expect(mocks.query.refetch).toHaveBeenCalledTimes(1);
+
+    await act(async () => setAppState("background"));
+    await act(async () => setAppState("active"));
+    expect(mocks.query.refetch).toHaveBeenCalledTimes(2);
   });
 
   it("sends with an optimistic message and a cache merge for the echo", async () => {
